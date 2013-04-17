@@ -184,7 +184,14 @@
                     </run-dependency>
                 </dependency>
             </module-dependencies>
-            <public-packages/>
+            <public-packages>
+                <package>org.jcae.netbeans</package>
+                <package>org.jcae.netbeans.cad</package>
+                <package>org.jcae.netbeans.cad.modeler</package>
+                <package>org.jcae.netbeans.mesh</package>
+                <package>org.jcae.netbeans.mesh.bora</package>
+                <package>org.jcae.netbeans.viewer3d.actions</package>
+            </public-packages>
         </data>
     </configuration>
 </project>

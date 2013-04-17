@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: project.org.jcae.netbeans.of
+OpenIDE-Module-Localizing-Bundle: project/org/jcae/netbeans/of/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
