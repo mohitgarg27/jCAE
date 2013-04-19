@@ -1,0 +1,744 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<root>
+    <SettingFile location="">
+    </SettingFile>
+    
+    <!--- Used while intantiation of SHM.xml  -->
+    <Properties name="FoamFile" editable="false" >
+        <Property name="version" defVal="2.0" val=""/>
+        <Property name="format" defVal="ascii" val=""/>
+        <Property name="class" defVal="dictionary" val=""/>
+        <Property name="object" defVal="snappyHexMeshDict" val=""/>            
+    </Properties>  
+    
+    <!--- Provided through UI-->
+    <Property name="castellatedMesh" defVal="false" val=""/>
+    <Property name="snap" defVal="false" val=""/>
+    <Property name="addLayers" defVal="false" val=""/>
+    <Property name="debug" defVal="0" val=""/>
+    <Property name="mergeTolerance" defVal="1E-6" val=""/>
+
+    
+    <Properties name="geometry" editable="true" >
+        <!--- Created automatically in SHM.xml, no UI  -->
+        <Properties name="" editable="true" > 
+            <Property name="type" defVal="triSurfaceMesh" val=""/>
+            <Property name="name" defVal="" val=""/>
+            <Properties name="regions" editable="true" >
+                <!--- This tag below will represent one patch which need to be 
+                repeated for each of the patch -->
+                <Properties name="" editable="true" >
+                    <Property name="name" defVal="" val=""/>
+                </Properties>
+            </Properties>
+        </Properties>  
+        
+        <!--- Provided through UI-->
+        <Properties name="" editable="true" > 
+            <Property name="type" defVal="searchableBox" val=""/>
+            <Function name="min" editable="true">
+                <Params>
+                    <Param name="Param1" val="0"/>
+                    <Param name="Param2" val="0"/>
+                    <Param name="Param3" val="0"/>
+                </Params>
+            </Function>
+            <Function name="max" editable="true">
+                <Params>
+                    <Param name="Param1" val="1"/>
+                    <Param name="Param2" val="1"/>
+                    <Param name="Param3" val="1"/>
+                </Params>
+            </Function>
+        </Properties>  
+    </Properties>   
+    
+    <Properties name="castellatedMeshControls" editable="true">
+        
+        <!--- These tags Provided through UI  -->
+        <Property name="maxLocalCells" defVal="10000000" val=""/>
+        <Property name="maxGlobalCells" defVal="10000000" val=""/>
+        <Property name="minRefinementCells" defVal="0" val=""/>
+        <Property name="maxLoadUnbalance" defVal="0.1" val=""/>
+        <Property name="nCellsBetweenLevels" defVal="2" val=""/>                
+        <Property name="allowFreeStandingZoneFaces" defVal="true" val=""/>  
+        <Property name="resolveFeatureAngle" defVal="30" val=""/>               
+        
+        <!--- This tag Set automatically in SHM.xml, no UI  -->
+        <Function name="features" editable="true">
+            <Params>
+                <Properties name="" editable="true" >
+                    <!--- The file need to be set -->
+                    <Property name="file" defVal="" val=""/>
+                    <Property name="level" defVal="0" val=""/>
+                </Properties>            
+            </Params>
+        </Function>
+        
+        <!--- These tags Provided through UI  -->
+        <Properties name="refinementSurfaces" editable="true" >        
+            <Properties name="" editable="true" >     
+                    <Function name="level" editable="true">
+                        <Params>
+                            <Param name="Param1" val="2"/>
+                            <Param name="Param2" val="3"/>
+                             <Properties name="regions" editable="true" >  
+                                <Properties name=".*" editable="true" >  
+                                    <Function name="level" editable="true">
+                                        <Params>
+                                            <Param name="Param1" val="2"/>
+                                            <Param name="Param2" val="3"/>
+                                        </Params>
+                                    </Function>
+                                </Properties>         
+                            </Properties>         
+                        </Params>
+                    </Function>
+            </Properties> 
+         </Properties> 
+         
+        <!--- These tags Provided through UI  -->
+        <Properties name="refinementRegions" editable="true" >        
+            <Properties name="" editable="true" >     
+                <Property name="mode" defVal="inside" val=""/>    
+                <Function name="levels" editable="true">
+                    <Params>
+                        <Function name="" editable="true">
+                            <Params>
+                                <Param name="Distance" val="2"/>
+                                <Param name="Level" val="3"/>
+                            </Params>
+                        </Function>     
+                    </Params>
+                </Function>
+            </Properties> 
+         </Properties> 
+         
+        <!--- These tags Provided through UI  -->
+        <Function name="locationInMesh" editable="true">
+            <Params>
+                <Param name="Param1" val="0"/>
+                <Param name="Param2" val="0"/>
+                <Param name="Param3" val="0"/>
+            </Params>
+        </Function>
+        
+    </Properties>
+        
+    <!--- These tags Provided through UI  -->    
+    <Properties name="snapControls" editable="true">
+        <Property name="nSmoothPatch" defVal="3" val=""/>
+        <Property name="tolerance" defVal="1.0" val=""/>
+        <Property name="nSolveIter" defVal="600" val=""/>
+        <Property name="nRelaxIter" defVal="80" val=""/>
+        <Property name="nFeatureSnapIter" defVal="80" val=""/>                
+    </Properties>
+    
+    <!--- These tags Provided through UI  -->
+    <Properties name="addLayersControls" editable="true">
+        <Property name="relativeSizes" defVal="false" val=""/>
+        <Property name="expansionRatio" defVal="1.1" val=""/>
+        <Property name="finalLayerThickness" defVal="0.00417468" val=""/>
+        <Property name="minThickness" defVal="0.002" val=""/>
+        <Property name="nGrow" defVal="0" val=""/>                
+        <Property name="featureAngle" defVal="180" val=""/>
+        <Property name="nRelaxIter" defVal="4" val=""/>
+        <Property name="nSmoothSurfaceNormals" defVal="1" val=""/>
+        <Property name="nSmoothNormals" defVal="3" val=""/>                
+        <Property name="nSmoothThickness" defVal="10" val=""/>
+        <Property name="maxFaceThicknessRatio" defVal="0.5" val=""/>
+        <Property name="maxThicknessToMedialRatio" defVal="1" val=""/>
+        <Property name="minMedianAxisAngle" defVal="90" val=""/>                
+        <Property name="nBufferCellsNoExtrude" defVal="0" val=""/>                
+        <Property name="nLayerIter" defVal="1000" val=""/>   
+        
+        <Properties name="layers" editable="true">
+            <Properties name=".*" editable="true">
+                <Property name="nSurfaceLayers" defVal="6" val=""/>                
+            </Properties>        
+            <!--- More patches can be provided here by adding children
+            -->
+        </Properties>        
+        
+    </Properties>
+    
+    <!--- These tags Provided through UI  -->
+    <Properties name="meshQualityControls" type="castellatedMesh" editable="true">
+        <Property name="maxNonOrtho" defVal="65" val=""/>
+        <Property name="maxBoundarySkewness" defVal="20" val=""/>
+        <Property name="maxInternalSkewness" defVal="4" val=""/>
+        <Property name="maxConcave" defVal="80" val=""/>
+        <Property name="minFlatness" defVal="0.5" val=""/>
+        <Property name="minVol" defVal="1e-13" val=""/>
+        <Property name="minTetQuality" defVal="-1e30" val=""/>
+        <Property name="minArea" defVal="-1" val=""/>
+        <Property name="minTwist" defVal="-10" val=""/>
+        <Property name="minDeterminant" defVal="0.001" val=""/>
+        <Property name="minFaceWeight" defVal="0.02" val=""/>
+        <Property name="minVolRatio" defVal="0.01" val=""/>
+        <Property name="minTriangleTwist" defVal="1e-5" val=""/>
+        <Property name="nSmoothScale" defVal="4" val=""/>        
+        <Property name="errorReduction" defVal="0.75" val=""/>    
+    </Properties>
+
+    <!--- These tags Provided through UI  -->
+    <Properties name="meshQualityControls" type="snap" editable="true">
+        <Property name="maxNonOrtho" defVal="65" val=""/>
+        <Property name="maxBoundarySkewness" defVal="20" val=""/>
+        <Property name="maxInternalSkewness" defVal="4" val=""/>
+        <Property name="maxConcave" defVal="80" val=""/>
+        <Property name="minFlatness" defVal="0.5" val=""/>
+        <Property name="minVol" defVal="1e-13" val=""/>
+        <Property name="minTetQuality" defVal="-1e30" val=""/>
+        <Property name="minArea" defVal="-1" val=""/>
+        <Property name="minTwist" defVal="-10" val=""/>
+        <Property name="minDeterminant" defVal="0.001" val=""/>
+        <Property name="minFaceWeight" defVal="0.02" val=""/>
+        <Property name="minVolRatio" defVal="0.01" val=""/>
+        <Property name="minTriangleTwist" defVal="1e-5" val=""/>
+        <Property name="nSmoothScale" defVal="4" val=""/>        
+        <Property name="errorReduction" defVal="0.75" val=""/>    
+    </Properties>
+
+    <!--- These tags Provided through UI  -->
+    <Properties name="meshQualityControls" type="addLayers" editable="true">
+        <Property name="maxNonOrtho" defVal="65" val=""/>
+        <Property name="maxBoundarySkewness" defVal="20" val=""/>
+        <Property name="maxInternalSkewness" defVal="4" val=""/>
+        <Property name="maxConcave" defVal="80" val=""/>
+        <Property name="minFlatness" defVal="0.5" val=""/>
+        <Property name="minVol" defVal="1e-13" val=""/>
+        <Property name="minTetQuality" defVal="-1e30" val=""/>
+        <Property name="minArea" defVal="-1" val=""/>
+        <Property name="minTwist" defVal="-10" val=""/>
+        <Property name="minDeterminant" defVal="0.001" val=""/>
+        <Property name="minFaceWeight" defVal="0.02" val=""/>
+        <Property name="minVolRatio" defVal="0.01" val=""/>
+        <Property name="minTriangleTwist" defVal="1e-5" val=""/>
+        <Property name="nSmoothScale" defVal="4" val=""/>        
+        <Property name="errorReduction" defVal="0.75" val=""/>    
+    </Properties>
+                
+</root>
+
+<!--
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Which of the steps to run
+castellatedMesh true;
+snap            true;
+addLayers       false;
+//castellatedMesh false;
+//snap            false;
+//addLayers       true;
+
+// Geometry. Definition of all surfaces. All surfaces are of class
+// searchableSurface.
+// Surfaces are used
+// - to specify refinement for any mesh cell intersecting it
+// - to specify refinement for any mesh cell inside/outside/near
+// - to 'snap' the mesh boundary to the surface
+geometry
+{
+	cabRegion.stl
+	{
+        type triSurfaceMesh;
+        name cabRegion;
+		regions
+		{
+			cabInlet
+			{
+					name cabInlet;
+			}
+			cabInletWallMaxX
+			{
+					name cabInletWallMaxX;
+			}
+			cabInletWallMinX
+			{
+					name cabInletWallMinX;
+			}
+			cabInletWallMinZ
+			{
+					name cabInletWallMinZ;
+			}
+			cabOutletLOuterWallMaxY
+			{
+					name cabOutletLOuterWallMaxY;
+			}
+			cabOutletLOuterWallMaxZ
+			{
+					name cabOutletLOuterWallMaxZ;
+			}
+			cabOutletLOuterWallMinZ
+			{
+					name cabOutletLOuterWallMinZ;
+			}
+			cabOutletROuterWallMaxY
+			{
+					name cabOutletROuterWallMaxY;
+			}
+			cabOutletROuterWallMaxZ
+			{
+					name cabOutletROuterWallMaxZ;
+			}
+			cabOutletROuterWallMinZ
+			{
+					name cabOutletROuterWallMinZ;
+			}
+			cabinInletWallMaxZ
+			{
+					name cabinInletWallMaxZ;
+			}
+			heatTransmissiveWall1
+			{
+					name heatTransmissiveWall1;
+			}
+			heatTransmissiveWall2
+			{
+					name heatTransmissiveWall2;
+			}
+			heatTransmissiveWall3
+			{
+					name heatTransmissiveWall3;
+			}
+			heatTransmissiveWall4
+			{
+					name heatTransmissiveWall4;
+			}
+			heatTransmissiveWall5
+			{
+					name heatTransmissiveWall5;
+			}
+			heatTransmissiveWall6
+			{
+					name heatTransmissiveWall6;
+			}
+			p1
+			{
+					name p1;
+			}
+			p2
+			{
+					name p2;
+			}
+			p3
+			{
+					name p3;
+			}
+			p4
+			{
+					name p4;
+			}
+			p5
+			{
+					name p5;
+			}
+			p6
+			{
+					name p6;
+			}
+			toSolidL
+			{
+					name toSolidL;
+			}
+			toSolidR
+			{
+					name toSolidR;
+			}
+			topExtWall10
+			{
+					name topExtWall10;
+			}
+			topExtWall7
+			{
+					name topExtWall7;
+			}
+			topExtWall8
+			{
+					name topExtWall8;
+			}
+			topExtWall9
+			{
+					name topExtWall9;
+			}
+			topExtWall_1
+			{
+					name topExtWall_1;
+			}
+			topExtWall_2
+			{
+					name topExtWall_2;
+			}
+			topExtWall_3
+			{
+					name topExtWall_3;
+			}
+			topExtWall_4
+			{
+					name topExtWall_4;
+			}
+			topExtWall_5
+			{
+					name topExtWall_5;
+			}
+			topExtWall_6
+			{
+					name topExtWall_6;
+			}
+			cabOutletLDummy
+			{
+					name cabOutletLDummy;
+			}
+			cabOutletRDummy
+			{
+					name cabOutletRDummy;
+			}
+		}
+	}
+
+	    refinementBoxCabInletJet1
+	    {
+	        type searchableBox;
+	        min (-0.125 -0.05 -0.45);
+	        max ( 0.125  1.875 0.45);
+	    }
+	    refinementBoxCabInletJet2
+	    {
+	        type searchableBox;
+	        min (-0.25 -0.05 -0.48);
+	        max ( 0.25  1.44 0.48);
+	    }
+};
+
+// Settings for the castellatedMesh generation.
+castellatedMeshControls
+{
+
+		// Refinement parameters
+		// ~~~~~~~~~~~~~~~~~~~~~
+
+		// If local number of cells is >= maxLocalCells on any processor
+		// switches from from refinement followed by balancing
+		// (current method) to (weighted) balancing before refinement.
+		maxLocalCells 10000000;
+
+		// Overall cell limit (approximately). Refinement will stop immediately
+		// upon reaching this number so a refinement level might not complete.
+		// Note that this is the number of cells before removing the part which
+		// is not 'visible' from the keepPoint. The final number of cells might
+		// actually be a lot less.
+		maxGlobalCells 10000000;
+
+		// The surface refinement loop might spend lots of iterations refining just a
+		// few cells. This setting will cause refinement to stop if <= minimumRefine
+		// are selected for refinement. Note: it will at least do one iteration
+		// (unless the number of cells to refine is 0)
+		minRefinementCells 0;
+
+		// Allow a certain level of imbalance during refining
+		// (since balancing is quite expensive)
+		// Expressed as fraction of perfect balance (= overall number of cells /
+		// nProcs). 0=balance always.
+		maxLoadUnbalance 0.10;
+
+		// Number of buffer layers between different levels.
+		// 1 means normal 2:1 refinement restriction, larger means slower
+		// refinement.
+		nCellsBetweenLevels 2;      //3
+
+		// Explicit feature edge refinement
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		// Specifies a level for any cell intersected by its edges.
+		// This is a featureEdgeMesh, read from constant/triSurface for now.
+		features
+				(
+				 {
+				     file "cabRegion.eMesh";
+				     //level 6;
+				     level 0;
+				 }
+				);
+
+		// Surface based refinement
+		// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+		// Specifies two levels for every surface. The first is the minimum level,
+		// every cell intersecting a surface gets refined up to the minimum level.
+		// The second level is the maximum level. Cells that 'see' multiple
+		// intersections where the intersections make an
+		// angle > resolveFeatureAngle get refined up to the maximum level.
+
+		refinementSurfaces
+		{
+				cabRegion
+				{
+						// Surface-wise min and max refinement level
+						level (2 3);      //(3 6)
+
+						regions
+						{
+							".*Dummy"
+							{
+								level (0 0);
+							}
+						}
+
+						cellZone cabRegion;
+						cellZoneInside true;
+				}
+		}
+
+		// Resolve sharp angles
+		resolveFeatureAngle 30;
+
+		// Region-wise refinement
+		// ~~~~~~~~~~~~~~~~~~~~~~
+
+		// Specifies refinement level for cells in relation to a surface. One of
+		// three modes
+		// - distance. 'levels' specifies per distance to the surface the
+		//   wanted refinement level. The distances need to be specified in
+		//   descending order.
+		// - inside. 'levels' is only one entry and only the level is used. All
+		//   cells inside the surface get refined up to the level. The surface
+		//   needs to be closed for this to be possible.
+		// - outside. Same but cells outside.
+
+		refinementRegions
+		{
+				        refinementBoxCabInletJet1
+				        {
+				            mode inside;
+				            levels ((1E15 1));
+				        }
+				        refinementBoxCabInletJet2
+				        {
+				            mode inside;
+				            levels ((1E15 1));
+				        }
+		}
+
+		// Mesh selection
+		// ~~~~~~~~~~~~~~
+
+		// After refinement patches get added for all refinementSurfaces and
+		// all cells intersecting the surfaces get put into these patches. The
+		// section reachable from the locationInMesh is kept.
+		// NOTE: This point should never be on a face, always inside a cell, even
+		// after refinement.
+		locationInMesh (0.000123 1.000123 0.000123);
+
+
+		// Whether any faceZones (as specified in the refinementSurfaces)
+		// are only on the boundary of corresponding cellZones or also allow
+		// free-standing zone faces. Not used if there are no faceZones.
+		allowFreeStandingZoneFaces true;
+}
+
+// Settings for the snapping.
+snapControls
+{
+		//- Number of patch smoothing iterations before finding correspondence
+		//  to surface
+		nSmoothPatch 3;
+//		nSmoothPatch 30;
+
+		//- Relative distance for points to be attracted by surface feature point
+		//  or edge. True distance is this factor times local
+		//  maximum edge length.
+		tolerance 1.0;
+//		tolerance 1.5;
+
+		//- Number of mesh displacement relaxation iterations.
+//		nSolveIter 300;
+		nSolveIter 600;
+
+		//- Maximum number of snapping relaxation iterations. Should stop
+		//  before upon reaching a correct mesh.
+//		nRelaxIter 5;
+//		nRelaxIter 20;
+		nRelaxIter 80;
+
+		    //- Highly experimental and wip: number of feature edge snapping
+			    //  iterations. Leave out altogether to disable.
+//				    nFeatureSnapIter 10;
+//				    nFeatureSnapIter 20;
+				    nFeatureSnapIter 80;
+}
+
+// Settings for the layer addition.
+addLayersControls
+{
+		// Are the thickness parameters below relative to the undistorted
+		// size of the refined cell outside layer (true) or absolute sizes (false).
+		relativeSizes true;
+
+		// Per final patch (so not geometry!) the layer information
+		layers
+		{
+				".*"
+				{
+						nSurfaceLayers 6;
+				}
+		}
+
+		// Expansion factor for layer mesh
+		expansionRatio 1.2;
+
+		//- Wanted thickness of final added cell layer. If multiple layers
+		//  is the thickness of the layer furthest away from the wall.
+		//  See relativeSizes parameter.
+		finalLayerThickness 0.8;
+
+		//- Minimum thickness of cell layer. If for any reason layer
+		//  cannot be above minThickness do not add layer.
+		//  Relative to undistorted size of cell outside layer.
+		minThickness 0.1;
+
+		//- If points get not extruded do nGrow layers of connected faces that are
+		//  also not grown. This helps convergence of the layer addition process
+		//  close to features.
+		nGrow 1;
+
+		// Advanced settings
+
+		//- When not to extrude surface. 0 is flat surface, 90 is when two faces
+		//  make straight angle.
+		featureAngle 30;
+
+		//- Maximum number of snapping relaxation iterations. Should stop
+		//  before upon reaching a correct mesh.
+		nRelaxIter 3;
+
+		// Number of smoothing iterations of surface normals
+		nSmoothSurfaceNormals 1;
+
+		// Number of smoothing iterations of interior mesh movement direction
+		nSmoothNormals 3;
+
+		// Smooth layer thickness over surface patches
+		nSmoothThickness 10;
+
+		// Stop layer growth on highly warped cells
+		maxFaceThicknessRatio 0.5;
+
+		// Reduce layer growth where ratio thickness to medial
+		// distance is large
+		maxThicknessToMedialRatio 0.3;
+
+		// Angle used to pick up medial axis points
+		minMedianAxisAngle 130;
+
+		// Create buffer region for new layer terminations
+		nBufferCellsNoExtrude 0;
+
+		// Overall max number of layer addition iterations
+		nLayerIter 50;
+}
+
+// Generic mesh quality settings. At any undoable phase these determine
+// where to undo.
+meshQualityControls
+{
+		//- Maximum non-orthogonality allowed. Set to 180 to disable.
+		//      maxNonOrtho 65;
+		        maxNonOrtho 180;    //there in checkMesh, so skipping
+
+		//- Max skewness allowed. Set to <0 to disable.
+		//      maxBoundarySkewness 20;
+		//      maxInternalSkewness 4;
+		        maxBoundarySkewness -20;
+				maxInternalSkewness -4;         //maxSkewness check there in checkMesh, so skipping
+
+
+		//- Max concaveness allowed. Is angle (in degrees) below which concavity
+		//  is allowed. 0 is straight face, <0 would be convex face.
+		//  Set to 180 to disable.
+		maxConcave 80;
+
+		//- Minimum projected area v.s. actual area. Set to -1 to disable.
+		minFlatness 0.5;
+
+		//- Minimum pyramid volume. Is absolute volume of cell pyramid.
+		//  Set to a sensible fraction of the smallest cell volume expected.
+		//  Set to very negative number (e.g. -1E30) to disable.
+		//      minVol 1e-13;
+		        minVol -1e30;       //there in checkMesh so skipping
+
+
+
+		//- Minimum quality of the tet formed by the face-centre
+		//  and variable base point minimum decomposition triangles and
+		//  the cell centre. This has to be a positive number for tracking
+		//  to work. Set to very negative number (e.g. -1E30) to
+		//  disable.
+		//     <0 = inside out tet,
+		//      0 = flat tet
+		//      1 = regular tet
+//		minTetQuality 1e-30;      //for 1 & 2
+		minTetQuality -1e30;
+
+
+		//- Minimum face area. Set to <0 to disable.
+		minArea -1;	//there in checkMesh so skipping
+
+		//- Minimum face twist. Set to <-1 to disable. dot product of face normal
+		//- and face centre triangles normal
+		minTwist 0.02;
+
+		//- minimum normalised cell determinant
+		//- 1 = hex, <= 0 = folded or flattened illegal cell
+		minDeterminant 0.001;
+//        minDeterminant 0.0001;
+
+		//- minFaceWeight (0 -> 0.5)
+		minFaceWeight 0.02;
+//		minFaceWeight 0.001;
+
+		//- minVolRatio (0 -> 1)
+		minVolRatio 0.01;
+//		minVolRatio 0.001;
+
+
+//		minTriangleTwist -1;
+		minTriangleTwist 1e-5;
+
+
+		// Advanced
+
+		//- Number of error distribution iterations
+		nSmoothScale 4;
+		//- amount to scale back displacement at error points
+		errorReduction 0.75;
+}
+
+// Advanced
+
+// Flags for optional output
+// 0 : only write final meshes
+// 1 : write intermediate meshes
+// 2 : write volScalarField with cellLevel for postprocessing
+// 4 : write current intersections as .obj files
+debug 0;
+
+// Merge tolerance. Is fraction of overall bounding box of initial mesh.
+// Note: the write tolerance needs to be higher than this.
+mergeTolerance 1E-6;
+
+// ************************************************************************* //
+-->

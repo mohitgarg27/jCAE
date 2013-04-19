@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<jcaecfd>
+        <Project name="">                
+                <OpenFOAM version="">        
+                        <Solver name=""/>            
+                        <SHM location=""/>
+                </OpenFOAM >
+                <Region name="">
+                    <SubRegion name="">
+                            <BGBlock>
+                                    <BGPatch name="">
+                                    </BGPatch>
+                            </BGBlock>
+                            <Patches>
+                                    <Patch name="" brepLocation="">
+                                    </Patch>
+                            </Patches>
+                            <Stitches>
+                                <Stitch PatchName="">
+                                    <Patch1>  </Patch1>
+                                    <Patch2>  </Patch2>
+                                </Stitch>
+                            </Stitches>
+                    </SubRegion>
+                    <Zones>
+                            <FaceZone name ="" Patch=""/>
+                            <CellZone name ="">
+                                <Function name="min" editable="true">
+                                    <Params>
+                                        <Param name="Param1" val="0"/>
+                                        <Param name="Param2" val="0"/>
+                                        <Param name="Param3" val="0"/>
+                                    </Params>
+                                </Function>
+                                <Function name="max" editable="true">
+                                    <Params>
+                                        <Param name="Param1" val="1"/>
+                                        <Param name="Param2" val="1"/>
+                                        <Param name="Param3" val="1"/>
+                                    </Params>
+                                </Function>
+                            </CellZone>
+                    </Zones>
+                </Region>        
+        </Project>        
+</jcaecfd>

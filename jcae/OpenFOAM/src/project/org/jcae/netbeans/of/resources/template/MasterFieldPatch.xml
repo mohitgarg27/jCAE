@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<!--- Defining structures of base patches  -->
+<root>
+
+    <FieldPatches>
+        
+        <FieldPatch name="symmetry" >
+            <Properties editable="true" >
+                <Property name="value" defVal="uniform" val="" defaultSecondaryVal="0.03" secondaryVal=""/>
+            </Properties> 
+        </FieldPatch>   
+
+        <FieldPatch name="kqRWallFunction" >
+            <Properties editable="true" >
+                <Property name="value" defVal="uniform" val="" defaultSecondaryVal="0.03" secondaryVal=""/>
+            </Properties> 
+        </FieldPatch>   
+                          
+        <FieldPatch name="inletOutlet" >
+            <Properties editable="true" >
+                <Property name="inletValue" defVal="uniform" val="" defaultSecondaryVal="0.03" secondaryVal=""/>
+                <Property name="value" defVal="uniform" val="" defaultSecondaryVal="0.03" secondaryVal=""/>
+            </Properties> 
+        </FieldPatch>   
+
+        <FieldPatch name="turbulentIntensityKineticEnergyInlet" >
+            <Properties editable="true" >
+                <Property name="intensity" defVal="0.05" val="" />
+                <Property name="value" defVal="uniform" val="" defaultSecondaryVal="0.03" secondaryVal=""/>
+            </Properties> 
+        </FieldPatch>   
+
+        <FieldPatch name="zeroGradient" >
+        </FieldPatch>   
+
+        <FieldPatch name="chtRcThermalDiffusivity" >
+            <Properties editable="true" >
+                <Property name="remoteField" defVal="k" val="" />
+                <Property name="value" defVal="uniform" val="" defaultSecondaryVal="1e-3" secondaryVal=""/>
+            </Properties> 
+        </FieldPatch>   
+
+        <FieldPatch name="nutSpalartAllmarasWallFunction" >
+            <Properties editable="true" >
+                <Property name="cmu" defVal="0.09" val="" />
+                <Property name="kappa" defVal="0.41" val="" />
+                <Property name="e" defVal="9.8" val="" />
+                <Property name="value" defVal="uniform" val="" defaultSecondaryVal="0" secondaryVal=""/>
+            </Properties> 
+        </FieldPatch>   
+
+        <FieldPatch name="calculated" >
+            <Properties editable="true" >                
+                <Property name="value" defVal="uniform" val="" defaultSecondaryVal="0" secondaryVal=""/>
+            </Properties> 
+        </FieldPatch>   
+
+        <FieldPatch name="omegaWallFunction" >
+            <Properties editable="true" >
+                <Property name="cmu" defVal="0.09" val="" />
+                <Property name="kappa" defVal="0.41" val="" />
+                <Property name="e" defVal="9.8" val="" />
+                <Property name="value" defVal="uniform" val="" defaultSecondaryVal="10" secondaryVal=""/>
+            </Properties> 
+        </FieldPatch>   
+
+        <FieldPatch name="bouyantPressure" >
+            <Properties editable="true" >
+                <Property name="rho" defVal="rhok" val="" />                
+            </Properties> 
+        </FieldPatch>   
+
+        <FieldPatch name="fixedMeanValue" >
+            <Properties editable="true" >
+                <Property name="meanValue" defVal="0" val="" />    
+                <Property name="value" defVal="uniform" val="" defaultSecondaryVal="0" secondaryVal=""/>            
+            </Properties> 
+        </FieldPatch>  
+         
+        <FieldPatch name="fixedValue" >
+            <Properties editable="true" >                
+                <Property name="value" defVal="uniform" val="" defaultSecondaryVal="0" secondaryVal=""/>            
+            </Properties> 
+        </FieldPatch>   
+
+        <FieldPatch name="chtRcTemperature" >
+            <Properties editable="true" >
+                <Property name="radiation" defVal="off" val="" />
+                <Property name="remoteField" defVal="T" val="" />
+                <Property name="k" defVal="kappEff" val="" />
+                <Property name="value" defVal="296" val="" defaultSecondaryVal="10" secondaryVal=""/>
+            </Properties> 
+        </FieldPatch>   
+
+        <FieldPatch name="extendedWallHeatTransfer" >
+            <Properties editable="true" >
+                <Property name="radiation" defVal="off" val="" />
+                <Property name="Tinf" defVal="0" val="" />
+                <Property name="k" defVal="kappEff" val="" />
+                <Property name="hc" defVal="0.6" val="" />
+                <Property name="alpha" defVal="50" val="" />
+                <Property name="value" defVal="296" val="" defaultSecondaryVal="10" secondaryVal=""/>
+                <Function name="radiationSources" editable="true">
+                    <Params>
+                    </Params>
+                </Function>
+            </Properties> 
+        </FieldPatch>   
+        
+        <FieldPatch name="flowRateInletVelocity" >
+            <Properties editable="true" >
+                <Property name="flowRate" defVal="0" val="" />
+                <Property name="value" >
+                    <value>
+                        <Function name="uniform" editable="true">
+                            <Params>
+                                <Param name="Param1" val="0"/>
+                                <Param name="Param2" val="0"/>
+                                <Param name="Param3" val="0"/>
+                            </Params>
+                        </Function>
+                    </value>
+                </Property>                
+            </Properties> 
+        </FieldPatch>      
+            
+        <FieldPatch name="chtRcThermalDiffusivitySlave" >
+            <Properties editable="true" >
+                <Property name="remoteField" defVal="kappaEff" val="" />
+                <Property name="value" defVal="1e-3" val="" defaultSecondaryVal="10" secondaryVal=""/>
+            </Properties> 
+        </FieldPatch>   
+
+
+    </FieldPatches>
+    
+</root>

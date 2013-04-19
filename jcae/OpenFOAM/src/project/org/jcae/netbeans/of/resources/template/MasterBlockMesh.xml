@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+
+<root>
+    <SettingFile location="">
+    </SettingFile>
+    
+    <!--- Used while intantiation of BlockMesh.xml  -->
+    <Properties name="FoamFile" editable="false" >
+        <Property name="version" defVal="2.0" val=""/>
+        <Property name="format" defVal="ascii" val=""/>
+        <Property name="class" defVal="dictionary" val=""/>
+        <Property name="object" defVal="blockMeshDict" val=""/>            
+    </Properties>  
+    
+    <Property name="convertToMeters" defVal="1" val=""/>
+    
+    
+    <Function name="vertices" editable="true">
+        <Params separator="\n">
+            <Function name="" editable="true">
+                <Params>
+                    <Param name="X" val=""/>
+                    <Param name="Y" val=""/>
+                    <Param name="Z" val=""/>
+                </Params>
+            </Function>     
+            <Function name="" editable="true">
+                <Params>
+                    <Param name="X" val=""/>
+                    <Param name="Y" val=""/>
+                    <Param name="Z" val=""/>
+                </Params>
+            </Function>     
+            <Function name="" editable="true">
+                <Params>
+                    <Param name="X" val=""/>
+                    <Param name="Y" val=""/>
+                    <Param name="Z" val=""/>
+                </Params>
+            </Function>                 
+        </Params>
+    </Function>
+
+    <Function name="blocks" editable="true">
+        <Params separator=" ">
+            <Function name="hex" editable="true">
+                <Params>
+                    <Param name="V1" val=""/>
+                    <Param name="V2" val=""/>
+                    <Param name="V3" val=""/>
+                    <Param name="V4" val=""/>
+                    <Param name="V5" val=""/>
+                    <Param name="V6" val=""/>                    
+                    <Param name="V7" val=""/>
+                    <Param name="V8" val=""/>                    
+                </Params>
+            </Function>     
+            <Function name="" editable="true">
+                <Params>
+                    <Param name="RES_X" val=""/>
+                    <Param name="RES_Y" val=""/>
+                    <Param name="RES_Z" val=""/>
+                </Params>
+            </Function>     
+            <Function name="simpleGrading" editable="true">
+                <Params>
+                    <Param name="X" val="1"/>
+                    <Param name="Y" val="1"/>
+                    <Param name="Z" val="1"/>
+                </Params>
+            </Function>                 
+        </Params>
+    </Function>
+    
+    <Function name="edges" editable="true">
+        <Params>
+        </Params>
+    </Function>  
+                   
+    <Function name="patches" editable="true">
+        <Params separator="\n">
+            <!--- This function can repeat -->
+            <Function name="" prefix="patch " editable="true">
+                <Params separator="\n">
+                    <Function name="" editable="true">
+                        <Params separator=" ">
+                            <Param name="V1" val=""/>
+                            <Param name="V2" val=""/>
+                            <Param name="V3" val=""/>
+                            <Param name="V4" val=""/>
+                        </Params>
+                    </Function>
+                </Params>
+            </Function>                    
+        </Params>
+    </Function>
+    
+</root>
+
+<!---
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 1;
+
+vertices
+(
+    (-2.5 -2.5 -0.5)
+    (2.5 -2.5 -0.5)
+    (2.5  2.5 -0.5)
+    (-2.5  2.5 -0.5)
+    (-2.5 -2.5 0.5)
+    (2.5 -2.5 0.5)
+    (2.5  2.5 0.5)
+    (-2.5  2.5 0.5)
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) (200 200 40) simpleGrading (1 1 1)
+);
+
+edges
+(
+);
+
+patches
+(
+    patch frontAndBack
+    (
+        (3 7 6 2)
+        (1 5 4 0)
+    )
+    patch inlet
+    (
+        (0 4 7 3)
+    )
+    patch outlet
+    (
+        (2 6 5 1)
+    )
+    patch zMin
+    (
+        (0 3 2 1)
+    )
+    patch zMax
+    (
+        (4 5 6 7)
+    )
+);
+
+// ************************************************************************* // -->

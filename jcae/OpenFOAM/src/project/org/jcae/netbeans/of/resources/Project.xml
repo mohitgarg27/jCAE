@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+
+
+-->
+
+<jcaecfd>
+        <Project name="sample">
+                <OpenFOAM version="">                                
+                        <SHM location=""/>
+                </OpenFOAM >
+                <Region name="Region1">
+                    <SubRegion name="SubRegion1">
+                            <BGBlock>
+                            </BGBlock>
+                            <Patches>
+                                    <Patch name="P1" brepLocation="P1.brep">
+                                    </Patch>
+                            </Patches>
+                    </SubRegion>
+                    <Zones>
+                            <FaceZone name ="P1FZ" Patch="P1"/>
+                    </Zones>
+                </Region>                     
+        </Project>        
+</jcaecfd>
