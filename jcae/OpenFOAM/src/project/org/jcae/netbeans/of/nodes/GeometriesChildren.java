@@ -6,6 +6,7 @@ package project.org.jcae.netbeans.of.nodes;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.TreeSet;
 import org.netbeans.api.project.Project;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
@@ -52,4 +53,39 @@ public class GeometriesChildren extends Children.Array{
         
         return toReturn;
     }
+    
+    public void addChildren(Collection<Node> nodes)
+    {
+        TreeSet<Node> set = new TreeSet<Node>();
+        for(Node n:getNodes())
+                set.add(n);
+
+        for(Node n:nodes)
+                set.add(n);
+
+        nodes.clear();
+        for(Node n:set)
+                nodes.add(n);
+        refresh();
+    }    
+    
+    public void refreshNodes()
+    {
+        Collection<Node> newNodes = initCollection();
+        
+        //Collection<Node> set = new ArrayList<Node>();
+        //for(Node n:getNodes())
+         //       set.add(n);
+
+        //for(Node n:newNodes)
+        //        set.add(n);
+
+        nodes.clear();
+        for(Node n:newNodes)
+                nodes.add(n);
+        
+        refresh();
+    }
+    
+    
 }

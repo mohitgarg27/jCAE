@@ -54,7 +54,7 @@ class SubRegionNode extends AbstractNode {
     public Sheet createSheet()
     {
             Sheet sheet=super.createSheet();
-            // The line below is causing Bug# https://netbeans.org/bugzilla/show_bug.cgi?id=228748
+            // The line below is causing a Bug
             //sheet.put(ProjectUtils.createSubRegionSheetSet(sName, rName, project.getProjectDirectory()));
             return sheet;
     }      
