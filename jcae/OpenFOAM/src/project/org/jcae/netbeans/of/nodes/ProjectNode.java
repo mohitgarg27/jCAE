@@ -13,8 +13,10 @@ import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
 import org.openide.nodes.Node;
+import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import project.org.jcae.netbeans.of.actions.AddRegionAction;
 
 /**
  *
@@ -33,7 +35,8 @@ public class ProjectNode extends AbstractNode {
         super(new ProjectChildren(project), new MyLookup() );
         this.project = project;        
         ((MyLookup)getLookup()).setDelegates(new AbstractLookup(instanceContent));        
-        instanceContent.add(this);        
+        instanceContent.add(this);
+        instanceContent.add(project);
         instanceContent.add(getChildren());        
     }
     
@@ -57,9 +60,11 @@ public class ProjectNode extends AbstractNode {
     @Override
     public Action[] getActions(boolean arg0) {
         return new Action[]{
-                    CommonProjectActions.newFileAction(),
-                    CommonProjectActions.copyProjectAction(),
-                    CommonProjectActions.deleteProjectAction(),
+                    //CommonProjectActions.newFileAction(),
+                    //CommonProjectActions.copyProjectAction(),
+                    //Utilities.actionsForPath("Actions/Project/").get(0), 
+                    ((Action) new AddRegionAction()),
+                    CommonProjectActions.deleteProjectAction(),                    
                     CommonProjectActions.closeProjectAction()
                 };
     } 

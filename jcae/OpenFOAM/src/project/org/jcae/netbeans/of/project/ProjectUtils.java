@@ -4,17 +4,15 @@
  */
 package project.org.jcae.netbeans.of.project;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.nodes.PropertySupport;
@@ -22,37 +20,28 @@ import org.openide.nodes.Sheet;
 import org.openide.util.Exceptions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import org.netbeans.api.annotations.common.StaticResource;
+import org.w3c.dom.Node;
 
 /**
  *
  * @author mogargaa65
  */
-public class ProjectUtils {
+public class ProjectUtils 
+{
+
+    @StaticResource()
+    public static final String PROJECT_TEMPLATE = "project/org/jcae/netbeans/of/resources/template/MasterProject.xml";
     
-    public static Document getXMLDom(FileObject project)
-    {
-        try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document dom = db.parse(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
-            return dom;
-        } catch (ParserConfigurationException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (SAXException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return null;
-    }
-    
+    /*
+     * Project details generators****************
+     */
+
     public static Collection<String> getRegions(FileObject project)
     {
         Collection<String>  regions = new ArrayList<String>();
-        Document dom = getXMLDom(project);
+        Document dom = ProjectXmlUtils.getXMLDom(project);
         Element docEle = dom.getDocumentElement();
         NodeList sName = docEle.getElementsByTagName("Region");
         if(sName!=null)
@@ -67,149 +56,11 @@ public class ProjectUtils {
         return regions;
     }
     
-    private static Element getRegionElement(String regionName, FileObject project)
-    {
-        Document dom = getXMLDom(project);
-        Element docEle = dom.getDocumentElement();
-        NodeList sName = docEle.getElementsByTagName("Region");
-        
-        Element theRegion = null;
-        if(sName!=null)
-        {
-            for(int i=0; i<sName.getLength();i++)
-            {
-                Element region = (Element) sName.item(i);
-                if(region.getAttribute("name").equalsIgnoreCase(regionName))
-                {
-                    theRegion = region;
-                    break;                            
-                }
-            }
-        }
-        
-        return theRegion;
-    }
-
-    private static Element getSubRegionElement(String regionName, String subRegionName, FileObject project)
-    {
-        Element theRegion = getRegionElement(regionName, project);
-        NodeList sName = theRegion.getElementsByTagName("SubRegion");
-        
-        Element theSubRegion = null;
-        
-        if(sName!=null)
-        {
-            for(int i=0; i<sName.getLength();i++)
-            {
-                Element subRegion = (Element) sName.item(i);
-                if(subRegion.getAttribute("name").equalsIgnoreCase(subRegionName))
-                {
-                    theSubRegion = subRegion;
-                    break;                            
-                }
-            }
-        }
-        
-        return theSubRegion;
-    }
-    
-    private static Element getBGPatchElement(String pName, String regionName, String subRegionName, FileObject project)
-    {
-        Element theRegion = getSubRegionElement(regionName, subRegionName, project);
-        NodeList sName = theRegion.getElementsByTagName("BGPatch");
-        
-        Element theBGPatch = null;
-        
-        if(sName!=null)
-        {
-            for(int i=0; i<sName.getLength();i++)
-            {
-                Element bgPatch = (Element) sName.item(i);
-                if(bgPatch.getAttribute("name").equalsIgnoreCase(pName))
-                {
-                    theBGPatch = bgPatch;
-                    break;                            
-                }
-            }
-        }
-        
-        return theBGPatch;
-    }
-    
-    private static Element getPatchElement(String pName, String regionName, String subRegionName, FileObject project)
-    {
-        Element theRegion = getSubRegionElement(regionName, subRegionName, project);
-        NodeList sName = theRegion.getElementsByTagName("Patch");
-        
-        Element thePatch = null;
-        
-        if(sName!=null)
-        {
-            for(int i=0; i<sName.getLength();i++)
-            {
-                Element patch = (Element) sName.item(i);
-                if(patch.getAttribute("name").equalsIgnoreCase(pName))
-                {
-                    thePatch = patch;
-                    break;                            
-                }
-            }
-        }
-        
-        return thePatch;
-    }    
-    
-    private static Element getCellZoneElement(String cName, String regionName, FileObject project)
-    {
-        Element theRegion = getRegionElement(regionName, project);
-        NodeList sName = theRegion.getElementsByTagName("CellZone");
-        
-        Element theZone = null;
-        
-        if(sName!=null)
-        {
-            for(int i=0; i<sName.getLength();i++)
-            {
-                Element patch = (Element) sName.item(i);
-                if(patch.getAttribute("name").equalsIgnoreCase(cName))
-                {
-                    theZone = patch;
-                    break;                            
-                }
-            }
-        }
-        
-        return theZone;
-    }     
-    
-    private static Element getFaceZoneElement(String fName, String regionName, FileObject project)
-    {
-        Element theRegion = getRegionElement(regionName, project);
-        NodeList sName = theRegion.getElementsByTagName("FaceZone");
-        
-        Element theZone = null;
-        
-        if(sName!=null)
-        {
-            for(int i=0; i<sName.getLength();i++)
-            {
-                Element patch = (Element) sName.item(i);
-                if(patch.getAttribute("name").equalsIgnoreCase(fName))
-                {
-                    theZone = patch;
-                    break;                            
-                }
-            }
-        }
-        
-        return theZone;
-    }    
-        
     public static Collection<String> getSubRegions(String regionName, FileObject project) 
     {
         Collection<String>  sRegions = new ArrayList<String>();
         
-        Element theRegion = getRegionElement(regionName, project);
+        Element theRegion = ProjectXmlUtils.getRegionElement(regionName, project);
         
         if(theRegion!=null)
         {
@@ -230,7 +81,7 @@ public class ProjectUtils {
     public static Collection<String> getFaceZones(String rName, FileObject project) 
     {
         Collection<String>  fZones = new ArrayList<String>();        
-        Element theRegion = getRegionElement(rName, project);
+        Element theRegion = ProjectXmlUtils.getRegionElement(rName, project);
         
         if(theRegion!=null)
         {
@@ -250,7 +101,7 @@ public class ProjectUtils {
     public static Collection<String> getCellZones(String rName, FileObject project) 
     {
         Collection<String>  cZones = new ArrayList<String>();        
-        Element theRegion = getRegionElement(rName, project);
+        Element theRegion = ProjectXmlUtils.getRegionElement(rName, project);
         
         if(theRegion!=null)
         {
@@ -271,7 +122,7 @@ public class ProjectUtils {
     {
         Collection<String>  patches = new ArrayList<String>();
         
-        Element theRegion = getSubRegionElement(rName, sName, project);
+        Element theRegion = ProjectXmlUtils.getSubRegionElement(rName, sName, project);
         
         if(theRegion!=null)
         {
@@ -292,7 +143,7 @@ public class ProjectUtils {
     {
         Collection<String>  bgPatches = new ArrayList<String>();
         
-        Element theRegion = getSubRegionElement(rName, sName, project);
+        Element theRegion = ProjectXmlUtils.getSubRegionElement(rName, sName, project);
         
         if(theRegion!=null)
         {
@@ -308,11 +159,14 @@ public class ProjectUtils {
         }
         return bgPatches;
     }
-    
+
+    /*
+     * Property sheet generators****************
+     */
     public static Sheet.Set createRegionSheetSet(String rName, FileObject pr)
     {
         Sheet.Set set=new Sheet.Set();
-        final Element rEl = getRegionElement(rName, pr);
+        final Element rEl = ProjectXmlUtils.getRegionElement(rName, pr);
         set.put(new PropertySupport.ReadOnly<String>("Name", String.class, "Name", "Name")
 			{	
 				public String getValue()
@@ -326,7 +180,7 @@ public class ProjectUtils {
     public static Sheet.Set createSubRegionSheetSet(String sName, String rName, FileObject pr)
     {
         Sheet.Set set=new Sheet.Set();
-        final Element rEl = getSubRegionElement(rName, sName, pr);
+        final Element rEl = ProjectXmlUtils.getSubRegionElement(rName, sName, pr);
         set.put(new PropertySupport.ReadOnly<String>("Name", String.class, "Name", "Name")
 			{	
 				public String getValue()
@@ -341,7 +195,7 @@ public class ProjectUtils {
     public static Sheet.Set createBGPatchSheetSet(String pName, String sName, String rName, FileObject pr)
     {
         Sheet.Set set=new Sheet.Set();
-        final Element rEl = getBGPatchElement(pName, rName, sName, pr);
+        final Element rEl = ProjectXmlUtils.getBGPatchElement(pName, rName, sName, pr);
         set.put(new PropertySupport.ReadOnly<String>("Name", String.class, "Name", "Name")
 			{	
 				public String getValue()
@@ -356,7 +210,7 @@ public class ProjectUtils {
     public static Sheet.Set createPatchSheetSet(String pName, String sName, String rName, FileObject pr)
     {
         Sheet.Set set=new Sheet.Set();
-        final Element rEl = getPatchElement(pName, rName, sName, pr);
+        final Element rEl = ProjectXmlUtils.getPatchElement(pName, rName, sName, pr);
         set.put(new PropertySupport.ReadOnly<String>("Name", String.class, "Name", "Name")
 			{	
 				public String getValue()
@@ -379,7 +233,7 @@ public class ProjectUtils {
     public static Sheet.Set createCellZoneSheetSet(String zName, String rName, FileObject pr)
     {
         Sheet.Set set=new Sheet.Set();
-        final Element rEl = getCellZoneElement(zName, rName, pr);
+        final Element rEl = ProjectXmlUtils.getCellZoneElement(zName, rName, pr);
         set.put(new PropertySupport.ReadOnly<String>("Name", String.class, "Name", "Name")
 			{	
 				public String getValue()
@@ -394,7 +248,7 @@ public class ProjectUtils {
     public static Sheet.Set createFaceZoneSheetSet(String zName, String rName, FileObject pr)
     {
         Sheet.Set set=new Sheet.Set();
-        final Element rEl = getFaceZoneElement(zName, rName, pr);
+        final Element rEl = ProjectXmlUtils.getFaceZoneElement(zName, rName, pr);
         set.put(new PropertySupport.ReadOnly<String>("Name", String.class, "Name", "Name")
 			{	
 				public String getValue()
@@ -414,146 +268,129 @@ public class ProjectUtils {
         return set;
     }
     
-    public static boolean makeDir(String basePath, String dirName) {        
-        
-        File dir = new File(basePath+"/"+dirName);
-        if(!dir.exists())
-        {
-            if(!dir.mkdir())
-            {                
-                return false;
-            }
-            else
-                return true;
-        }
-        else
-        {
-            // empty it 
-            String[] children = dir.list();
-            for(int i=0; i<children.length; i++) 
-            {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if(!success)
-                    return false;;
+    public static boolean addRegionElement(String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
+    {           
+        Document dom = ProjectXmlUtils.getMasterProjectXMLDom();
+        Element docEle = dom.getDocumentElement();
+        NodeList sName = docEle.getElementsByTagName("Region");
 
-            }                         
-            return true;                
-        }
-    }
-    
-    public static boolean makeDir(String dirPath) {
-        
-        File dir = new File(dirPath);
-        if(!dir.exists())
-        {
-            if(!dir.mkdir())
-            {
-                return false;
-            }
-            else
-                return true;
-        }
-        else
-        {
-            // empty it 
-            String[] children = dir.list();
-            for(int i=0; i<children.length; i++) 
-            {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if(!success)
-                    return false;;
-            }                         
-            return true;                
-        }                
-    } 
- 
-    public static boolean deleteDir(File dir) {
-        try
-        {
-            if(!dir.exists())
-                return true;
-            if(dir.isDirectory()) 
-            {
-                String[] children = dir.list();
-                for(int i=0; i<children.length; i++) 
-                {
-                    boolean success = deleteDir(new File(dir, children[i]));
-                    if(!success)
-                        return false;;
-                        
-                }
-            }            
-            return dir.delete();
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-    }
-    
-    public static boolean copyFile(String srcPath, String destPath) {
-        try
-        {
-            File f1 = new File(srcPath);
-            File f2 = new File(destPath);
-            
-            InputStream in = new FileInputStream(f1);
-            OutputStream out = new FileOutputStream(f2);
-            
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len=in.read(buf)) > 0) 
-            {
-                out.write(buf, 0, len);               
-            }
-            in.close();
-            out.close();
-            
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-    }   
-
-    public static boolean copyDir(String srcPath, String destPath) 
-    {
-        try
-        {
-            File f1 = new File(srcPath);
-            if(f1.isDirectory())
-            {
-                // request for copy dir
-                makeDir(destPath);
+        Element theRegion = (Element) sName.item(0);
+        theRegion.setAttribute("name", regionName);
                 
-                String[] children = f1.list();
-                for(int i=0; i<children.length; i++) 
-                {
-                    File child = new File(srcPath, children[i]);
-                    if(child.isDirectory())
-                    {
-                        return copyDir(child.getAbsolutePath(), destPath+"/"+child.getName());
-                    }
-                    else if(child.isFile())
-                    {
-                        if(!copyFile(child.getAbsolutePath(), destPath+"/"+child.getName()))
-                            return false;
-                    }
-                    
-                }
-                return true;
-            }
-            else if(f1.isFile())
-            {
-                System.out.println("Error: " +srcPath+ " Not a directory. Select a directory");
-                return false;
-            }
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-    }       
+        Element rootElement = ProjectXmlUtils.getRootElement(project);
+        
+        Document projectXML = rootElement.getOwnerDocument();
+        Node theRegionImported = projectXML.importNode(theRegion, true);
+        
+        rootElement.appendChild(theRegionImported);
+        ProjectXmlUtils.removeAll(theRegionImported);
+       
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(projectXML);
+        StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+        transformer.transform(source, result);
+
+        return false;
+    }
+
+    public static boolean addSubRegionElement(String subRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
+    {           
+        Document dom = ProjectXmlUtils.getMasterProjectXMLDom();
+        Element docEle = dom.getDocumentElement();
+        NodeList sName = docEle.getElementsByTagName("SubRegion");
+
+        Element theSubRegion = (Element) sName.item(0);
+        theSubRegion.setAttribute("name", subRegionName);
+                
+        Element regionElement = ProjectXmlUtils.getRegionElement(regionName, project);
+        
+        Document projectXML = regionElement.getOwnerDocument();
+        Node theSubRegionImported = projectXML.importNode(theSubRegion, true);
+        
+        regionElement.appendChild(theSubRegionImported);
+        ProjectXmlUtils.removeAll(theSubRegionImported);
+       
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(projectXML);
+        StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+        transformer.transform(source, result);
+
+        return false;
+    }    
+
+    public static boolean updateRegionElement(String newRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
+    {           
+        Element regionElement = ProjectXmlUtils.getRegionElement(regionName, project);
+        regionElement.setAttribute("name", newRegionName);
+        
+        Document projectXML = regionElement.getOwnerDocument();
+       
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(projectXML);
+        StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+        transformer.transform(source, result);
+
+        return false;
+    }        
+    
+    public static boolean updateSubRegionElement(String newSubRegionName, String subRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
+    {           
+        Element subRegionElement = ProjectXmlUtils.getSubRegionElement(regionName, subRegionName, project);
+        subRegionElement.setAttribute("name", newSubRegionName);
+        
+        Document projectXML = subRegionElement.getOwnerDocument();
+       
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(projectXML);
+        StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+        transformer.transform(source, result);
+
+        return false;
+    }    
+    
+    public static boolean removeRegionElement(String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
+    {           
+        Element regionElement = ProjectXmlUtils.getRegionElement(regionName, project);
+        
+        Node parent = regionElement.getParentNode();
+        parent.removeChild(regionElement);
+        
+        Document projectXML = regionElement.getOwnerDocument();
+       
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(projectXML);
+        StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+        transformer.transform(source, result);
+
+        return false;
+    }      
+
+    public static boolean removeSubRegionElement(String subRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
+    {           
+        Element subRegionElement = ProjectXmlUtils.getSubRegionElement(regionName, subRegionName, project);
+        
+        Node parent = subRegionElement.getParentNode();
+        parent.removeChild(subRegionElement);
+        
+        Document projectXML = subRegionElement.getOwnerDocument();
+       
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(projectXML);
+        StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+        transformer.transform(source, result);
+
+        return false;
+    }          
 }

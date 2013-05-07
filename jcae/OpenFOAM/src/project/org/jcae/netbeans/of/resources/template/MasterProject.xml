@@ -11,41 +11,33 @@ and open the template in the editor.
                         <SHM location=""/>
                 </OpenFOAM >
                 <Region name="">
-                    <SubRegion name="">
-                            <BGBlock>
-                                    <BGPatch name="">
-                                    </BGPatch>
-                            </BGBlock>
-                            <Patches>
-                                    <Patch name="" brepLocation="">
-                                    </Patch>
-                            </Patches>
-                            <Stitches>
+                        <SubRegion name="">
+                                <BGPatch name="">
+                                </BGPatch>
+                                <Patch name="" brepLocation="">
+                                </Patch>
                                 <Stitch PatchName="">
-                                    <Patch1>  </Patch1>
-                                    <Patch2>  </Patch2>
+                                        <Patch1>  </Patch1>
+                                        <Patch2>  </Patch2>
                                 </Stitch>
-                            </Stitches>
-                    </SubRegion>
-                    <Zones>
-                            <FaceZone name ="" Patch=""/>
-                            <CellZone name ="">
+                        </SubRegion>
+                        <FaceZone name ="" Patch=""/>
+                        <CellZone name ="">
                                 <Function name="min" editable="true">
-                                    <Params>
-                                        <Param name="Param1" val="0"/>
-                                        <Param name="Param2" val="0"/>
-                                        <Param name="Param3" val="0"/>
-                                    </Params>
+                                        <Params>
+                                                <Param name="Param1" val="0"/>
+                                                <Param name="Param2" val="0"/>
+                                                <Param name="Param3" val="0"/>
+                                        </Params>
                                 </Function>
                                 <Function name="max" editable="true">
-                                    <Params>
-                                        <Param name="Param1" val="1"/>
-                                        <Param name="Param2" val="1"/>
-                                        <Param name="Param3" val="1"/>
-                                    </Params>
+                                        <Params>
+                                                <Param name="Param1" val="1"/>
+                                                <Param name="Param2" val="1"/>
+                                                <Param name="Param3" val="1"/>
+                                        </Params>
                                 </Function>
-                            </CellZone>
-                    </Zones>
+                        </CellZone>
                 </Region>        
         </Project>        
 </jcaecfd>

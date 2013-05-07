@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<root>
+    <CaseStructures>
+        <Case RegionType="Fluid">
+            
+            <FieldFiles loc="0">
+                <Field fileName="k" loc="0/k" desc=""/>
+                <Field fileName="kappaEff" loc="0/kappaEff" desc=""/>
+                <Field fileName="nut" loc="0/nut" desc=""/>
+                <Field fileName="omega" loc="0/omega" desc=""/>
+                <Field fileName="p-rgh" loc="0/p-rgh" desc=""/>
+                <Field fileName="T" loc="0/T" desc=""/>
+                <Field fileName="U" loc="0/U" desc=""/>
+            </FieldFiles>
+            
+            <ConstantFiles loc="constant">
+                <Field fileName="g" loc="constant/g" desc=""/>
+                <Field fileName="radiationProperties" loc="constant/radiationProperties" desc=""/>
+                <Field fileName="RASProperties" loc="constant/RASProperties" desc=""/>
+                <Field fileName="transportProperties" loc="constant/transportProperties" desc=""/>
+                <Field fileName="turbulenceProperties" loc="constant/turbulenceProperties" desc=""/>
+            </ConstantFiles>
+
+        </Case>
+        
+        <Case RegionType="Solid">
+            
+            <FieldFiles loc="0">
+                <Field fileName="k" loc="0/k" desc=""/>
+                <Field fileName="T" loc="0/T" desc=""/>
+                <Field fileName="materials" loc="0/materials" desc=""/>
+            </FieldFiles>
+            
+            <ConstantFiles loc="constant">
+                <Field fileName="thermalProperties" loc="constant/thermalProperties" desc=""/>
+            </ConstantFiles>
+
+        </Case>
+        
+    </CaseStructures>
+    
+</root>

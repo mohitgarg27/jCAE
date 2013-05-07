@@ -7,22 +7,16 @@ package project.org.jcae.netbeans.of.nodes;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JOptionPane;
 import org.netbeans.api.project.Project;
 import org.openide.filesystems.FileChooserBuilder;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.nodes.AbstractNode;
-import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
-import org.openide.util.actions.SystemAction;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
-import project.org.jcae.netbeans.of.project.ProjectUtils;
+import project.org.jcae.netbeans.of.project.ProjectFileUtils;
 
 /**
  *
@@ -71,7 +65,7 @@ public class GeometriesNode extends AbstractNode {
             File f = new FileChooserBuilder(GeometriesNode.class).setTitle("Select Brep File").showOpenDialog();
             String path1 = project.getProjectDirectory().getFileObject("Geometries").getPath();
             String path2 = f.getAbsolutePath();
-            ProjectUtils.copyFile(f.getAbsolutePath(), project.getProjectDirectory().getFileObject("Geometries").getPath().concat("/").concat(f.getName()) );
+            ProjectFileUtils.copyFile(f.getAbsolutePath(), project.getProjectDirectory().getFileObject("Geometries").getPath().concat("/").concat(f.getName()) );
 
             // Update Geometries node
             ((GeometriesChildren)getChildren()).refreshNodes();

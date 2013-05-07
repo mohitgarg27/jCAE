@@ -7,8 +7,9 @@ package project.org.jcae.netbeans.of.nodes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.TreeSet;
+import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -26,19 +27,66 @@ public class RegionChildren extends Children.Array  {
     
     public void addChildren(Collection<Node> nodes)
     {
-        TreeSet<Node> set = new TreeSet<Node>();
+//        Set<Node> set = new HashSet<Node>();
+//        for(Node n:getNodes())
+//                set.add(n);
+//
+//        for(Node n:nodes)
+//                set.add(n);
+//
+//        nodes.clear();
+//        for(Node n:set)
+//                nodes.add(n);
+//        refresh();
+        
+        Collection<Node> set = new ArrayList<Node>();
         for(Node n:getNodes())
                 set.add(n);
 
         for(Node n:nodes)
                 set.add(n);
 
-        nodes.clear();
-        for(Node n:set)
-                nodes.add(n);
+        //nodes.clear();
+        //for(Node n:set)
+        //        nodes.add(n);
+        this.nodes = set;
         refresh();
     }
         
+    public void removeChildren( Node node)
+    {
+        
+        Collection<Node> set = new ArrayList<Node>();
+        for(Node n:getNodes())
+        {
+            if(node!=n)
+            set.add(n);
+        }
+                
+
+        this.nodes = set;
+        refresh();
+    }
+
+    public void renameChildren( Node node, String newName)
+    {
+        
+        Collection<Node> set = new ArrayList<Node>();
+        for(Node n:getNodes())
+        {
+            if(node==n)
+            {
+                ((SubRegionNode) node ).setsName(newName);
+                ((SubRegionNode) node ).setDisplayName(newName);
+            }
+            set.add(n);
+        }
+                
+
+        this.nodes = set;
+        refresh();
+    }   
+    
     private static ZonesNode getZonesNodes(String rName, Project pr)
     {        
         

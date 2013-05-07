@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<!--- Defining structures of base patches  -->
+<root>
+
+    <Patches>
+        <Patch type="patch" >
+        </Patch>
+
+        <Patch type="wall" >
+        </Patch>
+
+        <Patch type="symmetry" >
+        </Patch>
+
+        <Patch type="regionCouple" >
+            <Properties editable="true" >
+                <Property name="shadowRegion" defVal="" val=""/>
+                <Property name="shadowPatch" defVal="" val=""/>
+                <Property name="attached" defVal="off" val=""/>
+                <Property name="isWall" defVal="on" val=""/>
+            </Properties> 
+        </Patch>
+    </Patches>
+    
+</root>
