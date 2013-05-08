@@ -63,12 +63,15 @@ public class GeometriesNode extends AbstractNode {
         public void actionPerformed(ActionEvent ae) 
         {
             File f = new FileChooserBuilder(GeometriesNode.class).setTitle("Select Brep File").showOpenDialog();
-            String path1 = project.getProjectDirectory().getFileObject("Geometries").getPath();
-            String path2 = f.getAbsolutePath();
-            ProjectFileUtils.copyFile(f.getAbsolutePath(), project.getProjectDirectory().getFileObject("Geometries").getPath().concat("/").concat(f.getName()) );
+            if(f!=null)
+            {
+                String path1 = project.getProjectDirectory().getFileObject("Geometries").getPath();
+                String path2 = f.getAbsolutePath();
+                ProjectFileUtils.copyFile(f.getAbsolutePath(), project.getProjectDirectory().getFileObject("Geometries").getPath().concat("/").concat(f.getName()) );
 
-            // Update Geometries node
-            ((GeometriesChildren)getChildren()).refreshNodes();
+                // Update Geometries node
+                ((GeometriesChildren)getChildren()).refreshNodes();
+            }
             
         }        
     }  
