@@ -22,6 +22,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.netbeans.api.annotations.common.StaticResource;
+import org.openide.filesystems.FileLock;
 import org.w3c.dom.Node;
 
 /**
@@ -268,6 +269,9 @@ public class ProjectUtils
         return set;
     }
     
+    /*
+    * Add/Update/Delete Elements****************
+    */
     public static boolean addRegionElement(String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
     {           
         Document dom = ProjectXmlUtils.getMasterProjectXMLDom();
@@ -292,7 +296,7 @@ public class ProjectUtils
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
 
-        return false;
+        return true;
     }
 
     public static boolean addSubRegionElement(String subRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
@@ -319,7 +323,35 @@ public class ProjectUtils
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
 
-        return false;
+        return true;
+    }    
+
+    public static boolean addPatchElement(String patchName, String subRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
+    {
+        Document dom = ProjectXmlUtils.getMasterProjectXMLDom();
+        Element docEle = dom.getDocumentElement();
+        NodeList pName = docEle.getElementsByTagName("Patch");
+
+        Element thePatch = (Element) pName.item(0);
+        thePatch.setAttribute("name", patchName);
+        thePatch.setAttribute("brepLocation", "Patches/"+patchName);
+                
+        Element subRegionElement = ProjectXmlUtils.getSubRegionElement(regionName, subRegionName, project);
+        
+        Document projectXML = subRegionElement.getOwnerDocument();
+        Node thePatchImported = projectXML.importNode(thePatch, true);
+        
+        subRegionElement.appendChild(thePatchImported);
+        ProjectXmlUtils.removeAll(thePatchImported);
+       
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(projectXML);
+        StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+        transformer.transform(source, result);
+
+        return true;
     }    
 
     public static boolean updateRegionElement(String newRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
@@ -336,7 +368,7 @@ public class ProjectUtils
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
 
-        return false;
+        return true;
     }        
     
     public static boolean updateSubRegionElement(String newSubRegionName, String subRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
@@ -353,7 +385,42 @@ public class ProjectUtils
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
 
-        return false;
+        return true;
+    }    
+
+    public static boolean updatePatchElement(String newPatchName, String patchName, String subRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
+    {           
+        Element patchElement = ProjectXmlUtils.getPatchElement(patchName, regionName, subRegionName, project);
+        patchElement.setAttribute("name", newPatchName);
+        patchElement.setAttribute("brepLocation", "Patches/"+newPatchName);
+        
+        FileObject fo = project.getFileObject("Patches");
+        for(FileObject f : fo.getChildren())
+        {
+            if(f.getName().equalsIgnoreCase(patchName))
+            {
+                try {
+                    FileLock fl = f.lock();
+                    f.rename(fl, newPatchName, "");
+                    fl.releaseLock();
+                    break;
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                    patchElement.setAttribute("name", patchName);
+                    patchElement.setAttribute("brepLocation", "Patches/"+patchName);
+                }
+            }
+        }        
+        Document projectXML = patchElement.getOwnerDocument();
+       
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(projectXML);
+        StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+        transformer.transform(source, result);
+
+        return true;
     }    
     
     public static boolean removeRegionElement(String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
@@ -372,7 +439,7 @@ public class ProjectUtils
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
 
-        return false;
+        return true;
     }      
 
     public static boolean removeSubRegionElement(String subRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
@@ -391,6 +458,36 @@ public class ProjectUtils
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
 
-        return false;
+        return true;
     }          
+
+    public static boolean removePatchElement(String patchName, String subRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException, IOException
+    {           
+        Element patchElement = ProjectXmlUtils.getPatchElement(patchName, regionName, subRegionName, project);
+        
+        Node parent = patchElement.getParentNode();
+        parent.removeChild(patchElement);
+        
+        FileObject fo = project.getFileObject("Patches");
+        for(FileObject f : fo.getChildren())
+        {
+            if(f.getName().equalsIgnoreCase(patchName))
+            {
+                f.delete();
+                break;
+            }
+        }
+        
+        Document projectXML = patchElement.getOwnerDocument();
+       
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(projectXML);
+        StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+        transformer.transform(source, result);
+
+        return true;
+    }          
+    
 }

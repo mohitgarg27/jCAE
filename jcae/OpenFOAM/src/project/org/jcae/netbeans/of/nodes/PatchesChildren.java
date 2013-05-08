@@ -17,13 +17,61 @@ import project.org.jcae.netbeans.of.project.ProjectUtils;
  *
  * @author mogargaa65
  */
-class PatchesChildren extends Children.Array
+public class PatchesChildren extends Children.Array
 {
 
     public PatchesChildren(String sName, String rName, Project pr) 
     {
         super(Arrays.asList(PatchesChildren.generateNodes(sName, rName, pr)));        
     }
+    
+    public void addChildren(Collection<Node> nodes)
+    {
+        Collection<Node> set = new ArrayList<Node>();
+        for(Node n:getNodes())
+                set.add(n);
+
+        for(Node n:nodes)
+                set.add(n);
+
+        this.nodes = set;
+        refresh();
+    }
+    
+    
+    public void removeChildren( Node node)
+    {
+        
+        Collection<Node> set = new ArrayList<Node>();
+        for(Node n:getNodes())
+        {
+            if(node!=n)
+            set.add(n);
+        }
+                
+
+        this.nodes = set;
+        refresh();
+    }  
+    
+    public void renameChildren( Node node, String newName)
+    {
+        
+        Collection<Node> set = new ArrayList<Node>();
+        for(Node n:getNodes())
+        {
+            if(node==n)
+            {
+                ((PatchNode) node ).setpName(newName);
+                ((PatchNode) node ).setDisplayName(newName);
+            }
+            set.add(n);
+        }
+                
+
+        this.nodes = set;
+        refresh();
+    } 
     
     private static Node[] generateNodes( String sName, String rName, Project pr)
     {

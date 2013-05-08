@@ -20,6 +20,9 @@
 
 package org.jcae.netbeans.cad;
 
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.io.IOException;
 import org.jcae.netbeans.cad.modeler.PrimitiveNewType;
 import java.util.ArrayList;
 import javax.swing.Action;
@@ -39,6 +42,7 @@ import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 import org.openide.util.actions.NodeAction;
 import org.openide.util.actions.SystemAction;
+import org.openide.util.datatransfer.ExTransferable;
 import org.openide.util.datatransfer.NewType;
 import org.openide.util.lookup.Lookups;
 
@@ -172,4 +176,19 @@ public class ShapeNode extends AbstractNode
 	{
 		return true;
 	}
+        
+        @Override
+        public Transferable clipboardCopy() throws IOException 
+        {
+            Transferable deflt = super.clipboardCopy();
+            ExTransferable added = ExTransferable.create(deflt);
+            added.put(new ExTransferable.Single(NBShapeFlavor.NBSHAPE_FLAVOR) {
+                @Override
+                protected NbShape getData() {
+                    return getLookup().lookup(NbShape.class);
+                }
+            });
+            return added;
+        }
+        
 }
