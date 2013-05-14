@@ -4,6 +4,7 @@
  */
 package project.org.jcae.netbeans.of.project;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +14,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.jcae.netbeans.cad.GeomUtils;
+import org.jcae.opencascade.Utilities;
+import org.jcae.opencascade.jni.BRepAlgoAPI_BooleanOperation;
+import org.jcae.opencascade.jni.BRepAlgoAPI_Fuse;
+import org.jcae.opencascade.jni.TopoDS_Shape;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.nodes.PropertySupport;
@@ -24,6 +30,7 @@ import org.w3c.dom.NodeList;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.openide.filesystems.FileLock;
 import org.w3c.dom.Node;
+import project.org.jcae.netbeans.of.nodes.PatchNode;
 
 /**
  *
@@ -296,6 +303,7 @@ public class ProjectUtils
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
 
+        ProjectFileUtils.makeDir(project.getPath()+"/"+regionName);
         return true;
     }
 
@@ -323,6 +331,7 @@ public class ProjectUtils
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
 
+        ProjectFileUtils.makeDir(project.getPath()+"/"+regionName+"/"+subRegionName);
         return true;
     }    
 
@@ -334,7 +343,7 @@ public class ProjectUtils
 
         Element thePatch = (Element) pName.item(0);
         thePatch.setAttribute("name", patchName);
-        thePatch.setAttribute("brepLocation", "Patches/"+patchName);
+        thePatch.setAttribute("brepLocation", project.getPath()+"/"+regionName+"/"+subRegionName+"/"+patchName);
                 
         Element subRegionElement = ProjectXmlUtils.getSubRegionElement(regionName, subRegionName, project);
         
@@ -368,6 +377,17 @@ public class ProjectUtils
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
 
+        File f = new File(project.getPath()+"/"+regionName);
+        FileObject rFile = FileUtil.toFileObject(f);
+
+        try {
+            FileLock fl = rFile.lock();            
+            rFile.rename(fl, newRegionName, "");
+            fl.releaseLock();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
         return true;
     }        
     
@@ -384,7 +404,18 @@ public class ProjectUtils
         DOMSource source = new DOMSource(projectXML);
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
+        
+        File f = new File(project.getPath()+"/"+regionName+"/"+subRegionName);
+        FileObject rFile = FileUtil.toFileObject(f);
 
+        try {
+            FileLock fl = rFile.lock();            
+            rFile.rename(fl, newSubRegionName, "");
+            fl.releaseLock();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
         return true;
     }    
 
@@ -392,25 +423,8 @@ public class ProjectUtils
     {           
         Element patchElement = ProjectXmlUtils.getPatchElement(patchName, regionName, subRegionName, project);
         patchElement.setAttribute("name", newPatchName);
-        patchElement.setAttribute("brepLocation", "Patches/"+newPatchName);
-        
-        FileObject fo = project.getFileObject("Patches");
-        for(FileObject f : fo.getChildren())
-        {
-            if(f.getName().equalsIgnoreCase(patchName))
-            {
-                try {
-                    FileLock fl = f.lock();
-                    f.rename(fl, newPatchName, "");
-                    fl.releaseLock();
-                    break;
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                    patchElement.setAttribute("name", patchName);
-                    patchElement.setAttribute("brepLocation", "Patches/"+patchName);
-                }
-            }
-        }        
+        patchElement.setAttribute("brepLocation", project.getPath()+"/"+regionName+"/"+subRegionName+"/"+newPatchName);
+           
         Document projectXML = patchElement.getOwnerDocument();
        
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -420,6 +434,17 @@ public class ProjectUtils
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
 
+        File f = new File(project.getPath()+"/"+regionName+"/"+subRegionName+"/"+patchName);
+        FileObject rFile = FileUtil.toFileObject(f);
+
+        try {
+            FileLock fl = rFile.lock();            
+            rFile.rename(fl, newPatchName, "");
+            fl.releaseLock();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
         return true;
     }    
     
@@ -439,6 +464,16 @@ public class ProjectUtils
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
 
+        File f = new File(project.getPath()+"/"+regionName);
+        FileObject rFile = FileUtil.toFileObject(f);
+
+        try {
+            FileLock fl = rFile.lock();            
+            rFile.delete(fl);
+            fl.releaseLock();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }        
         return true;
     }      
 
@@ -457,7 +492,17 @@ public class ProjectUtils
         DOMSource source = new DOMSource(projectXML);
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
+        
+        File f = new File(project.getPath()+"/"+regionName+"/"+subRegionName);
+        FileObject rFile = FileUtil.toFileObject(f);
 
+        try {
+            FileLock fl = rFile.lock();            
+            rFile.delete(fl);
+            fl.releaseLock();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
         return true;
     }          
 
@@ -487,7 +532,42 @@ public class ProjectUtils
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
 
+        File f = new File(project.getPath()+"/"+regionName+"/"+subRegionName+"/"+patchName);
+        FileObject rFile = FileUtil.toFileObject(f);
+
+        try {
+            FileLock fl = rFile.lock();            
+            rFile.delete(fl);
+            fl.releaseLock();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
         return true;
     }          
+
+    public static void copyPatchElement(PatchNode n, String sName, String rName, FileObject projectDirectory) throws TransformerConfigurationException, TransformerException 
+    {
+        addPatchElement(n.getpName(), sName, rName, projectDirectory);
+        ProjectFileUtils.copyFile(projectDirectory.getPath()+"/"+n.getrName()+"/"+n.getsName()+"/"+n.getpName(), projectDirectory.getPath()+"/"+rName+"/"+sName+"/"+n.getpName());
+    }
+
+//    public static String mergePatches(PatchNode pNode0, PatchNode pNode1, FileObject projectDirectory) throws TransformerConfigurationException, TransformerException 
+//    {
+//        String newName = pNode0.getpName()+"-"+pNode1.getpName(); 
+//        
+//        String file0 = projectDirectory.getPath()+"/"+pNode0.getrName()+"/"+pNode0.getsName()+"/"+pNode0.getpName();
+//        String file1 = projectDirectory.getPath()+"/"+pNode1.getrName()+"/"+pNode1.getsName()+"/"+pNode1.getpName();
+//        
+//        String fileDest = projectDirectory.getPath()+"/"+pNode0.getrName()+"/"+pNode0.getsName()+"/"+newName;
+//        
+//        addPatchElement(newName, pNode0.getsName(), pNode0.getsName(), projectDirectory);
+//        
+//        TopoDS_Shape shape0 = Utilities.readFile(file0);
+//        TopoDS_Shape shape1 = Utilities.readFile(file1);
+//        BRepAlgoAPI_BooleanOperation bt = new BRepAlgoAPI_Fuse(shape0, shape1);
+//        
+//        
+//        return newName;
+//    }
     
 }

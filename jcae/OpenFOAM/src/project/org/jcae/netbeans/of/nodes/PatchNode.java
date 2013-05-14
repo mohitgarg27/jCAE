@@ -5,16 +5,22 @@
 package project.org.jcae.netbeans.of.nodes;
 
 import java.awt.Image;
+import java.awt.datatransfer.Transferable;
+import java.io.IOException;
 import javax.swing.Action;
 import org.netbeans.api.project.Project;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
+import org.openide.util.actions.SystemAction;
+import org.openide.util.datatransfer.ExTransferable;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import project.org.jcae.netbeans.of.actions.RemovePatchAction;
 import project.org.jcae.netbeans.of.actions.RenamePatchAction;
+import project.org.jcae.netbeans.of.actions.ViewPatchAction;
+import project.org.jcae.netbeans.of.actions.PatchFlavor;
 import project.org.jcae.netbeans.of.project.ProjectUtils;
 
 /**
@@ -47,8 +53,10 @@ public class PatchNode extends AbstractNode
     @Override
     public Action[] getActions(boolean arg0) {
         return new Action[]{
-                    ((Action) new RemovePatchAction()),
-                    ((Action) new RenamePatchAction())
+                    SystemAction.get(ViewPatchAction.class),
+                    SystemAction.get(RenamePatchAction.class),
+                    SystemAction.get(RemovePatchAction.class)
+                    //SystemAction.get( MergePatchAction.class)
                 };
     }     
 
@@ -113,5 +121,25 @@ public class PatchNode extends AbstractNode
     public void setrName(String rName) {
         this.rName = rName;
     }
+    
+    @Override
+    public boolean canCopy()
+    {
+            return true;
+    }
+
+    @Override
+    public Transferable clipboardCopy() throws IOException 
+    {
+        Transferable deflt = super.clipboardCopy();
+        ExTransferable added = ExTransferable.create(deflt);
+        added.put(new ExTransferable.Single(PatchFlavor.PATCH_FLAVOR) {
+            @Override
+            protected PatchNode getData() {
+                return getLookup().lookup(PatchNode.class);
+            }
+        });
+        return added;
+    }    
     
 }

@@ -28,7 +28,7 @@ public class ViewPatchAction extends CookieAction
     @Override
     protected int mode() 
     {
-        return CookieAction.MODE_ONE;
+        return CookieAction.MODE_EXACTLY_ONE;
     }
 
     @Override
@@ -42,24 +42,16 @@ public class ViewPatchAction extends CookieAction
     {
         Project project = activatedNodes[0].getLookup().lookup(Project.class);
         PatchNode pNode = activatedNodes[0].getLookup().lookup(PatchNode.class);        
-        PatchesChildren pcNode = activatedNodes[0].getParentNode().getLookup().lookup(PatchesChildren.class);
+
+        // View code
+        JOptionPane.showMessageDialog(null, "Viewing...");
         
-        String s = (String)JOptionPane.showInputDialog( null, "Rename","Rename Patch", JOptionPane.PLAIN_MESSAGE, null, null, pNode.getpName());
-                
-        try {
-            ProjectUtils.updatePatchElement(s, pNode.getpName(), pNode.getsName(), pNode.getrName(), project.getProjectDirectory());
-            pcNode.renameChildren(pNode, s);
-        } catch (TransformerConfigurationException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (TransformerException ex) {
-            Exceptions.printStackTrace(ex);
-        }
     }
 
     @Override
     public String getName() 
     {
-        return "Rename";
+        return "View";
     }
 
     @Override

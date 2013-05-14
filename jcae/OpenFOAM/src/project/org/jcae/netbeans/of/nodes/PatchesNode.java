@@ -29,6 +29,7 @@ import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import project.org.jcae.netbeans.of.project.ProjectFileUtils;
 import project.org.jcae.netbeans.of.project.ProjectUtils;
+import project.org.jcae.netbeans.of.actions.PatchFlavor;
 
 /**
  *
@@ -85,8 +86,10 @@ public class PatchesNode extends AbstractNode {
     
     @Override
     public PasteType getDropType(final Transferable t, int arg1, int arg2) {
-        if (t.isDataFlavorSupported(NBShapeFlavor.NBSHAPE_FLAVOR)) {
-            return new PasteType() {
+        if (t.isDataFlavorSupported(NBShapeFlavor.NBSHAPE_FLAVOR)) 
+        {
+            return new PasteType() 
+            {
                 @Override
                 public Transferable paste() throws IOException {
                     try {
@@ -94,8 +97,8 @@ public class PatchesNode extends AbstractNode {
                         NbShape n = ( (NbShape) t.getTransferData(NBShapeFlavor.NBSHAPE_FLAVOR));
                         if(n.getName().toLowerCase().startsWith("face"))
                         {
-                            n.saveImpl(project.getProjectDirectory().getPath()+"/Patches/"+ n.getName());
-                            ProjectUtils.addPatchElement(n.getName(), sName, rName, project.getProjectDirectory() );
+                            ProjectUtils.addPatchElement(n.getName(), sName, rName, project.getProjectDirectory());
+                            n.saveImpl(project.getProjectDirectory().getPath()+"/"+rName+"/"+sName+"/"+n.getName());
                             PatchesChildren pChild = getLookup().lookup(PatchesChildren.class);
                             Collection<Node> nColl = new ArrayList<Node>();
                             nColl.add(new PatchNode(n.getName(), sName, rName, project));
@@ -116,7 +119,33 @@ public class PatchesNode extends AbstractNode {
                     return null;
                 }
             };
-        } else {
+        }
+        else if (t.isDataFlavorSupported(PatchFlavor.PATCH_FLAVOR)) 
+        {
+            return new PasteType() 
+            {
+                @Override
+                public Transferable paste() throws IOException {
+                    try {
+    
+                        PatchNode n = ( (PatchNode) t.getTransferData(PatchFlavor.PATCH_FLAVOR));
+                        ProjectUtils.copyPatchElement(n, sName, rName,  project.getProjectDirectory() );
+                        PatchesChildren pChild = getLookup().lookup(PatchesChildren.class);
+                        Collection<Node> nColl = new ArrayList<Node>();
+                        nColl.add(new PatchNode(n.getpName(), sName, rName, project));
+                        pChild.addChildren(nColl);
+                    } catch (TransformerConfigurationException ex) {
+                        Exceptions.printStackTrace(ex);
+                    } catch (TransformerException ex) {
+                        Exceptions.printStackTrace(ex);
+                    } catch (UnsupportedFlavorException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                    return null;
+                }
+            };
+        }
+        else {
             return null;
         }
     }
