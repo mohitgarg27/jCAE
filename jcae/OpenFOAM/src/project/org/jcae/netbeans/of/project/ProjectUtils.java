@@ -14,11 +14,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.jcae.netbeans.cad.GeomUtils;
-import org.jcae.opencascade.Utilities;
-import org.jcae.opencascade.jni.BRepAlgoAPI_BooleanOperation;
-import org.jcae.opencascade.jni.BRepAlgoAPI_Fuse;
-import org.jcae.opencascade.jni.TopoDS_Shape;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.nodes.PropertySupport;
@@ -30,6 +25,8 @@ import org.w3c.dom.NodeList;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.openide.filesystems.FileLock;
 import org.w3c.dom.Node;
+import project.org.jcae.netbeans.of.api.Property;
+import project.org.jcae.netbeans.of.api.SelectionList;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
 
 /**
@@ -41,6 +38,9 @@ public class ProjectUtils
 
     @StaticResource()
     public static final String PROJECT_TEMPLATE = "project/org/jcae/netbeans/of/resources/template/MasterProject.xml";
+    
+    @StaticResource()
+    public static final String PROJECT_BASE_PATCH = "project/org/jcae/netbeans/of/resources/template/MasterBasePatch.xml";
     
     /*
      * Project details generators****************
@@ -146,7 +146,23 @@ public class ProjectUtils
         }
         return patches;
     }    
-
+    
+    public static Collection<String> getAllPatches(FileObject project) 
+    {
+        Collection<String>  sPatches = new ArrayList<String>();
+        
+        NodeList nPatches = ProjectXmlUtils.getAllPatches(project);
+        
+        if(nPatches!=null)
+        {
+            for(int i=0; i<nPatches.getLength(); i++)
+            {
+                sPatches.add( ((Element)nPatches.item(i)).getAttribute("name") );
+            }
+        }
+        return sPatches;
+    }  
+    
     public static Collection<String> getBGPatches(String sName, String rName, FileObject project) 
     {
         Collection<String>  bgPatches = new ArrayList<String>();
@@ -569,5 +585,104 @@ public class ProjectUtils
 //        
 //        return newName;
 //    }
+
+    public static String[] getBasePatches() 
+    {
+        
+        Collection<String> patches = new ArrayList<String>();
+                
+        //FileObject f = FileUtil.getConfigFile(PROJECT_BASE_PATCH);
+        
+        Document dom = ProjectXmlUtils.getMasterBasePatchXMLDom();
+        Element docEle = dom.getDocumentElement();
+        NodeList sName = docEle.getElementsByTagName("Patch");
+        if(sName!=null)
+        {
+            for(int i=0; i<sName.getLength();i++)
+            {
+                Element region = (Element) sName.item(i);
+                patches.add(region.getAttribute("type"));
+            }
+        }
+               
+        return patches.toArray(new String[patches.size()]);
+   }
+
+    public static Collection<Property> getPatchTypeProperties(String patchSelected, PatchNode pNode, FileObject projectDirectory) 
+    {
+        Collection<Property> collProp = new ArrayList<Property>();
+        
+        Element patchElement = ProjectXmlUtils.getPatchTypeElement(patchSelected);
+        extractPopertiesFromElement(patchElement, collProp, projectDirectory);
+        
+        return collProp;        
+    }
     
+    private static void extractPopertiesFromElement(Element element, Collection<Property> collProp, FileObject projectDirectory)
+    {
+        NodeList propNames = element.getElementsByTagName("Property");
+        NodeList funcNames = element.getElementsByTagName("Function");
+
+        System.out.println(propNames.getLength());
+        if(propNames!=null)
+        {
+            for(int i=0; i<propNames.getLength();i++)
+            {
+                Property p = new Property();
+                p.setVal( ( (Element) propNames.item(i)).getAttribute("val") );
+                p.setDefVal( ( (Element) propNames.item(i)).getAttribute("defVal") );
+                p.setName(( (Element) propNames.item(i)).getAttribute("name") );
+                
+                Element prop = (Element) propNames.item(i);
+                System.out.println(prop.toString());
+                
+                NodeList selectionList = prop.getElementsByTagName("SelectionList");
+                
+                System.out.println(selectionList.getLength());
+                
+                if(selectionList!=null && selectionList.getLength()>=1)
+                {
+                    
+                    Element el = (Element) selectionList.item(0);
+                    
+                    System.out.println(el.toString());
+                    
+                    String a = el.getAttribute("source");
+                    SelectionList sl = new SelectionList();
+                    sl.setSource(( (Element) selectionList.item(0)).getAttribute("source") );
+                    sl.setTag(( (Element) selectionList.item(0)).getAttribute("tag") );
+                    p.setSl(sl);
+                    
+                    // Populate list
+                    if(sl.getSource().equalsIgnoreCase("Project.xml"))
+                    {
+                        sl.setList(getElementsByTagName(projectDirectory, sl.getTag() ) );
+                    }
+                }
+                collProp.add(p);
+            }
+        }   
+        
+        if(funcNames!=null)
+        {
+            
+        }
+    }
+    
+    public static Collection<String> getElementsByTagName(FileObject project, String tagName) 
+    {
+        Collection<String>  sPatches = new ArrayList<String>();
+        
+        NodeList nPatches = ProjectXmlUtils.getAllElementsByTagName(project, tagName);
+        
+        if(nPatches!=null)
+        {
+            for(int i=0; i<nPatches.getLength(); i++)
+            {
+                sPatches.add( ((Element)nPatches.item(i)).getAttribute("name") );
+            }
+        }
+        return sPatches;
+    }      
+
 }

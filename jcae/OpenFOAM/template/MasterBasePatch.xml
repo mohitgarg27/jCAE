@@ -6,26 +6,27 @@ and open the template in the editor.
 
 
 <!--- Defining structures of base patches  -->
-<root>
 
-    <Patches>
-        <Patch type="patch" >
-        </Patch>
+<Patches>
+    <Patch type="patch" >
+    </Patch>
 
-        <Patch type="wall" >
-        </Patch>
+    <Patch type="wall" >
+    </Patch>
 
-        <Patch type="symmetry" >
-        </Patch>
+    <Patch type="symmetry" >
+    </Patch>
 
-        <Patch type="regionCouple" >
-            <Properties editable="true" >
-                <Property name="shadowRegion" defVal="" val=""/>
-                <Property name="shadowPatch" defVal="" val=""/>
-                <Property name="attached" defVal="off" val=""/>
-                <Property name="isWall" defVal="on" val=""/>
-            </Properties> 
-        </Patch>
-    </Patches>
-    
-</root>
+    <Patch type="regionCouple" >
+<!--        <Properties editable="true" >-->
+            <Property name="shadowRegion" defVal="" val="" >
+                <SelectionList source="Project.xml" tag="Region" />
+            </Property>
+            <Property name="shadowPatch" defVal="" val="" >
+                <SelectionList source="Project.xml" tag="Patch" />                        
+            </Property>
+            <Property name="attached" defVal="off" val=""/>
+            <Property name="isWall" defVal="on" val=""/>
+<!--        </Properties> -->
+    </Patch>
+</Patches>
