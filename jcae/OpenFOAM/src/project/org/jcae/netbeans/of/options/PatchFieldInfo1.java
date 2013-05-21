@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import org.netbeans.api.project.Project;
 import project.org.jcae.netbeans.of.api.ofProp;
@@ -19,11 +20,11 @@ import project.org.jcae.netbeans.of.project.ProjectUtils;
  *
  * @author mita
  */
-public class PatchFieldInfo extends javax.swing.JPanel 
-{
-    public class SubPanel1 extends JPanel 
+public class PatchFieldInfo1 extends javax.swing.JPanel {
+
+    public class SubPanel2 extends JPanel 
     {        
-        public SubPanel1()
+        public SubPanel2()
         {           
             //setBackground(Color.white);
             setBorder(BorderFactory.createTitledBorder("Properties"));
@@ -32,6 +33,12 @@ public class PatchFieldInfo extends javax.swing.JPanel
         
         public void initComponents() 
         {
+
+            //setLayout(new GridLayout(0, 1));
+            //JButton j = new JButton("fdscvdscsdc");
+            //j.setBounds(20,20, 50,50);
+            //this.add(j);
+            //setBackground(Color.red);
             Collection<ofProp> collProp = ProjectUtils.getFieldPatchTypeProperties(patchSelected, pNode, pr.getProjectDirectory());
             
             // Create panel based on collProp
@@ -47,14 +54,17 @@ public class PatchFieldInfo extends javax.swing.JPanel
             }
         }        
     }
+        
     
+        
     PatchNode pNode;
     Project pr;
     String patchSelected;
+    
     /**
-     * Creates new form PatchBasicInfo
+     * Creates new form PatchFieldInfo1
      */
-    public PatchFieldInfo(PatchNode pNode, Project pr) {
+    public PatchFieldInfo1(PatchNode pNode, Project pr) {
         initComponents();
         setBorder(BorderFactory.createTitledBorder("K"));
         this.pNode = pNode;
@@ -70,20 +80,11 @@ public class PatchFieldInfo extends javax.swing.JPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new SubPanel1();
-        jComboBox1 = new javax.swing.JComboBox(ProjectUtils.getFieldPatches());
         jLabel1 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox(ProjectUtils.getFieldPatches());
+        jPanel1 = new SubPanel2();
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 168, Short.MAX_VALUE)
-        );
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PatchFieldInfo1.class, "PatchFieldInfo1.jLabel1.text")); // NOI18N
 
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -91,38 +92,52 @@ public class PatchFieldInfo extends javax.swing.JPanel
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PatchFieldInfo.class, "PatchFieldInfo.jLabel1.text")); // NOI18N
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 237, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 176, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(57, 57, 57)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addGap(84, 84, 84)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(50, 50, 50)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(36, 36, 36)
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap(236, Short.MAX_VALUE))
+                    .addComponent(jLabel1)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(34, 34, 34)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(37, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         patchSelected = (String) jComboBox1.getSelectedItem();
         //jPanel1 = new SubPanel1();
-        ((SubPanel1)jPanel1).removeAll();
-        ((SubPanel1)jPanel1).repaint();
-        ((SubPanel1)jPanel1).initComponents();
-        ((SubPanel1)jPanel1).repaint();
-        setBackground(Color.red);
+        ((PatchFieldInfo1.SubPanel2)jPanel1).removeAll();
+        ((PatchFieldInfo1.SubPanel2)jPanel1).repaint();
+        ((PatchFieldInfo1.SubPanel2)jPanel1).initComponents();
+        ((PatchFieldInfo1.SubPanel2)jPanel1).repaint();
+        
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

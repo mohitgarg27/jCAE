@@ -5,18 +5,14 @@
 package project.org.jcae.netbeans.of.options;
 
 import java.awt.GridLayout;
-import java.util.Collection;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.Utilities;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
 
 /**
@@ -97,13 +93,13 @@ public final class PatchInfoTopComponent extends TopComponent {
             setLayout(new GridLayout(2,1));
             JPanel j = new PatchBasicInfo(pNode, p);
             add(j);
-            JPanel j1 = new PatchFieldInfo(pNode, p);
+            JPanel j1 = new PatchFieldInfo1(pNode, p);
+            //JPanel j1 = new PatchBasicInfo(pNode, p);
             add(j1);
         }
         else
             removeAll();
                 
-
     }
 
     @Override

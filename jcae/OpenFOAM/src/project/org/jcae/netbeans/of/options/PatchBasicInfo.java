@@ -55,29 +55,6 @@ public class PatchBasicInfo extends javax.swing.JPanel
                     Property p = ((ArrayList<Property>) collProp).get(i);
                     add(p.loadGraphics());
                 }
-//                setLayout(new GridLayout(collProp.size(), 2));
-//                for(int i=0;i<collProp.size();i++)
-//                {
-//                    Property p = ((ArrayList<Property>) collProp).get(i);
-//                    JLabel label = new JLabel(p.getKey());                    
-//                    label.setVisible(true);
-//                    add(label);
-//                    if(p.getSl()!=null)
-//                    {
-//                        JComboBox comboBox = new JComboBox( p.getSl().getList().toArray(new String[p.getSl().getList().size()]) );
-//                        comboBox.setVisible(true);
-//                        this.add(comboBox);
-//                    }
-//                    else
-//                    {                        
-//                        JTextField textField = new JTextField();
-//                        if(p.getVal().equalsIgnoreCase(""))
-//                            textField.setText(p.getDefVal());
-//                        else
-//                            textField.setText(p.getVal());
-//                        add(textField);
-//                    }                        
-//                }
             }
         }        
     }
