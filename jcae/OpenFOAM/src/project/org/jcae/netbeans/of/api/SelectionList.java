@@ -5,6 +5,8 @@
 package project.org.jcae.netbeans.of.api;
 
 import java.util.Collection;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 
 /**
  *
@@ -18,10 +20,17 @@ public class SelectionList
     
     private Collection<String> list = null;
 
+    private JComponent jList;
+    
     public SelectionList() 
     {
     }
 
+    public void loadGraphics()
+    {
+        jList = new JComboBox(list.toArray(new String[list.size()]));
+    }
+    
     /**
      * @return the source
      */
@@ -62,6 +71,20 @@ public class SelectionList
      */
     public void setList(Collection<String> list) {
         this.list = list;
+    }
+
+    /**
+     * @return the jcomponent
+     */
+    public JComponent getJcomponent() {
+        return jList;
+    }
+
+    /**
+     * @param jcomponent the jcomponent to set
+     */
+    public void setJcomponent(JComponent jcomponent) {
+        this.jList = jcomponent;
     }
     
     

@@ -25,8 +25,11 @@ import org.w3c.dom.NodeList;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.openide.filesystems.FileLock;
 import org.w3c.dom.Node;
+import project.org.jcae.netbeans.of.api.Function;
+import project.org.jcae.netbeans.of.api.Param;
 import project.org.jcae.netbeans.of.api.Property;
 import project.org.jcae.netbeans.of.api.SelectionList;
+import project.org.jcae.netbeans.of.api.ofProp;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
 
 /**
@@ -608,22 +611,22 @@ public class ProjectUtils
         return patches.toArray(new String[patches.size()]);
    }
 
-    public static Collection<Property> getPatchTypeProperties(String patchSelected, PatchNode pNode, FileObject projectDirectory) 
+    public static Collection<Property> getBasePatchTypeProperties(String patchSelected, PatchNode pNode, FileObject projectDirectory) 
     {
         Collection<Property> collProp = new ArrayList<Property>();
         
-        Element patchElement = ProjectXmlUtils.getPatchTypeElement(patchSelected);
-        extractPopertiesFromElement(patchElement, collProp, projectDirectory);
+        Element patchElement = ProjectXmlUtils.getBasePatchTypeElement(patchSelected);
+        extractPopertiesFromBasePatchElement(patchElement, collProp, projectDirectory);
         
         return collProp;        
     }
     
-    private static void extractPopertiesFromElement(Element element, Collection<Property> collProp, FileObject projectDirectory)
+    private static void extractPopertiesFromBasePatchElement(Element element, Collection<Property> collProp, FileObject projectDirectory)
     {
         NodeList propNames = element.getElementsByTagName("Property");
         NodeList funcNames = element.getElementsByTagName("Function");
 
-        System.out.println(propNames.getLength());
+        //System.out.println(propNames.getLength());
         if(propNames!=null)
         {
             for(int i=0; i<propNames.getLength();i++)
@@ -631,14 +634,14 @@ public class ProjectUtils
                 Property p = new Property();
                 p.setVal( ( (Element) propNames.item(i)).getAttribute("val") );
                 p.setDefVal( ( (Element) propNames.item(i)).getAttribute("defVal") );
-                p.setName(( (Element) propNames.item(i)).getAttribute("name") );
+                p.setKey(( (Element) propNames.item(i)).getAttribute("key") );
                 
                 Element prop = (Element) propNames.item(i);
-                System.out.println(prop.toString());
+                //System.out.println(prop.toString());
                 
                 NodeList selectionList = prop.getElementsByTagName("SelectionList");
                 
-                System.out.println(selectionList.getLength());
+                //System.out.println(selectionList.getLength());
                 
                 if(selectionList!=null && selectionList.getLength()>=1)
                 {
@@ -685,4 +688,106 @@ public class ProjectUtils
         return sPatches;
     }      
 
+    public static String[] getFieldPatches() 
+    {
+        
+        Collection<String> patches = new ArrayList<String>();
+        
+        Document dom = ProjectXmlUtils.getMasterFieldPatchXMLDom();
+        Element docEle = dom.getDocumentElement();
+        NodeList sName = docEle.getElementsByTagName("FieldPatch");
+        if(sName!=null)
+        {
+            for(int i=0; i<sName.getLength();i++)
+            {
+                Element region = (Element) sName.item(i);
+                patches.add(region.getAttribute("type"));
+            }
+        }
+               
+        return patches.toArray(new String[patches.size()]);
+   }    
+
+    public static Collection<ofProp> getFieldPatchTypeProperties(String patchSelected, PatchNode pNode, FileObject projectDirectory) 
+    {
+        Collection<ofProp> collProp = new ArrayList<ofProp>();
+        
+        Element patchElement = ProjectXmlUtils.getFieldPatchTypeElement(patchSelected);
+        extractPopertiesFromFieldPatchElement(patchElement, collProp, projectDirectory);
+        
+        return collProp;           
+    }
+
+    private static void extractPopertiesFromFieldPatchElement(Element element, Collection<ofProp> collProp, FileObject projectDirectory) 
+    {
+        NodeList propNames = element.getElementsByTagName("Property");
+        NodeList funcNames = element.getElementsByTagName("Function");
+
+        if(propNames!=null)
+        {
+            for(int i=0; i<propNames.getLength();i++)
+            {
+                Property p = new Property();
+                p.setVal( ( (Element) propNames.item(i)).getAttribute("val") );
+                p.setDefVal( ( (Element) propNames.item(i)).getAttribute("defVal") );
+                p.setSecondaryVal( ( (Element) propNames.item(i)).getAttribute("secondaryVal") );
+                p.setDefSecondaryVal( ( (Element) propNames.item(i)).getAttribute("defaultSecondaryVal") );
+
+                p.setKey(( (Element) propNames.item(i)).getAttribute("key") );
+                
+                Element prop = (Element) propNames.item(i);               
+                NodeList selectionList = prop.getElementsByTagName("SelectionList");
+                
+                if(selectionList!=null && selectionList.getLength()>=1)
+                {
+                    
+                    Element el = (Element) selectionList.item(0);
+                    
+                    System.out.println(el.toString());
+                    
+                    String a = el.getAttribute("source");
+                    SelectionList sl = new SelectionList();
+                    sl.setSource(( (Element) selectionList.item(0)).getAttribute("source") );
+                    sl.setTag(( (Element) selectionList.item(0)).getAttribute("tag") );
+                    p.setSl(sl);
+                    
+                    // Populate list
+                    if(sl.getSource().equalsIgnoreCase("Project.xml"))
+                    {
+                        sl.setList(getElementsByTagName(projectDirectory, sl.getTag() ) );
+                    }
+                }
+                //ofProp pInterface = p;
+                collProp.add(p);
+            }
+        }   
+        
+        if(funcNames!=null)
+        {
+            for(int i=0; i<funcNames.getLength();i++)
+            {
+                Function f = new Function();
+                f.setKey(( (Element) funcNames.item(i)).getAttribute("key") );
+                f.setSeparator(( (Element) funcNames.item(i)).getAttribute("separator") );
+                
+                Element func = (Element) funcNames.item(i);
+                NodeList paramList = func.getElementsByTagName("Param");
+                
+                if(paramList!=null)
+                {
+                    Collection<Param> paramsColl = new ArrayList<Param>();
+                    for(int j=0;j<paramList.getLength();j++)
+                    {
+                        Param param = new Param();
+                        param.setKey(( (Element) paramList.item(j)).getAttribute("key") );
+                        param.setVal(( (Element) paramList.item(j)).getAttribute("val") );
+                        paramsColl.add(param);
+                    }
+                    f.setParams(paramsColl);
+                }
+                collProp.add(f);
+            }
+        }
+    }
+    
 }

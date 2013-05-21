@@ -12,29 +12,29 @@ and open the template in the editor.
         
         <Field fileName="k" loc="" desc="">
             
-            <Properties name="FoamFile" editable="false" >
-                <Property name="version" defVal="2.0" val=""/>
-                <Property name="format" defVal="ascii" val=""/>
-                <Property name="class" defVal="volScalarField" val=""/>
-                <Property name="object" defVal="k" val=""/>            
+            <Properties key="FoamFile" editable="false" >
+                <Property key="version" defVal="2.0" val=""/>
+                <Property key="format" defVal="ascii" val=""/>
+                <Property key="class" defVal="volScalarField" val=""/>
+                <Property key="object" defVal="k" val=""/>            
             </Properties> 
             
             <Array name="dimensions" editable="true">
                 <Params>
-                    <Param name="Param1" val="0"/>
-                    <Param name="Param2" val="2"/>
-                    <Param name="Param3" val="-2"/>
-                    <Param name="Param1" val="0"/>
-                    <Param name="Param2" val="0"/>
-                    <Param name="Param3" val="0"/>
-                    <Param name="Param1" val="0"/>
+                    <Param key="Param1" val="0"/>
+                    <Param key="Param2" val="2"/>
+                    <Param key="Param3" val="-2"/>
+                    <Param key="Param1" val="0"/>
+                    <Param key="Param2" val="0"/>
+                    <Param key="Param3" val="0"/>
+                    <Param key="Param1" val="0"/>
                 </Params>
             </Array>
             
-            <Property name="internalField"  defVal="uniform" val="" defaultSecondaryVal="0.002" secondaryVal=""/>
+            <Property key="internalField"  defVal="uniform" val="" defaultSecondaryVal="0.002" secondaryVal=""/>
             
-            <Properties name="boundaryField" editable="true" >
-                <Properties name="" editable="true" >                    
+            <Properties key="boundaryField" editable="true" >
+                <Properties key="" editable="true" >                    
                 </Properties> 
             </Properties> 
                         
@@ -42,29 +42,29 @@ and open the template in the editor.
         
         <Field fileName="kappaEff" loc="" desc="">
             
-            <Properties name="FoamFile" editable="false" >
-                <Property name="version" defVal="2.0" val=""/>
-                <Property name="format" defVal="ascii" val=""/>
-                <Property name="class" defVal="volScalarField" val=""/>
-                <Property name="object" defVal="kappaEff" val=""/>            
+            <Properties key="FoamFile" editable="false" >
+                <Property key="version" defVal="2.0" val=""/>
+                <Property key="format" defVal="ascii" val=""/>
+                <Property key="class" defVal="volScalarField" val=""/>
+                <Property key="object" defVal="kappaEff" val=""/>            
             </Properties> 
             
             <Array name="dimensions" editable="true">
                 <Params>
-                    <Param name="Param1" val="1"/>
-                    <Param name="Param2" val="1"/>
-                    <Param name="Param3" val="-3"/>
-                    <Param name="Param1" val="-1"/>
-                    <Param name="Param2" val="0"/>
-                    <Param name="Param3" val="0"/>
-                    <Param name="Param1" val="0"/>
+                    <Param key="Param1" val="1"/>
+                    <Param key="Param2" val="1"/>
+                    <Param key="Param3" val="-3"/>
+                    <Param key="Param1" val="-1"/>
+                    <Param key="Param2" val="0"/>
+                    <Param key="Param3" val="0"/>
+                    <Param key="Param1" val="0"/>
                 </Params>
             </Array>
             
-            <Property name="internalField"  defVal="uniform" val="" defaultSecondaryVal="1e-3" secondaryVal=""/>
+            <Property key="internalField"  defVal="uniform" val="" defaultSecondaryVal="1e-3" secondaryVal=""/>
             
-            <Properties name="boundaryField" editable="true" >
-                <Properties name="" editable="true" >                    
+            <Properties key="boundaryField" editable="true" >
+                <Properties key="" editable="true" >                    
                 </Properties> 
             </Properties> 
                         
@@ -72,29 +72,29 @@ and open the template in the editor.
         
         <Field fileName="nut" loc="" desc="">
             
-            <Properties name="FoamFile" editable="false" >
-                <Property name="version" defVal="2.0" val=""/>
-                <Property name="format" defVal="ascii" val=""/>
-                <Property name="class" defVal="volScalarField" val=""/>
-                <Property name="object" defVal="nut" val=""/>            
+            <Properties key="FoamFile" editable="false" >
+                <Property key="version" defVal="2.0" val=""/>
+                <Property key="format" defVal="ascii" val=""/>
+                <Property key="class" defVal="volScalarField" val=""/>
+                <Property key="object" defVal="nut" val=""/>            
             </Properties> 
             
             <Array name="dimensions" editable="true">
                 <Params>
-                    <Param name="Param1" val="0"/>
-                    <Param name="Param2" val="2"/>
-                    <Param name="Param3" val="-1"/>
-                    <Param name="Param1" val="0"/>
-                    <Param name="Param2" val="0"/>
-                    <Param name="Param3" val="0"/>
-                    <Param name="Param1" val="0"/>
+                    <Param key="Param1" val="0"/>
+                    <Param key="Param2" val="2"/>
+                    <Param key="Param3" val="-1"/>
+                    <Param key="Param1" val="0"/>
+                    <Param key="Param2" val="0"/>
+                    <Param key="Param3" val="0"/>
+                    <Param key="Param1" val="0"/>
                 </Params>
             </Array>
             
-            <Property name="internalField"  defVal="uniform" val="" defaultSecondaryVal="0" secondaryVal=""/>
+            <Property key="internalField"  defVal="uniform" val="" defaultSecondaryVal="0" secondaryVal=""/>
             
-            <Properties name="boundaryField" editable="true" >
-                <Properties name="" editable="true" >                    
+            <Properties key="boundaryField" editable="true" >
+                <Properties key="" editable="true" >                    
                 </Properties> 
             </Properties> 
                         
@@ -102,29 +102,29 @@ and open the template in the editor.
         
         <Field fileName="omega" loc="" desc="">
             
-            <Properties name="FoamFile" editable="false" >
-                <Property name="version" defVal="2.0" val=""/>
-                <Property name="format" defVal="ascii" val=""/>
-                <Property name="class" defVal="volScalarField" val=""/>
-                <Property name="object" defVal="epsilon" val=""/>            
+            <Properties key="FoamFile" editable="false" >
+                <Property key="version" defVal="2.0" val=""/>
+                <Property key="format" defVal="ascii" val=""/>
+                <Property key="class" defVal="volScalarField" val=""/>
+                <Property key="object" defVal="epsilon" val=""/>            
             </Properties> 
             
             <Array name="dimensions" editable="true">
                 <Params>
-                    <Param name="Param1" val="0"/>
-                    <Param name="Param2" val="0"/>
-                    <Param name="Param3" val="-1"/>
-                    <Param name="Param1" val="0"/>
-                    <Param name="Param2" val="0"/>
-                    <Param name="Param3" val="0"/>
-                    <Param name="Param1" val="0"/>
+                    <Param key="Param1" val="0"/>
+                    <Param key="Param2" val="0"/>
+                    <Param key="Param3" val="-1"/>
+                    <Param key="Param1" val="0"/>
+                    <Param key="Param2" val="0"/>
+                    <Param key="Param3" val="0"/>
+                    <Param key="Param1" val="0"/>
                 </Params>
             </Array>
             
-            <Property name="internalField"  defVal="uniform" val="" defaultSecondaryVal="0" secondaryVal=""/>
+            <Property key="internalField"  defVal="uniform" val="" defaultSecondaryVal="0" secondaryVal=""/>
             
-            <Properties name="boundaryField" editable="true" >
-                <Properties name="" editable="true" >                    
+            <Properties key="boundaryField" editable="true" >
+                <Properties key="" editable="true" >                    
                 </Properties> 
             </Properties> 
                         
@@ -132,29 +132,29 @@ and open the template in the editor.
         
         <Field fileName="p_rgh" loc="" desc="">
             
-            <Properties name="FoamFile" editable="false" >
-                <Property name="version" defVal="2.0" val=""/>
-                <Property name="format" defVal="ascii" val=""/>
-                <Property name="class" defVal="volScalarField" val=""/>
-                <Property name="object" defVal="p" val=""/>            
+            <Properties key="FoamFile" editable="false" >
+                <Property key="version" defVal="2.0" val=""/>
+                <Property key="format" defVal="ascii" val=""/>
+                <Property key="class" defVal="volScalarField" val=""/>
+                <Property key="object" defVal="p" val=""/>            
             </Properties> 
             
             <Array name="dimensions" editable="true">
                 <Params>
-                    <Param name="Param1" val="0"/>
-                    <Param name="Param2" val="-2"/>
-                    <Param name="Param3" val="-2"/>
-                    <Param name="Param1" val="0"/>
-                    <Param name="Param2" val="0"/>
-                    <Param name="Param3" val="0"/>
-                    <Param name="Param1" val="0"/>
+                    <Param key="Param1" val="0"/>
+                    <Param key="Param2" val="-2"/>
+                    <Param key="Param3" val="-2"/>
+                    <Param key="Param1" val="0"/>
+                    <Param key="Param2" val="0"/>
+                    <Param key="Param3" val="0"/>
+                    <Param key="Param1" val="0"/>
                 </Params>
             </Array>
             
-            <Property name="internalField"  defVal="uniform" val="" defaultSecondaryVal="0" secondaryVal=""/>
+            <Property key="internalField"  defVal="uniform" val="" defaultSecondaryVal="0" secondaryVal=""/>
             
-            <Properties name="boundaryField" editable="true" >
-                <Properties name="" editable="true" >                    
+            <Properties key="boundaryField" editable="true" >
+                <Properties key="" editable="true" >                    
                 </Properties> 
             </Properties> 
                         
@@ -162,29 +162,29 @@ and open the template in the editor.
         
         <Field fileName="T" loc="" desc="">
             
-            <Properties name="FoamFile" editable="false" >
-                <Property name="version" defVal="2.0" val=""/>
-                <Property name="format" defVal="ascii" val=""/>
-                <Property name="class" defVal="volScalarField" val=""/>
-                <Property name="object" defVal="T" val=""/>            
+            <Properties key="FoamFile" editable="false" >
+                <Property key="version" defVal="2.0" val=""/>
+                <Property key="format" defVal="ascii" val=""/>
+                <Property key="class" defVal="volScalarField" val=""/>
+                <Property key="object" defVal="T" val=""/>            
             </Properties> 
             
             <Array name="dimensions" editable="true">
                 <Params>
-                    <Param name="Param1" val="0"/>
-                    <Param name="Param2" val="0"/>
-                    <Param name="Param3" val="0"/>
-                    <Param name="Param1" val="1"/>
-                    <Param name="Param2" val="0"/>
-                    <Param name="Param3" val="0"/>
-                    <Param name="Param1" val="0"/>
+                    <Param key="Param1" val="0"/>
+                    <Param key="Param2" val="0"/>
+                    <Param key="Param3" val="0"/>
+                    <Param key="Param1" val="1"/>
+                    <Param key="Param2" val="0"/>
+                    <Param key="Param3" val="0"/>
+                    <Param key="Param1" val="0"/>
                 </Params>
             </Array>
             
-            <Property name="internalField"  defVal="uniform" val="" defaultSecondaryVal="1" secondaryVal=""/>
+            <Property key="internalField"  defVal="uniform" val="" defaultSecondaryVal="1" secondaryVal=""/>
             
-            <Properties name="boundaryField" editable="true" >
-                <Properties name="" editable="true" >                    
+            <Properties key="boundaryField" editable="true" >
+                <Properties key="" editable="true" >                    
                 </Properties> 
             </Properties> 
                         
@@ -192,37 +192,37 @@ and open the template in the editor.
         
         <Field fileName="U" loc="" desc="">
             
-            <Properties name="FoamFile" editable="false" >
-                <Property name="version" defVal="2.0" val=""/>
-                <Property name="format" defVal="ascii" val=""/>
-                <Property name="class" defVal="volScalarField" val=""/>
-                <Property name="object" defVal="U" val=""/>            
+            <Properties key="FoamFile" editable="false" >
+                <Property key="version" defVal="2.0" val=""/>
+                <Property key="format" defVal="ascii" val=""/>
+                <Property key="class" defVal="volScalarField" val=""/>
+                <Property key="object" defVal="U" val=""/>            
             </Properties> 
             
             <Array name="dimensions" editable="true">
                 <Params>
-                    <Param name="Param1" val="0"/>
-                    <Param name="Param2" val="1"/>
-                    <Param name="Param3" val="-1"/>
-                    <Param name="Param1" val="0"/>
-                    <Param name="Param2" val="0"/>
-                    <Param name="Param3" val="0"/>
-                    <Param name="Param1" val="0"/>
+                    <Param key="Param1" val="0"/>
+                    <Param key="Param2" val="1"/>
+                    <Param key="Param3" val="-1"/>
+                    <Param key="Param1" val="0"/>
+                    <Param key="Param2" val="0"/>
+                    <Param key="Param3" val="0"/>
+                    <Param key="Param1" val="0"/>
                 </Params>
             </Array>
             
-            <Property name="internalField" > 
+            <Property key="internalField" > 
                 <Function name="uniform" editable="true">
                     <Params>
-                        <Param name="Param1" val="0"/>
-                        <Param name="Param2" val="0"/>
-                        <Param name="Param3" val="0"/>
+                        <Param key="Param1" val="0"/>
+                        <Param key="Param2" val="0"/>
+                        <Param key="Param3" val="0"/>
                     </Params>
                 </Function>
             </Property>
             
-            <Properties name="boundaryField" editable="true" >
-                <Properties name="" editable="true" >                    
+            <Properties key="boundaryField" editable="true" >
+                <Properties key="" editable="true" >                    
                 </Properties> 
             </Properties> 
                         
@@ -230,29 +230,29 @@ and open the template in the editor.
         
         <Field fileName="material" loc="" desc="">
             
-            <Properties name="FoamFile" editable="false" >
-                <Property name="version" defVal="2.0" val=""/>
-                <Property name="format" defVal="ascii" val=""/>
-                <Property name="class" defVal="volScalarField" val=""/>
-                <Property name="object" defVal="material" val=""/>            
+            <Properties key="FoamFile" editable="false" >
+                <Property key="version" defVal="2.0" val=""/>
+                <Property key="format" defVal="ascii" val=""/>
+                <Property key="class" defVal="volScalarField" val=""/>
+                <Property key="object" defVal="material" val=""/>            
             </Properties> 
             
             <Array name="dimensions" editable="true">
                 <Params>
-                    <Param name="Param1" val="0"/>
-                    <Param name="Param2" val="0"/>
-                    <Param name="Param3" val="0"/>
-                    <Param name="Param1" val="0"/>
-                    <Param name="Param2" val="0"/>
-                    <Param name="Param3" val="0"/>
-                    <Param name="Param1" val="0"/>
+                    <Param key="Param1" val="0"/>
+                    <Param key="Param2" val="0"/>
+                    <Param key="Param3" val="0"/>
+                    <Param key="Param1" val="0"/>
+                    <Param key="Param2" val="0"/>
+                    <Param key="Param3" val="0"/>
+                    <Param key="Param1" val="0"/>
                 </Params>
             </Array>
             
-            <Property name="internalField"  defVal="uniform" val="" defaultSecondaryVal="0.002" secondaryVal=""/>
+            <Property key="internalField"  defVal="uniform" val="" defaultSecondaryVal="0.002" secondaryVal=""/>
             
-            <Properties name="boundaryField" editable="true" >
-                <Properties name="" editable="true" >                    
+            <Properties key="boundaryField" editable="true" >
+                <Properties key="" editable="true" >                    
                 </Properties> 
             </Properties> 
                         

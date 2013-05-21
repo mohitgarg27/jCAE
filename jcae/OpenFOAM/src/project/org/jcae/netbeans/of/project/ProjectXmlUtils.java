@@ -124,6 +124,26 @@ public class ProjectXmlUtils
         }
         return null;
     }
+
+    public static Document getMasterFieldPatchXMLDom()
+    {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            String loc = System.getProperty("user.dir")+"/" + "./template/MasterFieldPatch.xml";
+            System.out.println(loc);
+            
+            Document dom = db.parse(new File(loc));
+            return dom;
+        } catch (ParserConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (SAXException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null;
+    }
     
     public static Document getMasterProjectXMLDom()
     {
@@ -296,7 +316,7 @@ public class ProjectXmlUtils
         return theZone;
     }        
     
-    public static Element getPatchTypeElement(String patchType)
+    public static Element getBasePatchTypeElement(String patchType)
     {
         Element patchTypeEl = null;
         
@@ -334,4 +354,29 @@ public class ProjectXmlUtils
         
          return docEle.getElementsByTagName(tagName);
     }    
+    
+    
+    public static Element getFieldPatchTypeElement(String patchType)
+    {
+        Element patchTypeEl = null;
+        
+        Document dom = getMasterFieldPatchXMLDom();
+        Element docEle = dom.getDocumentElement();
+        System.out.println(nodeToString(docEle));
+        NodeList sName = docEle.getElementsByTagName("FieldPatch");
+        if(sName!=null)
+        {
+            for(int i=0; i<sName.getLength();i++)
+            {
+                Element patch = (Element) sName.item(i);
+                if(patch.getAttribute("type").equalsIgnoreCase(patchType))
+                {
+                    patchTypeEl = patch;
+                    break;
+                }
+            }
+        }
+        return patchTypeEl;
+    }
+    
 }

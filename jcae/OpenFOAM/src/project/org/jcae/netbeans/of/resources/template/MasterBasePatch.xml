@@ -19,14 +19,14 @@ and open the template in the editor.
 
     <Patch type="regionCouple" >
 <!--        <Properties editable="true" >-->
-            <Property name="shadowRegion1" defVal="dummy" val="" >
+            <Property key="shadowRegion1" defVal="" val="" >
                 <SelectionList source="Project.xml" tag="Region" />
             </Property>
-            <Property name="shadowPatch" defVal="" val="" >
+            <Property key="shadowPatch" defVal="" val="" >
                 <SelectionList source="Project.xml" tag="Patch" />                        
             </Property>
-            <Property name="attached" defVal="off" val=""/>
-            <Property name="isWall" defVal="on" val=""/>
+            <Property key="attached" defVal="off" val=""/>
+            <Property key="isWall" defVal="on" val=""/>
 <!--        </Properties> -->
     </Patch>
 </Patches>

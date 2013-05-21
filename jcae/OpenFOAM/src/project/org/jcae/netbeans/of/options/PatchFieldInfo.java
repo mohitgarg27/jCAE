@@ -4,20 +4,13 @@
  */
 package project.org.jcae.netbeans.of.options;
 
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Vector;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import org.netbeans.api.project.Project;
-import org.openide.awt.ColorComboBox;
-import project.org.jcae.netbeans.of.api.Property;
+import project.org.jcae.netbeans.of.api.ofProp;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
 import project.org.jcae.netbeans.of.project.ProjectUtils;
 
@@ -25,25 +18,19 @@ import project.org.jcae.netbeans.of.project.ProjectUtils;
  *
  * @author mita
  */
-public class PatchBasicInfo extends javax.swing.JPanel 
+public class PatchFieldInfo extends javax.swing.JPanel 
 {
-
     public class SubPanel extends JPanel 
-    {
-        
+    {        
         public SubPanel()
-        {
-            //setLayout(new GridLayout(0,2));
-            //this.patchSelected = patchSelected;
-            //initComponents1();
-            
+        {           
             //setBackground(Color.white);
             setBorder(BorderFactory.createTitledBorder("Properties")); 
         }
         
         public void initComponents() 
         {
-            Collection<Property> collProp = ProjectUtils.getBasePatchTypeProperties(patchSelected, pNode, pr.getProjectDirectory());
+            Collection<ofProp> collProp = ProjectUtils.getFieldPatchTypeProperties(patchSelected, pNode, pr.getProjectDirectory());
             
             // Create panel based on collProp
             if(collProp!=null)
@@ -52,32 +39,48 @@ public class PatchBasicInfo extends javax.swing.JPanel
                 
                 for(int i=0;i<collProp.size();i++)
                 {
-                    Property p = ((ArrayList<Property>) collProp).get(i);
-                    add(p.loadGraphics());
-                }
-//                setLayout(new GridLayout(collProp.size(), 2));
-//                for(int i=0;i<collProp.size();i++)
-//                {
-//                    Property p = ((ArrayList<Property>) collProp).get(i);
-//                    JLabel label = new JLabel(p.getKey());                    
-//                    label.setVisible(true);
-//                    add(label);
-//                    if(p.getSl()!=null)
+                    ofProp ofProp = ((ArrayList<ofProp>) collProp).get(i);
+                    add(ofProp.loadGraphics());
+//                    if(ofProp instanceof Property)
 //                    {
-//                        JComboBox comboBox = new JComboBox( p.getSl().getList().toArray(new String[p.getSl().getList().size()]) );
-//                        comboBox.setVisible(true);
-//                        this.add(comboBox);
-//                    }
-//                    else
-//                    {                        
+//                        Property p = (Property) ofProp;
+//                        JLabel label = new JLabel(p.getKey());
+//                        //label.setVisible(true);
+//                        add(label);
+//                        
 //                        JTextField textField = new JTextField();
 //                        if(p.getVal().equalsIgnoreCase(""))
 //                            textField.setText(p.getDefVal());
 //                        else
 //                            textField.setText(p.getVal());
 //                        add(textField);
-//                    }                        
-//                }
+//                    
+//                        JTextField textFieldSecondary = new JTextField();
+//                        if(p.getSecondaryVal().equalsIgnoreCase(""))
+//                            textFieldSecondary.setText(p.getDefSecondaryVal());
+//                        else
+//                            textFieldSecondary.setText(p.getSecondaryVal());
+//                        add(textFieldSecondary);
+//
+//                    }
+//                    else if(ofProp instanceof Function)
+//                    {
+//                        Function f = (Function) ofProp;
+//                        
+//                        JLabel label = new JLabel(f.getKey());
+//                        if(f.getParams()!=null)
+//                        {
+//                            ArrayList<Param> params = (ArrayList<Param>) f.getParams();
+//                            for(int j=0;j<params.size();j++)
+//                            {                                
+//                                JTextField textField = new JTextField();
+//                                
+//                            }
+//                        }
+//                        
+//                    }
+//
+                }
             }
         }        
     }
@@ -88,9 +91,9 @@ public class PatchBasicInfo extends javax.swing.JPanel
     /**
      * Creates new form PatchBasicInfo
      */
-    public PatchBasicInfo(PatchNode pNode, Project pr) {
+    public PatchFieldInfo(PatchNode pNode, Project pr) {
         initComponents();
-        setBorder(BorderFactory.createTitledBorder("Basic Type"));                
+        setBorder(BorderFactory.createTitledBorder("K"));
         this.pNode = pNode;
         this.pr = pr;
     }
@@ -104,7 +107,7 @@ public class PatchBasicInfo extends javax.swing.JPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jComboBox1 = new javax.swing.JComboBox(ProjectUtils.getBasePatches());
+        jComboBox1 = new javax.swing.JComboBox(ProjectUtils.getFieldPatches());
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new SubPanel();
 
@@ -114,7 +117,7 @@ public class PatchBasicInfo extends javax.swing.JPanel
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PatchBasicInfo.class, "PatchBasicInfo.jLabel1.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PatchFieldInfo.class, "PatchFieldInfo.jLabel1.text")); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
