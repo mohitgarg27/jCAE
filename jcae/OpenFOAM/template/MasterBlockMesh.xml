@@ -4,104 +4,143 @@ To change this template, choose Tools | Templates
 and open the template in the editor.
 -->
 
-
-
-<root>
+<BlockMesh>
     <SettingFile location="">
     </SettingFile>
     
     <!--- Used while intantiation of BlockMesh.xml  -->
-    <Properties name="FoamFile" editable="false" >
-        <Property name="version" defVal="2.0" val=""/>
-        <Property name="format" defVal="ascii" val=""/>
-        <Property name="class" defVal="dictionary" val=""/>
-        <Property name="object" defVal="blockMeshDict" val=""/>            
+    <Properties key="FoamFile" editable="false" >
+        <Property key="version" defVal="2.0" val=""/>
+        <Property key="format" defVal="ascii" val=""/>
+        <Property key="class" defVal="dictionary" val=""/>
+        <Property key="object" defVal="blockMeshDict" val=""/>            
     </Properties>  
     
-    <Property name="convertToMeters" defVal="1" val=""/>
+    <Property key="convertToMeters" defVal="1" val="1"/>    
     
-    
-    <Function name="vertices" editable="true">
-        <Params separator="\n">
-            <Function name="" editable="true">
-                <Params>
-                    <Param name="X" val=""/>
-                    <Param name="Y" val=""/>
-                    <Param name="Z" val=""/>
-                </Params>
-            </Function>     
-            <Function name="" editable="true">
-                <Params>
-                    <Param name="X" val=""/>
-                    <Param name="Y" val=""/>
-                    <Param name="Z" val=""/>
-                </Params>
-            </Function>     
-            <Function name="" editable="true">
-                <Params>
-                    <Param name="X" val=""/>
-                    <Param name="Y" val=""/>
-                    <Param name="Z" val=""/>
-                </Params>
-            </Function>                 
-        </Params>
+    <Function name="vertices" id="vertices" separator="\n" >        
+            <Function name=""  id="0">
+                    <Param val="-1"/>
+                    <Param val="-1"/>
+                    <Param val="-1"/>
+            </Function>                                            
+            <Function name=""  id="1">
+                    <Param val="1"/>
+                    <Param val="-1"/>
+                    <Param val="-1"/>
+            </Function>                                            
+            <Function name=""  id="2">
+                    <Param val="1"/>
+                    <Param val="1"/>
+                    <Param val="-1"/>
+            </Function>                                            
+            <Function name=""  id="3">
+                    <Param val="-1"/>
+                    <Param val="1"/>
+                    <Param val="-1"/>
+            </Function>                                            
+            <Function name=""  id="4">
+                    <Param val="-1"/>
+                    <Param val="-1"/>
+                    <Param val="1"/>
+            </Function>                                            
+            <Function name=""  id="5">
+                    <Param val="1"/>
+                    <Param val="-1"/>
+                    <Param val="1"/>
+            </Function>                                            
+            <Function name=""  id="6">
+                    <Param val="1"/>
+                    <Param val="1"/>
+                    <Param val="1"/>
+            </Function>                                            
+            <Function name=""  id="7">
+                    <Param val="-1"/>
+                    <Param val="1"/>
+                    <Param val="1"/>
+            </Function>                                            
     </Function>
 
-    <Function name="blocks" editable="true">
-        <Params separator=" ">
-            <Function name="hex" editable="true">
-                <Params>
-                    <Param name="V1" val=""/>
-                    <Param name="V2" val=""/>
-                    <Param name="V3" val=""/>
-                    <Param name="V4" val=""/>
-                    <Param name="V5" val=""/>
-                    <Param name="V6" val=""/>                    
-                    <Param name="V7" val=""/>
-                    <Param name="V8" val=""/>                    
-                </Params>
+    <Function name="blocks" id="blocks" separator=" ">        
+            <Function name="hex" id="hex" >
+                    <Param val="0"/>
+                    <Param val="1"/>
+                    <Param val="2"/>
+                    <Param val="3"/>
+                    <Param val="4"/>
+                    <Param val="5"/>                    
+                    <Param val="6"/>
+                    <Param val="7"/>                                    
             </Function>     
-            <Function name="" editable="true">
-                <Params>
-                    <Param name="RES_X" val=""/>
-                    <Param name="RES_Y" val=""/>
-                    <Param name="RES_Z" val=""/>
-                </Params>
+            <Function name="" id="resolution">
+                    <Param val="40"/>
+                    <Param val="40"/>
+                    <Param val="40"/>
             </Function>     
-            <Function name="simpleGrading" editable="true">
-                <Params>
-                    <Param name="X" val="1"/>
-                    <Param name="Y" val="1"/>
-                    <Param name="Z" val="1"/>
-                </Params>
-            </Function>                 
-        </Params>
+            <Function name="simpleGrading" id="simpleGrading" separator=" " >
+                    <Param val="1"/>
+                    <Param val="1"/>
+                    <Param val="1"/>
+            </Function>                         
     </Function>
     
-    <Function name="edges" editable="true">
+    <Function name="edges" >
         <Params>
         </Params>
     </Function>  
                    
-    <Function name="patches" editable="true">
-        <Params separator="\n">
-            <!--- This function can repeat -->
-            <Function name="" prefix="patch " editable="true">
-                <Params separator="\n">
-                    <Function name="" editable="true">
-                        <Params separator=" ">
-                            <Param name="V1" val=""/>
-                            <Param name="V2" val=""/>
-                            <Param name="V3" val=""/>
-                            <Param name="V4" val=""/>
-                        </Params>
+    <Function name="patches" separator="\n">
+            <Function name="xMin" prefix="patch "  separator="\n">
+                    <Function name=""  separator=" ">                        
+                            <Param val="0"/>
+                            <Param val="4"/>
+                            <Param val="7"/>
+                            <Param val="3"/>
                     </Function>
-                </Params>
-            </Function>                    
-        </Params>
+            </Function>             
+            <Function name="xMax" prefix="patch "  separator="\n">
+                    <Function name=""  separator=" ">                        
+                            <Param val="2"/>
+                            <Param val="6"/>
+                            <Param val="5"/>
+                            <Param val="1"/>
+                    </Function>
+            </Function>                               
+            <Function name="yMin" prefix="patch "  separator="\n">
+                    <Function name=""  separator=" ">                        
+                            <Param val="3"/>
+                            <Param val="7"/>
+                            <Param val="6"/>
+                            <Param val="2"/>
+                    </Function>
+            </Function>             
+            <Function name="yMax" prefix="patch "  separator="\n">
+                    <Function name=""  separator=" ">                        
+                            <Param val="1"/>
+                            <Param val="5"/>
+                            <Param val="4"/>
+                            <Param val="0"/>
+                    </Function>
+            </Function>                               
+            <Function name="zMin" prefix="patch "  separator="\n">
+                    <Function name=""  separator=" ">                        
+                            <Param val="0"/>
+                            <Param val="3"/>
+                            <Param val="2"/>
+                            <Param val="1"/>
+                    </Function>
+            </Function>             
+            <Function name="zMax" prefix="patch "  separator="\n">
+                    <Function name=""  separator=" ">                        
+                            <Param val="4"/>
+                            <Param val="5"/>
+                            <Param val="6"/>
+                            <Param val="7"/>
+                    </Function>
+            </Function>                               
     </Function>
     
-</root>
+</BlockMesh>
 
 <!---
 FoamFile
@@ -140,24 +179,24 @@ patches
 (
     patch frontAndBack
     (
-        (3 7 6 2)
-        (1 5 4 0)
+        (3 7 6 2)  // yMin
+        (1 5 4 0)  // yMax
     )
     patch inlet
     (
-        (0 4 7 3)
+        (0 4 7 3) // left xMin
     )
     patch outlet
     (
-        (2 6 5 1)
+        (2 6 5 1) // right xMax
     )
     patch zMin
     (
-        (0 3 2 1)
+        (0 3 2 1) // zMin
     )
     patch zMax
     (
-        (4 5 6 7)
+        (4 5 6 7) // zMax
     )
 );
 

@@ -25,6 +25,7 @@ import org.w3c.dom.NodeList;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.openide.filesystems.FileLock;
 import org.w3c.dom.Node;
+import project.org.jcae.netbeans.of.actions.BGBlockPanel;
 import project.org.jcae.netbeans.of.api.Function;
 import project.org.jcae.netbeans.of.api.Param;
 import project.org.jcae.netbeans.of.api.Property;
@@ -789,5 +790,210 @@ public class ProjectUtils
             }
         }
     }
+
+    public static BGBlockPanel.BGBlock getBlockmeshInSubRegion(String rName, String sName, FileObject projectDirectory)
+    {
+        BGBlockPanel.BGBlock toReturn = new BGBlockPanel.BGBlock();
+        
+        try 
+        {            
+            Element el = ProjectXmlUtils.getBGBlockElement(rName, sName, projectDirectory);
+            
+            NodeList funcs = el.getElementsByTagName("Function");
+            
+            Element vertices = null;
+            
+            Element lBound = null;
+            Element uBound = null;
+            
+            Element resolution = null;
+            Element simpleGrading = null;
+            
+            int a = funcs.getLength();
+            for(int i=0; i<funcs.getLength();i++)
+            {
+                Element tmp = (Element) funcs.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("vertices"))
+                {
+                    vertices = tmp;
+                    NodeList verticesChildren = vertices.getElementsByTagName("Function");
+                    for(int j=0; j<verticesChildren.getLength();j++)
+                    {
+                        Element tmp1 = (Element) verticesChildren.item(j);
+                        String id = tmp1.getAttribute("id");
+                        if(id.equalsIgnoreCase("0"))
+                        {
+                            lBound = tmp1;
+                        }
+                        if(id.equalsIgnoreCase("6"))
+                        {
+                            uBound = tmp1;
+                        }
+                    }
+                }
+                if(name.equalsIgnoreCase("resolution"))
+                {
+                    resolution = tmp;
+                }
+                if(name.equalsIgnoreCase("simpleGrading"))
+                {
+                    simpleGrading = tmp;                   
+                }
+            }
+            
+            NodeList params;
+            
+            params = lBound.getElementsByTagName("Param");
+            if(params.getLength()==3)
+            {
+                String[] s = new String[3];
+                for(int i=0; i< params.getLength(); i++)
+                {
+                    s[i] = ((Element) params.item(i)).getAttribute("val");
+                }
+                toReturn.setlBounds(s);
+            }
+
+            params = uBound.getElementsByTagName("Param");
+            if(params.getLength()==3)
+            {
+                String[] s = new String[3];
+                for(int i=0; i< params.getLength(); i++)
+                {
+                    s[i] = ((Element) params.item(i)).getAttribute("val");
+                }
+                toReturn.setuBounds(s);
+            }
+            
+            params = resolution.getElementsByTagName("Param");
+            if(params.getLength()==3)
+            {
+                String[] s = new String[3];
+                for(int i=0; i< params.getLength(); i++)
+                {
+                    s[i] = ((Element) params.item(i)).getAttribute("val");
+                }
+                toReturn.setResolution(s);
+            }
+
+            params = simpleGrading.getElementsByTagName("Param");
+            if(params.getLength()==3)
+            {
+                String[] s = new String[3];
+                for(int i=0; i< params.getLength(); i++)
+                {
+                    s[i] = ((Element) params.item(i)).getAttribute("val");
+                }
+                toReturn.setSimpleGrading(s);
+            }            
+
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }   
+        
+        return toReturn;
+    }
     
+    
+    public static void setBlockMeshInSubRegion(BGBlockPanel.BGBlock bgNewParams, String rName, String sName, FileObject projectDirectory)
+    {
+        
+        String[][] verticesVals = new String[8][3];
+        
+        double x1 = Double.parseDouble(bgNewParams.getlBounds()[0]);
+        double y1 = Double.parseDouble(bgNewParams.getlBounds()[1]);
+        double z1 = Double.parseDouble(bgNewParams.getlBounds()[2]);
+
+        double x2 = Double.parseDouble(bgNewParams.getuBounds()[0]);
+        double y2 = Double.parseDouble(bgNewParams.getuBounds()[1]);
+        double z2 = Double.parseDouble(bgNewParams.getuBounds()[2]);
+        
+        verticesVals[0] = new String[] {String.valueOf(x1), String.valueOf(y1), String.valueOf(z1) };
+        verticesVals[1] = new String[] {String.valueOf(x2), String.valueOf(y1), String.valueOf(z1) };
+        verticesVals[2] = new String[] {String.valueOf(x2), String.valueOf(y2), String.valueOf(z1) };
+        verticesVals[3] = new String[] {String.valueOf(x1), String.valueOf(y2), String.valueOf(z1) };
+        verticesVals[4] = new String[] {String.valueOf(x1), String.valueOf(y1), String.valueOf(z2) };
+        verticesVals[5] = new String[] {String.valueOf(x2), String.valueOf(y1), String.valueOf(z2) };
+        verticesVals[6] = new String[] {String.valueOf(x2), String.valueOf(y2), String.valueOf(z2) };
+        verticesVals[7] = new String[] {String.valueOf(x1), String.valueOf(y2), String.valueOf(z2) };
+        
+        String[] resVals = bgNewParams.getResolution();
+        String[] simpleGrading = bgNewParams.getSimpleGrading();
+        
+        try {
+            Element el = ProjectXmlUtils.getBGBlockElement(rName, sName, projectDirectory);
+            NodeList funcs = el.getElementsByTagName("Function");
+            
+            int a = funcs.getLength();
+            for(int i=0; i<funcs.getLength();i++)
+            {
+                Element tmp = (Element) funcs.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("vertices"))
+                {                    
+                    NodeList verticesChildren = tmp.getElementsByTagName("Function");
+                    if(verticesChildren.getLength()==8)
+                    {
+                        for(int j=0; j<verticesChildren.getLength();j++)
+                        {
+                            Element tmp1 = (Element) verticesChildren.item(j);
+                            String id = tmp1.getAttribute("id");
+                            int intId = Integer.parseInt(id);
+                            
+                            NodeList paramList = tmp1.getElementsByTagName("Param");
+                            if(paramList.getLength()==3)
+                            {
+                                for(int k=0;k<paramList.getLength();k++)
+                                {
+                                    ( (Element) paramList.item(k)).setAttribute("val", verticesVals[intId][k]);
+                                }
+                            }
+                        }
+                    }
+                }
+                if(name.equalsIgnoreCase("resolution"))
+                {
+                    NodeList paramList = tmp.getElementsByTagName("Param");
+                    if(paramList.getLength()==3)
+                    {
+                        for(int k=0;k<paramList.getLength();k++)
+                        {
+                            ( (Element) paramList.item(k)).setAttribute("val", resVals[k]);
+                        }
+                    }
+                }
+                if(name.equalsIgnoreCase("simpleGrading"))
+                {
+                    NodeList paramList = tmp.getElementsByTagName("Param");
+                    if(paramList.getLength()==3)
+                    {
+                        for(int k=0;k<paramList.getLength();k++)
+                        {
+                            ( (Element) paramList.item(k)).setAttribute("val", simpleGrading[k]);
+                        }
+                    }
+                }            
+                
+                Document projectXML = el.getOwnerDocument();
+
+                TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                Transformer transformer;
+                transformer = transformerFactory.newTransformer();
+                DOMSource source = new DOMSource(projectXML);
+                StreamResult result = new StreamResult(FileUtil.toFile(projectDirectory.getFileObject(OFProjectFactory.PROJECT_FILE)));
+                transformer.transform(source, result);
+                
+            }       
+            
+            
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
+    }
 }

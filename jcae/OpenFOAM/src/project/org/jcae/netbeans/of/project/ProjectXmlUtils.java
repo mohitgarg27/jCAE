@@ -9,13 +9,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -111,7 +110,7 @@ public class ProjectXmlUtils
             //System.out.println(u.getFile());
             //FileObject f = FileUtil.getConfigFile( u.getFile() );
             String loc = System.getProperty("user.dir")+"/" + "./template/MasterBasePatch.xml";
-            System.out.println(loc);
+            //System.out.println(loc);
             
             Document dom = db.parse(new File(loc));
             return dom;
@@ -131,7 +130,28 @@ public class ProjectXmlUtils
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
             String loc = System.getProperty("user.dir")+"/" + "./template/MasterFieldPatch.xml";
-            System.out.println(loc);
+            //System.out.println(loc);
+            
+            Document dom = db.parse(new File(loc));
+            return dom;
+        } catch (ParserConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (SAXException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null;
+    }
+    
+    public static Document getMasterBlockMeshXMLDom()
+    {
+        try 
+        {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            String loc = System.getProperty("user.dir")+"/" + "./template/MasterBlockMesh.xml";
+            //System.out.println(loc);
             
             Document dom = db.parse(new File(loc));
             return dom;
@@ -315,6 +335,41 @@ public class ProjectXmlUtils
         
         return theZone;
     }        
+    
+    public static Element getBGBlockElement( String regionName, String subRegionName, FileObject project) throws TransformerConfigurationException, TransformerException
+    {
+        Element theSubRegion = getSubRegionElement(regionName, subRegionName, project);
+        NodeList BMName = theSubRegion.getElementsByTagName("BlockMesh");
+        
+        if(BMName.getLength()==0) // means no BlockMesh
+        {
+            Document dom = ProjectXmlUtils.getMasterBlockMeshXMLDom();
+            Element docEle = dom.getDocumentElement();
+            
+            Element subRegionElement = ProjectXmlUtils.getSubRegionElement(regionName, subRegionName, project);
+            Document projectXML = subRegionElement.getOwnerDocument();
+            Node theBGImported = projectXML.importNode(docEle, true);
+            subRegionElement.appendChild(theBGImported);
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer;
+            transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(projectXML);
+            StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);
+        }
+
+        theSubRegion = getSubRegionElement(regionName, subRegionName, project);
+        BMName = theSubRegion.getElementsByTagName("BlockMesh");
+        
+        Element theBGBlock = null;
+        
+        if(BMName!=null)
+        {
+                theBGBlock = (Element) BMName.item(0);
+        }
+        
+        return theBGBlock;
+    }    
     
     public static Element getBasePatchTypeElement(String patchType)
     {
