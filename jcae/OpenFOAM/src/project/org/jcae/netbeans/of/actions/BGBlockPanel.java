@@ -13,7 +13,7 @@ import project.org.jcae.netbeans.of.project.ProjectUtils;
 
 /**
  *
- * @author mita
+ * @author mohit
  */
 public class BGBlockPanel extends javax.swing.JPanel {
 

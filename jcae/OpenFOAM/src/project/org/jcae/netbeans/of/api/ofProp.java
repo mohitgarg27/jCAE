@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 
 /**
  *
- * @author mita
+ * @author mohit
  */
 public interface ofProp 
 {

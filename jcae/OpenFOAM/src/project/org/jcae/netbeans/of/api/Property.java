@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 
 /**
  *
- * @author mita
+ * @author mohit
  */
 public class Property implements ofProp
 {

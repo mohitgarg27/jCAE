@@ -23,7 +23,7 @@ import project.org.jcae.netbeans.of.project.ProjectUtils;
 
 /**
  *
- * @author mita
+ * @author mohit
  */
 public class PatchBasicInfo extends javax.swing.JPanel 
 {
