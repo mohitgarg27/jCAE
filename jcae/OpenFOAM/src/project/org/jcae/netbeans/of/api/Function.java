@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 
 /**
  *
- * @author mita
+ * @author mohit
  */
 public class Function implements ofProp
 {

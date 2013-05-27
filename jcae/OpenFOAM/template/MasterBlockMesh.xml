@@ -90,7 +90,7 @@ and open the template in the editor.
     </Function>  
                    
     <Function name="patches" separator="\n">
-            <Function name="xMin" prefix="patch "  separator="\n">
+            <Function name="xMin" type="patch" prefix="patch "  separator="\n">
                     <Function name=""  separator=" ">                        
                             <Param val="0"/>
                             <Param val="4"/>
@@ -98,7 +98,7 @@ and open the template in the editor.
                             <Param val="3"/>
                     </Function>
             </Function>             
-            <Function name="xMax" prefix="patch "  separator="\n">
+            <Function name="xMax" type="patch" prefix="patch "  separator="\n">
                     <Function name=""  separator=" ">                        
                             <Param val="2"/>
                             <Param val="6"/>
@@ -106,7 +106,7 @@ and open the template in the editor.
                             <Param val="1"/>
                     </Function>
             </Function>                               
-            <Function name="yMin" prefix="patch "  separator="\n">
+            <Function name="yMin" type="patch" prefix="patch "  separator="\n">
                     <Function name=""  separator=" ">                        
                             <Param val="3"/>
                             <Param val="7"/>
@@ -114,7 +114,7 @@ and open the template in the editor.
                             <Param val="2"/>
                     </Function>
             </Function>             
-            <Function name="yMax" prefix="patch "  separator="\n">
+            <Function name="yMax" type="patch" prefix="patch "  separator="\n">
                     <Function name=""  separator=" ">                        
                             <Param val="1"/>
                             <Param val="5"/>
@@ -122,7 +122,7 @@ and open the template in the editor.
                             <Param val="0"/>
                     </Function>
             </Function>                               
-            <Function name="zMin" prefix="patch "  separator="\n">
+            <Function name="zMin" type="patch" prefix="patch "  separator="\n">
                     <Function name=""  separator=" ">                        
                             <Param val="0"/>
                             <Param val="3"/>
@@ -130,7 +130,7 @@ and open the template in the editor.
                             <Param val="1"/>
                     </Function>
             </Function>             
-            <Function name="zMax" prefix="patch "  separator="\n">
+            <Function name="zMax" type="patch" prefix="patch "  separator="\n">
                     <Function name=""  separator=" ">                        
                             <Param val="4"/>
                             <Param val="5"/>

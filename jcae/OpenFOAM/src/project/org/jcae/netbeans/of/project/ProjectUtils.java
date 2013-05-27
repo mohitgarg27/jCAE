@@ -383,6 +383,32 @@ public class ProjectUtils
         return true;
     }    
 
+    public static boolean addBGPatchElement(String patchName, String subRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
+    {
+        Document dom = ProjectXmlUtils.getMasterProjectXMLDom();
+        Element docEle = dom.getDocumentElement();
+        NodeList pName = docEle.getElementsByTagName("BGPatch");
+
+        Element thePatch = (Element) pName.item(0);
+        thePatch.setAttribute("name", patchName);
+                
+        Element subRegionElement = ProjectXmlUtils.getSubRegionElement(regionName, subRegionName, project);
+        
+        Document projectXML = subRegionElement.getOwnerDocument();
+        Node thePatchImported = projectXML.importNode(thePatch, true);
+        
+        subRegionElement.appendChild(thePatchImported);
+       
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(projectXML);
+        StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+        transformer.transform(source, result);
+
+        return true;
+    } 
+    
     public static boolean updateRegionElement(String newRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
     {           
         Element regionElement = ProjectXmlUtils.getRegionElement(regionName, project);
@@ -927,7 +953,7 @@ public class ProjectUtils
             Element el = ProjectXmlUtils.getBGBlockElement(rName, sName, projectDirectory);
             NodeList funcs = el.getElementsByTagName("Function");
             
-            int a = funcs.getLength();
+            //int a = funcs.getLength();
             for(int i=0; i<funcs.getLength();i++)
             {
                 Element tmp = (Element) funcs.item(i);
@@ -976,18 +1002,20 @@ public class ProjectUtils
                         }
                     }
                 }            
-                
-                Document projectXML = el.getOwnerDocument();
 
-                TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                Transformer transformer;
-                transformer = transformerFactory.newTransformer();
-                DOMSource source = new DOMSource(projectXML);
-                StreamResult result = new StreamResult(FileUtil.toFile(projectDirectory.getFileObject(OFProjectFactory.PROJECT_FILE)));
-                transformer.transform(source, result);
-                
+             
             }       
+                            
+            Document projectXML = el.getOwnerDocument();
+
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer;
+            transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(projectXML);
+            StreamResult result = new StreamResult(FileUtil.toFile(projectDirectory.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);
             
+            loadBGPatches(rName, sName, projectDirectory);
             
         } catch (TransformerConfigurationException ex) {
             Exceptions.printStackTrace(ex);
@@ -995,5 +1023,66 @@ public class ProjectUtils
             Exceptions.printStackTrace(ex);
         }
         
+    }
+    
+    private static void cleanBGPatches(String rName, String sName, FileObject projectDirectory) throws TransformerConfigurationException, TransformerException
+    {
+        
+        Element docEle = ProjectXmlUtils.getSubRegionElement(rName, sName, projectDirectory);
+        NodeList pName = docEle.getElementsByTagName("BGPatch");
+
+        for(int i=0;i<pName.getLength();i++)
+        {
+            pName.item(i).getParentNode().removeChild(pName.item(i));
+        }
+        
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(docEle.getOwnerDocument());
+        StreamResult result = new StreamResult(FileUtil.toFile(projectDirectory.getFileObject(OFProjectFactory.PROJECT_FILE)));
+        transformer.transform(source, result);
+        
+    }
+    private static void loadBGPatches(String rName, String sName, FileObject projectDirectory) throws TransformerConfigurationException, TransformerException
+    {
+        // Create BGPatches
+
+        Element docEle = ProjectXmlUtils.getSubRegionElement(rName, sName, projectDirectory);
+        System.out.println(ProjectXmlUtils.nodeToString(docEle));
+        NodeList pName = docEle.getElementsByTagName("BGPatch");
+        
+        if(pName.getLength()!=8)
+        {
+            cleanBGPatches(rName, sName, projectDirectory);
+            NodeList patchFuncs = docEle.getElementsByTagName("Function");
+            Element patches = null;
+            for(int i=0; i<patchFuncs.getLength();i++)
+            {
+                patches = (Element) patchFuncs.item(i);
+                
+                String name = patches.getAttribute("name");
+                if(name.equalsIgnoreCase("patches"))
+                {
+                    System.out.println(ProjectXmlUtils.nodeToString(patches));
+                    break;
+                }                
+            }
+
+           //System.out.println(patches);
+            
+            NodeList patchList = patches.getElementsByTagName("Function");
+            
+            for(int i=0; i<patchList.getLength();i++)
+            {
+                Element el = (Element) patchList.item(i);                
+                String elementType = el.getAttribute("type");
+                if(elementType.equalsIgnoreCase("patch"))
+                {
+                    String patchName = el.getAttribute("name");
+                    addBGPatchElement(patchName, sName, rName, projectDirectory);                    
+                }
+            }
+        }
+
     }
 }

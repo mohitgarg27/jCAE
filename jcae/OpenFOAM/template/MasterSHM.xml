@@ -5,58 +5,42 @@ and open the template in the editor.
 -->
 
 
-<root>
+<SHM>
     <SettingFile location="">
     </SettingFile>
     
-    <!--- Used while intantiation of SHM.xml  -->
     <Properties name="FoamFile" editable="false" >
         <Property name="version" defVal="2.0" val=""/>
         <Property name="format" defVal="ascii" val=""/>
         <Property name="class" defVal="dictionary" val=""/>
         <Property name="object" defVal="snappyHexMeshDict" val=""/>            
     </Properties>  
-    
-    <!--- Provided through UI-->
+        
     <Property name="castellatedMesh" defVal="false" val=""/>
     <Property name="snap" defVal="false" val=""/>
     <Property name="addLayers" defVal="false" val=""/>
     <Property name="debug" defVal="0" val=""/>
     <Property name="mergeTolerance" defVal="1E-6" val=""/>
 
-    
-    <Properties name="geometry" editable="true" >
-        <!--- Created automatically in SHM.xml, no UI  -->
+    <Properties name="geometry" editable="true" >        
         <Properties name="" editable="true" > 
             <Property name="type" defVal="triSurfaceMesh" val=""/>
             <Property name="name" defVal="" val=""/>
             <Properties name="regions" editable="true" >
-                <!--- This tag below will represent one patch which need to be 
-                repeated for each of the patch -->
+                <!--Repeatable-->
                 <Properties name="" editable="true" >
                     <Property name="name" defVal="" val=""/>
                 </Properties>
             </Properties>
         </Properties>  
         
-        <!--- Provided through UI-->
+        <!--Repeatable-->
         <Properties name="" editable="true" > 
             <Property name="type" defVal="searchableBox" val=""/>
-            <Function name="min" editable="true">
-                <Params>
-                    <Param name="Param1" val="0"/>
-                    <Param name="Param2" val="0"/>
-                    <Param name="Param3" val="0"/>
-                </Params>
-            </Function>
-            <Function name="max" editable="true">
-                <Params>
-                    <Param name="Param1" val="1"/>
-                    <Param name="Param2" val="1"/>
-                    <Param name="Param3" val="1"/>
-                </Params>
-            </Function>
+            <Property name="min" defVal="(0,0,0)" val=""/>
+            <Property name="max" defVal="(0,0,0)" val=""/>
         </Properties>  
+        
     </Properties>   
     
     <Properties name="castellatedMeshControls" editable="true">
@@ -70,7 +54,6 @@ and open the template in the editor.
         <Property name="allowFreeStandingZoneFaces" defVal="true" val=""/>  
         <Property name="resolveFeatureAngle" defVal="30" val=""/>               
         
-        <!--- This tag Set automatically in SHM.xml, no UI  -->
         <Function name="features" editable="true">
             <Params>
                 <Properties name="" editable="true" >
@@ -81,57 +64,30 @@ and open the template in the editor.
             </Params>
         </Function>
         
-        <!--- These tags Provided through UI  -->
         <Properties name="refinementSurfaces" editable="true" >        
             <Properties name="" editable="true" >     
-                    <Function name="level" editable="true">
-                        <Params>
-                            <Param name="Param1" val="2"/>
-                            <Param name="Param2" val="3"/>
-                             <Properties name="regions" editable="true" >  
-                                <Properties name=".*" editable="true" >  
-                                    <Function name="level" editable="true">
-                                        <Params>
-                                            <Param name="Param1" val="2"/>
-                                            <Param name="Param2" val="3"/>
-                                        </Params>
-                                    </Function>
-                                </Properties>         
-                            </Properties>         
-                        </Params>
-                    </Function>
-            </Properties> 
+                    <Property name="level" defVal="(2,3)" val=""/>
+                    <Properties name="regions" editable="true" >  
+                        <!--Repeatable-->
+                        <Properties name="" editable="true" >  
+                            <Property name="level" defVal="(0,0)" val=""/>
+                        </Properties>
+                    </Properties>
+            </Properties>
          </Properties> 
          
-        <!--- These tags Provided through UI  -->
         <Properties name="refinementRegions" editable="true" >        
+            <!--Repeatable-->
             <Properties name="" editable="true" >     
                 <Property name="mode" defVal="inside" val=""/>    
-                <Function name="levels" editable="true">
-                    <Params>
-                        <Function name="" editable="true">
-                            <Params>
-                                <Param name="Distance" val="2"/>
-                                <Param name="Level" val="3"/>
-                            </Params>
-                        </Function>     
-                    </Params>
-                </Function>
+                <Property name="levels" defVal="(1E15,1)" val=""/>
             </Properties> 
-         </Properties> 
+        </Properties> 
          
-        <!--- These tags Provided through UI  -->
-        <Function name="locationInMesh" editable="true">
-            <Params>
-                <Param name="Param1" val="0"/>
-                <Param name="Param2" val="0"/>
-                <Param name="Param3" val="0"/>
-            </Params>
-        </Function>
+        <Property name="locationInMesh" defVal="(0,0,0)" val=""/>
         
     </Properties>
-        
-    <!--- These tags Provided through UI  -->    
+         
     <Properties name="snapControls" editable="true">
         <Property name="nSmoothPatch" defVal="3" val=""/>
         <Property name="tolerance" defVal="1.0" val=""/>
@@ -140,7 +96,6 @@ and open the template in the editor.
         <Property name="nFeatureSnapIter" defVal="80" val=""/>                
     </Properties>
     
-    <!--- These tags Provided through UI  -->
     <Properties name="addLayersControls" editable="true">
         <Property name="relativeSizes" defVal="false" val=""/>
         <Property name="expansionRatio" defVal="1.1" val=""/>
@@ -159,16 +114,14 @@ and open the template in the editor.
         <Property name="nLayerIter" defVal="1000" val=""/>   
         
         <Properties name="layers" editable="true">
-            <Properties name=".*" editable="true">
+            <!--Repeatable-->
+            <Properties name=".*" editable="true"> 
                 <Property name="nSurfaceLayers" defVal="6" val=""/>                
-            </Properties>        
-            <!--- More patches can be provided here by adding children
-            -->
+            </Properties>
         </Properties>        
         
     </Properties>
     
-    <!--- These tags Provided through UI  -->
     <Properties name="meshQualityControls" type="castellatedMesh" editable="true">
         <Property name="maxNonOrtho" defVal="65" val=""/>
         <Property name="maxBoundarySkewness" defVal="20" val=""/>
@@ -187,7 +140,6 @@ and open the template in the editor.
         <Property name="errorReduction" defVal="0.75" val=""/>    
     </Properties>
 
-    <!--- These tags Provided through UI  -->
     <Properties name="meshQualityControls" type="snap" editable="true">
         <Property name="maxNonOrtho" defVal="65" val=""/>
         <Property name="maxBoundarySkewness" defVal="20" val=""/>
@@ -206,7 +158,6 @@ and open the template in the editor.
         <Property name="errorReduction" defVal="0.75" val=""/>    
     </Properties>
 
-    <!--- These tags Provided through UI  -->
     <Properties name="meshQualityControls" type="addLayers" editable="true">
         <Property name="maxNonOrtho" defVal="65" val=""/>
         <Property name="maxBoundarySkewness" defVal="20" val=""/>
@@ -225,7 +176,7 @@ and open the template in the editor.
         <Property name="errorReduction" defVal="0.75" val=""/>    
     </Properties>
                 
-</root>
+</SHM>
 
 <!--
 FoamFile

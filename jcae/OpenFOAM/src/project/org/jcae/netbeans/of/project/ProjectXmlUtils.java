@@ -244,6 +244,21 @@ public class ProjectXmlUtils
         return theSubRegion;
     }
     
+    public static Element getBGPatchesBlockElement(String regionName, String subRegionName, FileObject project)
+    {
+        Element theSubRegion = getSubRegionElement(regionName, subRegionName, project);
+        NodeList sName = theSubRegion.getElementsByTagName("BGBlock");
+        
+        Element theBGBlock = null;
+        
+        if(sName.getLength()==1)
+        {
+            theBGBlock = (Element) sName.item(0);
+        }
+        
+        return theBGBlock;
+    }
+    
     public static Element getBGPatchElement(String pName, String regionName, String subRegionName, FileObject project)
     {
         Element theRegion = getSubRegionElement(regionName, subRegionName, project);

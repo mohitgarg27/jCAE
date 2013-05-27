@@ -35,6 +35,7 @@ public class BGBlockNode extends AbstractNode
         ((MyLookup)getLookup()).setDelegates(new AbstractLookup(instanceContent));        
         instanceContent.add(this);                
         instanceContent.add(pr);  
+        instanceContent.add(getChildren());
     }
     
     

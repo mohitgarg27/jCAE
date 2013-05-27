@@ -17,7 +17,7 @@ import project.org.jcae.netbeans.of.project.ProjectUtils;
  *
  * @author mogargaa65
  */
-class BGBlockChildren extends Children.Array
+public class BGBlockChildren extends Children.Array
 {
 
     public BGBlockChildren(String sName, String rName, Project pr) 
@@ -25,7 +25,7 @@ class BGBlockChildren extends Children.Array
         super(Arrays.asList(BGBlockChildren.generateNodes(sName, rName, pr))); 
     }
     
-    private static Node[] generateNodes( String sName, String rName, Project pr)
+    public static Node[] generateNodes( String sName, String rName, Project pr)
     {
         Collection<BGPatchNode> pNodes = getBGPatchNodes(sName, rName, pr);
                
@@ -54,5 +54,18 @@ class BGBlockChildren extends Children.Array
         }
         
         return pNodes;
+    }    
+    
+    public void addChildren(Collection<Node> nodes)
+    {
+        Collection<Node> set = new ArrayList<Node>();
+        for(Node n:getNodes())
+                set.add(n);
+
+        for(Node n:nodes)
+                set.add(n);
+
+        this.nodes = set;
+        refresh();
     }    
 }
