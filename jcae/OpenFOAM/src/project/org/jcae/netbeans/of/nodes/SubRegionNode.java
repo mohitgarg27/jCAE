@@ -14,6 +14,7 @@ import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import project.org.jcae.netbeans.of.actions.RemoveSubRegionAction;
 import project.org.jcae.netbeans.of.actions.RenameSubRegionAction;
+import project.org.jcae.netbeans.of.actions.SnappyHexMeshAction;
 
 /**
  *
@@ -60,7 +61,8 @@ public class SubRegionNode extends AbstractNode {
                     //CommonProjectActions.copyProjectAction(),
                     //Utilities.actionsForPath("Actions/Project/").get(0), 
                     ((Action) new RemoveSubRegionAction()),
-                    ((Action) new RenameSubRegionAction())
+                    ((Action) new RenameSubRegionAction()),
+                    ((Action) new SnappyHexMeshAction())
                 };
     }     
     
