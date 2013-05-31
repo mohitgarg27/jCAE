@@ -42,9 +42,13 @@ public class SnappyHexMeshAction extends CookieAction
         SubRegionNode srNode = activatedNodes[0].getLookup().lookup(SubRegionNode.class);
         SubRegionChildren srChild = activatedNodes[0].getLookup().lookup(SubRegionChildren.class);
         
-        SnappyHexMeshSettingsPanel s = new SnappyHexMeshSettingsPanel();
-        s.showDialog();
+        SnappyHexMeshSettingsPanel s = new SnappyHexMeshSettingsPanel(srNode.getrName(), srNode.getsName(), pr);
         
+        
+        if(s.showDialog())
+        {
+            SnappyHexMeshSettingsPanel.SHMParams params = s.loadParams();
+        }
 //        BGBlockPanel bgPanel = new BGBlockPanel(bgBlockNode.getrName(), bgBlockNode.getsName(), pr);
 //        bgPanel.loadPanel();
 //        if(bgPanel.showDialog())

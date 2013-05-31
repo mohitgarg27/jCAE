@@ -19,7 +19,7 @@ import project.org.jcae.netbeans.of.project.ProjectUtils;
  *
  * @author mogargaa65
  */
-public class GenerateBlockMeshAction extends CookieAction
+public class BGBlockMeshAction extends CookieAction
 {
 
     @Override

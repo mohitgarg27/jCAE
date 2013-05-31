@@ -26,6 +26,7 @@ import org.netbeans.api.annotations.common.StaticResource;
 import org.openide.filesystems.FileLock;
 import org.w3c.dom.Node;
 import project.org.jcae.netbeans.of.actions.BGBlockPanel;
+import project.org.jcae.netbeans.of.actions.SnappyHexMeshSettingsPanel;
 import project.org.jcae.netbeans.of.api.Function;
 import project.org.jcae.netbeans.of.api.Param;
 import project.org.jcae.netbeans.of.api.Property;
@@ -923,6 +924,77 @@ public class ProjectUtils
         return toReturn;
     }
     
+    
+    public static SnappyHexMeshSettingsPanel.SHMParams getSHMInSubRegion(String rName, String sName, FileObject projectDirectory)
+    {
+        SnappyHexMeshSettingsPanel.SHMParams toReturn = new SnappyHexMeshSettingsPanel.SHMParams();
+        
+        try 
+        {            
+            Element el = ProjectXmlUtils.getSHMBlockElement(rName, sName, projectDirectory);
+            System.out.println(ProjectXmlUtils.nodeToString((Node)el));
+            
+            toReturn.setAllowFreeStandingZoneFaces(ProjectSHMXmlUtils.getAllowFreeStandingZoneFaces(el));
+            toReturn.setErrorReduction(ProjectSHMXmlUtils.getMeshQualitySetting(el, "ErrorReduction"));
+            toReturn.setExpansiveRatio(ProjectSHMXmlUtils.getExpansionRatio(el));
+            toReturn.setFeatureAngle(ProjectSHMXmlUtils.getFeatureAngle(el));
+            toReturn.setFeaturesFile(ProjectSHMXmlUtils.getFeaturesFile(el));
+            toReturn.setFinalLayerThickness(ProjectSHMXmlUtils.getFinalLayerThickness(el));
+            toReturn.setFeaturesLevel(ProjectSHMXmlUtils.getFeaturesLevel(el));
+            toReturn.setListPatches(ProjectSHMXmlUtils.getRefinementSurfaces(el));
+            toReturn.setListPatches0(ProjectSHMXmlUtils.getRefinementSurfaces(el));
+            toReturn.setLocationInMesh(ProjectSHMXmlUtils.getLocationInMesh(el));
+            toReturn.setMaxBoundarySkewness(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MaxBoundarySkewness"));
+            toReturn.setMaxConcave(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MaxConcave"));
+            toReturn.setMaxFaceThicknessRatio(ProjectSHMXmlUtils.getMaxFaceThicknessRatio(el));
+            toReturn.setMinFlatness(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinFlatness"));
+            toReturn.setMaxGlobalCells(ProjectSHMXmlUtils.getMaxGlobalCells(el));
+            toReturn.setMaxInternalSkewness(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MaxInternalSkewness"));
+            toReturn.setMaxLoadUnbalance(ProjectSHMXmlUtils.getMaxLoadUnbalance(el));
+            toReturn.setMaxLocalCells(ProjectSHMXmlUtils.getMaxLocalCells(el));
+            toReturn.setMaxNonOrtho(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MaxNonOrtho"));
+            toReturn.setMinRefinementCells(ProjectSHMXmlUtils.getMinRefinementCells(el));
+            toReturn.setMaxThicknessToMedialRatio(ProjectSHMXmlUtils.getMaxThicknessToMedialRatio(el));
+            toReturn.setMeshType(ProjectSHMXmlUtils.getGeometryType(el));
+            toReturn.setMinArea(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinArea"));
+            toReturn.setMinDeterminant(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinDeterminant"));
+            toReturn.setMinFaceWeight(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinFaceWeight"));
+            toReturn.setMinMedianAxisAngle(ProjectSHMXmlUtils.getMinMedianAxisAngle(el));
+            toReturn.setMinTetQuality(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinTetQuality"));
+            toReturn.setMinThickness(ProjectSHMXmlUtils.getMinThickness(el));
+            toReturn.setMinTriangleTwist(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinTriangleTwist"));
+            toReturn.setMinTwist(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinTwist"));
+            toReturn.setMinVol(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinVol")); //
+            toReturn.setMinVolRatio(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinVolRatio"));
+            toReturn.setNBufferCellsNoExtrude(ProjectSHMXmlUtils.getNBufferCellsNoExtrude(el));
+            toReturn.setNCellsBetweenLevels(ProjectSHMXmlUtils.getNCellsBetweenLevels(el));
+            toReturn.setNFeatureSnapIter(ProjectSHMXmlUtils.getNFeatureSnapIter(el));
+            toReturn.setNGrow(ProjectSHMXmlUtils.getNGrow(el));
+            toReturn.setNLayerIter(ProjectSHMXmlUtils.getNLayerIter(el));
+            toReturn.setNRelaxIter(ProjectSHMXmlUtils.getNRelaxIter(el));
+            toReturn.setNRelaxIter1(ProjectSHMXmlUtils.getNRelaxIter1(el));
+            toReturn.setNSmoothNormals(ProjectSHMXmlUtils.getNSmoothNormals(el));
+            toReturn.setNSmoothPatch(ProjectSHMXmlUtils.getNSmoothPatch(el));
+            toReturn.setNSmoothScale(ProjectSHMXmlUtils.getMeshQualitySetting(el, "NSmoothScale"));
+            toReturn.setNSmoothSurfaceNormals(ProjectSHMXmlUtils.getNSmoothSurfaceNormals(el));
+            toReturn.setNSmoothThickness(ProjectSHMXmlUtils.getNSmoothThickness(el));
+            toReturn.setNSolveIter(ProjectSHMXmlUtils.getNSolveIter(el));
+            toReturn.setRefRegion(ProjectSHMXmlUtils.getRefinementRegions(el));
+            //toReturn.setRefRegion1(ProjectSHMXmlUtils.getRefinementRegions(el));
+            toReturn.setRelativeSizes(ProjectSHMXmlUtils.getRelativeSizes(el));
+            toReturn.setResolveFeatureAngle(ProjectSHMXmlUtils.getResolveFeatureAngle(el));
+            toReturn.setSubRegionName(ProjectSHMXmlUtils.getSHM(el));
+            toReturn.setTolerance(ProjectSHMXmlUtils.getTolerance(el));
+            
+            
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }   
+        
+        return toReturn;
+    }
     
     public static void setBlockMeshInSubRegion(BGBlockPanel.BGBlock bgNewParams, String rName, String sName, FileObject projectDirectory)
     {

@@ -4,177 +4,179 @@ To change this template, choose Tools | Templates
 and open the template in the editor.
 -->
 
-
 <SHM>
     <SettingFile location="">
     </SettingFile>
     
     <Properties name="FoamFile" editable="false" >
-        <Property name="version" defVal="2.0" val=""/>
-        <Property name="format" defVal="ascii" val=""/>
-        <Property name="class" defVal="dictionary" val=""/>
-        <Property name="object" defVal="snappyHexMeshDict" val=""/>            
+        <Property name="version" val="2.0"/>
+        <Property name="format" val="ascii"/>
+        <Property name="class" val="dictionary"/>
+        <Property name="object" val="snappyHexMeshDict"/>            
     </Properties>  
         
-    <Property name="castellatedMesh" defVal="false" val=""/>
-    <Property name="snap" defVal="false" val=""/>
-    <Property name="addLayers" defVal="false" val=""/>
-    <Property name="debug" defVal="0" val=""/>
-    <Property name="mergeTolerance" defVal="1E-6" val=""/>
+    <Property name="castellatedMesh" val="false"/>
+    <Property name="snap" val="false"/>
+    <Property name="addLayers" val="false"/>
+    <Property name="debug" val="0"/>
+    <Property name="mergeTolerance" val="1E-6"/>
 
-    <Properties name="geometry" editable="true" >        
-        <Properties name="" editable="true" > 
-            <Property name="type" defVal="triSurfaceMesh" val=""/>
-            <Property name="name" defVal="" val=""/>
-            <Properties name="regions" editable="true" >
+    <Properties name="geometry" id="geometry"  >        
+        <Properties name=""  id="STL" > 
+            <Property name="type" val="triSurfaceMesh" id="geometryType"/>
+            <Property name="name" val="" id="subRegionName"/>
+            <Properties name="regions"  id="geometryRegion" >
                 <!--Repeatable-->
-                <Properties name="" editable="true" >
-                    <Property name="name" defVal="" val=""/>
+                <Properties name=""  id="GeometryPatch" >
+                    <Property name="name"  val=""/>
                 </Properties>
             </Properties>
         </Properties>  
-        
-        <!--Repeatable-->
-        <Properties name="" editable="true" > 
-            <Property name="type" defVal="searchableBox" val=""/>
-            <Property name="min" defVal="(0,0,0)" val=""/>
-            <Property name="max" defVal="(0,0,0)" val=""/>
+                
+        <Properties name="" id="refinementRegion"  > 
+            <Property name="type"  val="searchableBox"/>
+            <Property name="min"  val="(0,0,0)"/>
+            <Property name="max"  val="(0,0,0)"/>
         </Properties>  
         
     </Properties>   
     
-    <Properties name="castellatedMeshControls" editable="true">
+    <Properties name="castellatedMeshControls" >
         
-        <!--- These tags Provided through UI  -->
-        <Property name="maxLocalCells" defVal="10000000" val=""/>
-        <Property name="maxGlobalCells" defVal="10000000" val=""/>
-        <Property name="minRefinementCells" defVal="0" val=""/>
-        <Property name="maxLoadUnbalance" defVal="0.1" val=""/>
-        <Property name="nCellsBetweenLevels" defVal="2" val=""/>                
-        <Property name="allowFreeStandingZoneFaces" defVal="true" val=""/>  
-        <Property name="resolveFeatureAngle" defVal="30" val=""/>               
+        <Property name="maxLocalCells"  val="10000000" id="maxLocalCells"/>
+        <Property name="maxGlobalCells"  val="10000000" id="maxGlobalCells"/>
+        <Property name="minRefinementCells"  val="0" id="minRefinementCells"/>
+        <Property name="maxLoadUnbalance"  val="0.1" id="maxLoadUnbalance"/>
+        <Property name="nCellsBetweenLevels"  val="2" id="nCellsBetweenLevels"/>                
+        <Property name="allowFreeStandingZoneFaces"  val="true" id="allowFreeStandingZoneFaces"/>  
+        <Property name="resolveFeatureAngle"  val="30" id="resolveFeatureAngle"/>               
         
-        <Function name="features" editable="true">
+        <Function name="features"  id="features">
             <Params>
-                <Properties name="" editable="true" >
+                <Properties name=""  >
                     <!--- The file need to be set -->
-                    <Property name="file" defVal="" val=""/>
-                    <Property name="level" defVal="0" val=""/>
+                    <Property name="file"  val="" id="featuresFile"/>
+                    <Property name="level"  val="0" id="featuresLevel"/>
                 </Properties>            
             </Params>
         </Function>
         
-        <Properties name="refinementSurfaces" editable="true" >        
-            <Properties name="" editable="true" >     
-                    <Property name="level" defVal="(2,3)" val=""/>
-                    <Properties name="regions" editable="true" >  
+        <Properties name="refinementSurfaces"  id="refinementSurfaces">        
+            <Properties name=""  >     
+                    <Property name="level"  val="(2,3)"/>
+                    <Properties name="regions"  id="surfaceRegion">  
                         <!--Repeatable-->
-                        <Properties name="" editable="true" >  
-                            <Property name="level" defVal="(0,0)" val=""/>
+                        <Properties name=""  id="RefinedPatch" >  
+                            <Property name="level"  val="(0,0)"/>
                         </Properties>
                     </Properties>
             </Properties>
          </Properties> 
          
-        <Properties name="refinementRegions" editable="true" >        
+        <Properties name="refinementRegions"  id="refinementRegions" >        
             <!--Repeatable-->
-            <Properties name="" editable="true" >     
-                <Property name="mode" defVal="inside" val=""/>    
-                <Property name="levels" defVal="(1E15,1)" val=""/>
+            <Properties name=""  id="refinedRegion" >     
+                <Property name="mode"  val="inside"/>    
+                <Property name="levels"  val="(1E15,1)"/>
             </Properties> 
         </Properties> 
          
-        <Property name="locationInMesh" defVal="(0,0,0)" val=""/>
+        <Property name="locationInMesh"  val="(0,0,0)" id="locationInMesh"/>
         
     </Properties>
          
-    <Properties name="snapControls" editable="true">
-        <Property name="nSmoothPatch" defVal="3" val=""/>
-        <Property name="tolerance" defVal="1.0" val=""/>
-        <Property name="nSolveIter" defVal="600" val=""/>
-        <Property name="nRelaxIter" defVal="80" val=""/>
-        <Property name="nFeatureSnapIter" defVal="80" val=""/>                
+    <Properties name="snapControls"  id="snapControls" >
+        <Property name="nSmoothPatch"  val="3" id="nSmoothPatch"/>
+        <Property name="tolerance"  val="1.0"  id="tolerance" />
+        <Property name="nSolveIter"  val="600" id="nSolveIter"/>
+        <Property name="nRelaxIter"  val="80" id="nRelaxIter" />
+        <Property name="nFeatureSnapIter"  val="80" id="nFeatureSnapIter"/>                
     </Properties>
     
-    <Properties name="addLayersControls" editable="true">
-        <Property name="relativeSizes" defVal="false" val=""/>
-        <Property name="expansionRatio" defVal="1.1" val=""/>
-        <Property name="finalLayerThickness" defVal="0.00417468" val=""/>
-        <Property name="minThickness" defVal="0.002" val=""/>
-        <Property name="nGrow" defVal="0" val=""/>                
-        <Property name="featureAngle" defVal="180" val=""/>
-        <Property name="nRelaxIter" defVal="4" val=""/>
-        <Property name="nSmoothSurfaceNormals" defVal="1" val=""/>
-        <Property name="nSmoothNormals" defVal="3" val=""/>                
-        <Property name="nSmoothThickness" defVal="10" val=""/>
-        <Property name="maxFaceThicknessRatio" defVal="0.5" val=""/>
-        <Property name="maxThicknessToMedialRatio" defVal="1" val=""/>
-        <Property name="minMedianAxisAngle" defVal="90" val=""/>                
-        <Property name="nBufferCellsNoExtrude" defVal="0" val=""/>                
-        <Property name="nLayerIter" defVal="1000" val=""/>   
+    <Properties name="addLayersControls"   id="addLayersControls">
+        <Property name="relativeSizes"  val="false" id="relativeSizes" />
+        <Property name="expansionRatio"  val="1.1" id="expansionRatio" />
+        <Property name="finalLayerThickness"  val="0.00417468" id="finalLayerThickness" />
+        <Property name="minThickness"  val="0.002" id="minThickness"/>
+        <Property name="nGrow"  val="0" id="nGrow" />                
+        <Property name="featureAngle"  val="180" id="featureAngle"/>
+        <Property name="nRelaxIter"  val="4" id="nRelaxIter1" />
+        <Property name="nSmoothSurfaceNormals"  val="1" id="nSmoothSurfaceNormals"/>
+        <Property name="nSmoothNormals"  val="3" id="nSmoothNormals" />                
+        <Property name="nSmoothThickness"  val="10" id="nSmoothThickness"/>
+        <Property name="maxFaceThicknessRatio"  val="0.5" id="maxFaceThicknessRatio"/>
+        <Property name="maxThicknessToMedialRatio"  val="1" id="maxThicknessToMedialRatio" />
+        <Property name="minMedianAxisAngle"  val="90" id="minMedianAxisAngle"/>                
+        <Property name="nBufferCellsNoExtrude"  val="0" id="nBufferCellsNoExtrude" />                
+        <Property name="nLayerIter"  val="1000" id="nLayerIter" />   
         
-        <Properties name="layers" editable="true">
+        <Properties name="layers"  id="layers">
             <!--Repeatable-->
-            <Properties name=".*" editable="true"> 
-                <Property name="nSurfaceLayers" defVal="6" val=""/>                
+            <Properties name=".*"  id="layerPatch"> 
+                <Property name="nSurfaceLayers"  val="6"/>                
             </Properties>
         </Properties>        
         
     </Properties>
     
-    <Properties name="meshQualityControls" type="castellatedMesh" editable="true">
-        <Property name="maxNonOrtho" defVal="65" val=""/>
-        <Property name="maxBoundarySkewness" defVal="20" val=""/>
-        <Property name="maxInternalSkewness" defVal="4" val=""/>
-        <Property name="maxConcave" defVal="80" val=""/>
-        <Property name="minFlatness" defVal="0.5" val=""/>
-        <Property name="minVol" defVal="1e-13" val=""/>
-        <Property name="minTetQuality" defVal="-1e30" val=""/>
-        <Property name="minArea" defVal="-1" val=""/>
-        <Property name="minTwist" defVal="-10" val=""/>
-        <Property name="minDeterminant" defVal="0.001" val=""/>
-        <Property name="minFaceWeight" defVal="0.02" val=""/>
-        <Property name="minVolRatio" defVal="0.01" val=""/>
-        <Property name="minTriangleTwist" defVal="1e-5" val=""/>
-        <Property name="nSmoothScale" defVal="4" val=""/>        
-        <Property name="errorReduction" defVal="0.75" val=""/>    
-    </Properties>
+    <Properties name="meshQualityControls" type="castellatedMesh" >
+        <Properties id="castellatedMesh">
+            <Property id="maxNonOrtho"  val="65" name="maxNonOrtho" />
+            <Property id="maxBoundarySkewness"  val="20" name="maxBoundarySkewness" />
+            <Property id="maxInternalSkewness"  val="4" name="maxInternalSkewness" />
+            <Property id="maxConcave"  val="80" name="maxConcave" />
+            <Property id="minFlatness"  val="0.5" name="minFlatness" />
+            <Property id="minVol"  val="1e-13" name="minVol" />
+            <Property id="minTetQuality"  val="-1e30" name="minTetQuality"/>
+            <Property id="minArea"  val="-1" name="minArea"/>
+            <Property id="minTwist"  val="-10" name="minTwist"/>
+            <Property id="minDeterminant"  val="0.001" name="minDeterminant"/>
+            <Property id="minFaceWeight"  val="0.02" name="minFaceWeight"/>
+            <Property id="minVolRatio"  val="0.01" name="minVolRatio"/>
+            <Property id="minTriangleTwist"  val="1e-5" name="minTriangleTwist"/>
+            <Property id="nSmoothScale"  val="4" name="nSmoothScale"/>        
+            <Property id="errorReduction"  val="0.75" name="errorReduction"/>    
+        </Properties>
 
-    <Properties name="meshQualityControls" type="snap" editable="true">
-        <Property name="maxNonOrtho" defVal="65" val=""/>
-        <Property name="maxBoundarySkewness" defVal="20" val=""/>
-        <Property name="maxInternalSkewness" defVal="4" val=""/>
-        <Property name="maxConcave" defVal="80" val=""/>
-        <Property name="minFlatness" defVal="0.5" val=""/>
-        <Property name="minVol" defVal="1e-13" val=""/>
-        <Property name="minTetQuality" defVal="-1e30" val=""/>
-        <Property name="minArea" defVal="-1" val=""/>
-        <Property name="minTwist" defVal="-10" val=""/>
-        <Property name="minDeterminant" defVal="0.001" val=""/>
-        <Property name="minFaceWeight" defVal="0.02" val=""/>
-        <Property name="minVolRatio" defVal="0.01" val=""/>
-        <Property name="minTriangleTwist" defVal="1e-5" val=""/>
-        <Property name="nSmoothScale" defVal="4" val=""/>        
-        <Property name="errorReduction" defVal="0.75" val=""/>    
-    </Properties>
+        <Properties id="snap" >
+            <Property id="maxNonOrtho"  val="65" name="maxNonOrtho" />
+            <Property id="maxBoundarySkewness"  val="20" name="maxBoundarySkewness" />
+            <Property id="maxInternalSkewness"  val="4" name="maxInternalSkewness" />
+            <Property id="maxConcave"  val="80" name="maxConcave" />
+            <Property id="minFlatness"  val="0.5" name="minFlatness" />
+            <Property id="minVol"  val="1e-13" name="minVol" />
+            <Property id="minTetQuality"  val="-1e30" name="minTetQuality"/>
+            <Property id="minArea"  val="-1" name="minArea"/>
+            <Property id="minTwist"  val="-10" name="minTwist"/>
+            <Property id="minDeterminant"  val="0.001" name="minDeterminant"/>
+            <Property id="minFaceWeight"  val="0.02" name="minFaceWeight"/>
+            <Property id="minVolRatio"  val="0.01" name="minVolRatio"/>
+            <Property id="minTriangleTwist"  val="1e-5" name="minTriangleTwist"/>
+            <Property id="nSmoothScale"  val="4" name="nSmoothScale"/>        
+            <Property id="errorReduction"  val="0.75" name="errorReduction"/>     
+        </Properties>
 
-    <Properties name="meshQualityControls" type="addLayers" editable="true">
-        <Property name="maxNonOrtho" defVal="65" val=""/>
-        <Property name="maxBoundarySkewness" defVal="20" val=""/>
-        <Property name="maxInternalSkewness" defVal="4" val=""/>
-        <Property name="maxConcave" defVal="80" val=""/>
-        <Property name="minFlatness" defVal="0.5" val=""/>
-        <Property name="minVol" defVal="1e-13" val=""/>
-        <Property name="minTetQuality" defVal="-1e30" val=""/>
-        <Property name="minArea" defVal="-1" val=""/>
-        <Property name="minTwist" defVal="-10" val=""/>
-        <Property name="minDeterminant" defVal="0.001" val=""/>
-        <Property name="minFaceWeight" defVal="0.02" val=""/>
-        <Property name="minVolRatio" defVal="0.01" val=""/>
-        <Property name="minTriangleTwist" defVal="1e-5" val=""/>
-        <Property name="nSmoothScale" defVal="4" val=""/>        
-        <Property name="errorReduction" defVal="0.75" val=""/>    
+        <Properties id="addLayers" >
+            <Property id="maxNonOrtho"  val="65" name="maxNonOrtho" />
+            <Property id="maxBoundarySkewness"  val="20" name="maxBoundarySkewness" />
+            <Property id="maxInternalSkewness"  val="4" name="maxInternalSkewness" />
+            <Property id="maxConcave"  val="80" name="maxConcave" />
+            <Property id="minFlatness"  val="0.5" name="minFlatness" />
+            <Property id="minVol"  val="1e-13" name="minVol" />
+            <Property id="minTetQuality"  val="-1e30" name="minTetQuality"/>
+            <Property id="minArea"  val="-1" name="minArea"/>
+            <Property id="minTwist"  val="-10" name="minTwist"/>
+            <Property id="minDeterminant"  val="0.001" name="minDeterminant"/>
+            <Property id="minFaceWeight"  val="0.02" name="minFaceWeight"/>
+            <Property id="minVolRatio"  val="0.01" name="minVolRatio"/>
+            <Property id="minTriangleTwist"  val="1e-5" name="minTriangleTwist"/>
+            <Property id="nSmoothScale"  val="4" name="nSmoothScale"/>        
+            <Property id="errorReduction"  val="0.75" name="errorReduction"/>    
+        </Properties>
+        
     </Properties>
+    
+
                 
 </SHM>
 

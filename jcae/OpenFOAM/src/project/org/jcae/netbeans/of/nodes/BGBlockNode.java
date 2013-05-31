@@ -12,7 +12,7 @@ import org.openide.nodes.AbstractNode;
 import org.openide.util.ImageUtilities;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
-import project.org.jcae.netbeans.of.actions.GenerateBlockMeshAction;
+import project.org.jcae.netbeans.of.actions.BGBlockMeshAction;
 
 /**
  *
@@ -69,7 +69,7 @@ public class BGBlockNode extends AbstractNode
     public Action[] getActions(boolean popup) {
         
         ArrayList<Action> actions=new ArrayList<Action>();
-        actions.add(new GenerateBlockMeshAction()) ;
+        actions.add(new BGBlockMeshAction()) ;
         return actions.toArray(new Action[actions.size()]);
     }    
 }

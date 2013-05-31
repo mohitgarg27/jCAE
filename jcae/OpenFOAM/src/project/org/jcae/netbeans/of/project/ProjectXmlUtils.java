@@ -19,6 +19,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
@@ -130,6 +131,27 @@ public class ProjectXmlUtils
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
             String loc = System.getProperty("user.dir")+"/" + "./template/MasterFieldPatch.xml";
+            //System.out.println(loc);
+            
+            Document dom = db.parse(new File(loc));
+            return dom;
+        } catch (ParserConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (SAXException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null;
+    }
+  
+    public static Document getMasterSHMXMLDom()
+    {
+        try 
+        {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            String loc = System.getProperty("user.dir")+"/" + "./template/MasterSHM.xml";
             //System.out.println(loc);
             
             Document dom = db.parse(new File(loc));
@@ -303,7 +325,256 @@ public class ProjectXmlUtils
         }
         
         return thePatch;
-    }    
+    }   
+    
+    public static Element getSHMBlockElement( String regionName, String subRegionName, FileObject project) throws TransformerConfigurationException, TransformerException
+    {
+        Element theSubRegion = getSubRegionElement(regionName, subRegionName, project);
+        NodeList SHMBlockName = theSubRegion.getElementsByTagName("SHM");
+        
+        Document docMasterSHM = ProjectXmlUtils.getMasterSHMXMLDom();
+        
+        if(SHMBlockName.getLength()==0) // means no BlockMesh
+        {
+            Document dom = ProjectXmlUtils.getMasterSHMXMLDom();
+            Element docEle = dom.getDocumentElement();
+            
+            Element subRegionElement = ProjectXmlUtils.getSubRegionElement(regionName, subRegionName, project);
+            Document projectXML = subRegionElement.getOwnerDocument();
+            Node theSHMImported = projectXML.importNode(docEle, true);
+            subRegionElement.appendChild(theSHMImported);
+            
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer;
+            transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(projectXML);
+            StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);
+            
+            // Set default params
+            
+            subRegionElement = ProjectXmlUtils.getSubRegionElement(regionName, subRegionName, project);
+            
+            // 1. Set {SubRegionName.stl}
+            NodeList propertiesList= ((Element)subRegionElement).getElementsByTagName("Properties");
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("STL"))
+                {
+                    tmp.setAttribute("name", subRegionName+".stl");
+                }
+            }            
+                        
+            // 2. Add patches
+            Element patchEle = null;
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("GeometryPatch"))
+                {
+                    // Remove empty patch, but keep the instance for future
+                    patchEle = tmp;
+                    tmp.getParentNode().removeChild(tmp);
+                    break;
+                }
+            }
+            
+            Node geometryRegionEle = null;
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("geometryRegion"))
+                {
+                    geometryRegionEle = tmp;
+                    break;
+                }
+            }
+            
+            NodeList patchList = getAllPatchesInSubRegion(regionName, subRegionName, project);
+            if(patchEle!=null)
+            {
+                for(int i=0;i<patchList.getLength(); i++)
+                {
+                    Element projectPatchEle = (Element) patchList.item(i);
+                    patchEle.setAttribute("name", projectPatchEle.getAttribute("name"));
+                    
+                    NodeList patchEleChildren = patchEle.getElementsByTagName("Property");
+                    Element patchEleChild = (Element) patchEleChildren.item(0);
+                    patchEleChild.setAttribute("val", projectPatchEle.getAttribute("name"));
+                    
+                    projectXML = subRegionElement.getOwnerDocument();
+                    Node patchEleImported = projectXML.importNode(patchEle, true);
+                    geometryRegionEle.appendChild(patchEleImported);                    
+                }
+            }
+            
+            // 3. Set featurefile "SubRegionName.eMesh"
+            // Find Function ("features")
+            Element featuresFunction = null;
+            NodeList funcList = subRegionElement.getElementsByTagName("Function");
+            for(int i=0; i<funcList.getLength(); i++)
+            {
+                Element funcEl = (Element)funcList.item(i);
+                if(funcEl.getAttribute("name").equalsIgnoreCase("features"))
+                {
+                    featuresFunction = funcEl;
+                    break;
+                }
+            }
+            
+            System.out.println(ProjectXmlUtils.nodeToString(featuresFunction));
+            NodeList propertyList = featuresFunction.getElementsByTagName("Property");
+            for(int i=0; i<propertyList.getLength(); i++)
+            {
+                Element propEl = (Element)propertyList.item(i);
+                System.out.println(propEl.getAttribute("name"));
+                if(propEl.getAttribute("name").equalsIgnoreCase("file"))
+                {
+                    
+                    propEl.setAttribute("file", subRegionName+".eMesh");
+                    break;
+                }
+            }
+                    
+            
+            // 4. Add patches in RefinementSurfaces
+            patchEle = null;
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("RefinedPatch"))
+                {
+                    // Remove empty patch, but keep the instance for future
+                    patchEle = tmp;
+                    tmp.getParentNode().removeChild(tmp);
+                    break;
+                }
+            }
+            
+            Element surfaceRegionEle = null;
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("surfaceRegion"))
+                {
+                    surfaceRegionEle = tmp;
+                    break;
+                }
+            }
+            
+            //patchList = getAllPatches(project);
+            if(patchEle!=null)
+            {
+                for(int i=0;i<patchList.getLength(); i++)
+                {
+                    Element projectPatchEle = (Element) patchList.item(i);
+                    patchEle.setAttribute("name", projectPatchEle.getAttribute("name"));
+                    
+                    NodeList patchEleChildren = patchEle.getElementsByTagName("Property");
+                    //Element patchEleChild = (Element) patchEleChildren.item(0);
+                    //patchEleChild.setAttribute("val", projectPatchEle.getAttribute("name"));
+                    
+                    Node patchEleImported = projectXML.importNode(patchEle, true);
+                    surfaceRegionEle.appendChild(patchEleImported);                    
+                }
+            }
+            
+            
+            // 5. Add patches in Layers
+            patchEle = null;
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("layerPatch"))
+                {
+                    // Remove empty patch, but keep the instance for future
+                    patchEle = tmp;
+                    tmp.getParentNode().removeChild(tmp);
+                    break;
+                }
+            }
+            
+            Element layerRegionEle = null;
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("name");
+                if(name.equalsIgnoreCase("layers"))
+                {
+                    layerRegionEle = tmp;
+                    break;
+                }
+            }
+            
+            //patchList = getAllPatches(project);
+            if(patchEle!=null)
+            {
+                for(int i=0;i<patchList.getLength(); i++)
+                {
+                    Element projectPatchEle = (Element) patchList.item(i);
+                    patchEle.setAttribute("name", projectPatchEle.getAttribute("name"));
+                    
+                    NodeList patchEleChildren = patchEle.getElementsByTagName("Property");
+                    //Element patchEleChild = (Element) patchEleChildren.item(0);
+                    //patchEleChild.setAttribute("val", projectPatchEle.getAttribute("name"));
+                    
+                    Node patchEleImported = projectXML.importNode(patchEle, true);
+                    layerRegionEle.appendChild(patchEleImported);                    
+                }
+            }
+            
+            
+            
+            // 6. Remove empty RefineRegions
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("refinedRegion"))
+                {
+                    tmp.getParentNode().removeChild(tmp);
+                    break;
+                }
+            }
+            
+            
+            // 7. Remove empty RefinementRegion element
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("refinementRegion"))
+                {
+                    tmp.getParentNode().removeChild(tmp);
+                    break;
+                }
+            }
+            
+            //TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            //Transformer transformer;
+            //transformer = transformerFactory.newTransformer();
+            source = new DOMSource(projectXML);
+            result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);
+            
+        }
+        theSubRegion = getSubRegionElement(regionName, subRegionName, project);
+        SHMBlockName = theSubRegion.getElementsByTagName("SHM");
+        
+        Element theSHMBlock = null;
+        if(SHMBlockName!=null)
+                theSHMBlock = (Element) SHMBlockName.item(0);
+        
+        System.err.println(ProjectXmlUtils.nodeToString(theSHMBlock));
+        return theSHMBlock;
+    }  
     
     public static Element getCellZoneElement(String cName, String regionName, FileObject project)
     {
@@ -415,6 +686,12 @@ public class ProjectXmlUtils
         Element docEle = dom.getDocumentElement();
         
          return docEle.getElementsByTagName("Patch");
+    }
+    
+    public static NodeList getAllPatchesInSubRegion(String region, String subRegion, FileObject project)
+    {
+        Element subRegionElement = getSubRegionElement(region, subRegion, project);
+        return subRegionElement.getElementsByTagName("Patch");
     }
     
     public static NodeList getAllElementsByTagName(FileObject project, String tagName)
