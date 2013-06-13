@@ -47,7 +47,9 @@ public class SnappyHexMeshAction extends CookieAction
         
         if(s.showDialog())
         {
-            SnappyHexMeshSettingsPanel.SHMParams params = s.loadParams();
+            //SnappyHexMeshSettingsPanel.SHMParams params = s.loadParams();
+            s.savePanel();
+            
         }
 //        BGBlockPanel bgPanel = new BGBlockPanel(bgBlockNode.getrName(), bgBlockNode.getsName(), pr);
 //        bgPanel.loadPanel();

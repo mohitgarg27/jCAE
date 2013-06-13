@@ -4,14 +4,31 @@
  */
 package project.org.jcae.netbeans.of.project;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import project.org.jcae.netbeans.of.actions.SnappyHexMeshSettingsPanel;
+import static project.org.jcae.netbeans.of.project.ProjectXmlUtils.getAllPatchesInSubRegion;
+import static project.org.jcae.netbeans.of.project.ProjectXmlUtils.getSubRegionElement;
 
 /**
  *
@@ -19,10 +36,536 @@ import project.org.jcae.netbeans.of.actions.SnappyHexMeshSettingsPanel;
  */
 public class ProjectSHMXmlUtils 
 {
+    
+    public static Element getSHMBlockElement( String regionName, String subRegionName, FileObject project) throws TransformerConfigurationException, TransformerException
+    {
+        Element theSubRegion = getSubRegionElement(regionName, subRegionName, project);
+        NodeList SHMBlockName = theSubRegion.getElementsByTagName("SHM");
+        
+        Document docMasterSHM = getMasterSHMXMLDom();
+        
+        if(SHMBlockName.getLength()==0) // means no BlockMesh
+        {
+            Document dom = getMasterSHMXMLDom();
+            Element docEle = dom.getDocumentElement();
+            
+            Element subRegionElement = ProjectXmlUtils.getSubRegionElement(regionName, subRegionName, project);
+            Document projectXML = subRegionElement.getOwnerDocument();
+            Node theSHMImported = projectXML.importNode(docEle, true);
+            subRegionElement.appendChild(theSHMImported);
+            
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer;
+            transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(projectXML);
+            StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);
+            
+            // Set default params
+            
+            subRegionElement = ProjectXmlUtils.getSubRegionElement(regionName, subRegionName, project);
+            
+            // 1. Set {SubRegionName.stl}
+            NodeList propertiesList= ((Element)subRegionElement).getElementsByTagName("Properties");
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("STL"))
+                {
+                    tmp.setAttribute("name", subRegionName+".stl");
+                    break;
+                }
+            }            
+                        
+            // 2. Add patches
+            Element patchEle = null;
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("GeometryPatch"))
+                {
+                    // Remove empty patch, but keep the instance for future
+                    patchEle = tmp;
+                    tmp.getParentNode().removeChild(tmp);
+                    break;
+                }
+            }
+            
+            Node geometryRegionEle = null;
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("geometryRegion"))
+                {
+                    geometryRegionEle = tmp;
+                    break;
+                }
+            }
+            
+            NodeList patchList = getAllPatchesInSubRegion(regionName, subRegionName, project);
+            if(patchEle!=null)
+            {
+                for(int i=0;i<patchList.getLength(); i++)
+                {
+                    Element projectPatchEle = (Element) patchList.item(i);
+                    patchEle.setAttribute("name", projectPatchEle.getAttribute("name"));
+                    
+                    NodeList patchEleChildren = patchEle.getElementsByTagName("Property");
+                    Element patchEleChild = (Element) patchEleChildren.item(0);
+                    patchEleChild.setAttribute("val", projectPatchEle.getAttribute("name"));
+                    
+                    projectXML = subRegionElement.getOwnerDocument();
+                    Node patchEleImported = projectXML.importNode(patchEle, true);
+                    geometryRegionEle.appendChild(patchEleImported);                    
+                }
+            }
+            
+            // 3. Set featurefile "SubRegionName.eMesh"
+            // Find Function ("features")
+            Element featuresFunction = null;
+            NodeList funcList = subRegionElement.getElementsByTagName("Function");
+            for(int i=0; i<funcList.getLength(); i++)
+            {
+                Element funcEl = (Element)funcList.item(i);
+                if(funcEl.getAttribute("name").equalsIgnoreCase("features"))
+                {
+                    featuresFunction = funcEl;
+                    break;
+                }
+            }
+            
+            System.out.println(ProjectXmlUtils.nodeToString(featuresFunction));
+            NodeList propertyList = featuresFunction.getElementsByTagName("Property");
+            for(int i=0; i<propertyList.getLength(); i++)
+            {
+                Element propEl = (Element)propertyList.item(i);
+                System.out.println(propEl.getAttribute("name"));
+                if(propEl.getAttribute("id").equalsIgnoreCase("featuresFile"))
+                {
+                    
+                    propEl.setAttribute("file", subRegionName+".eMesh");
+                    break;
+                }
+            }
+                    
+            patchEle = null;
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("RefinedPatch"))
+                {
+                    // Remove empty patch, but keep the instance for future
+                    patchEle = tmp;
+                    tmp.getParentNode().removeChild(tmp);
+                    break;
+                }
+            }
+            
+            Element surfaceRegionEle = null;
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("surfaceRegion"))
+                {
+                    surfaceRegionEle = tmp;
+                    break;
+                }
+            }
+            
+            if(patchEle!=null)
+            {
+                for(int i=0;i<patchList.getLength(); i++)
+                {
+                    Element projectPatchEle = (Element) patchList.item(i);
+                    patchEle.setAttribute("name", projectPatchEle.getAttribute("name"));
+                    
+                    NodeList patchEleChildren = patchEle.getElementsByTagName("Property");
+                    //Element patchEleChild = (Element) patchEleChildren.item(0);
+                    //patchEleChild.setAttribute("val", projectPatchEle.getAttribute("name"));
+                    
+                    Node patchEleImported = projectXML.importNode(patchEle, true);
+                    surfaceRegionEle.appendChild(patchEleImported);                    
+                }
+            }
+            
+            // 5. Add patches in Layers
+            patchEle = null;
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("layerPatch"))
+                {
+                    // Remove empty patch, but keep the instance for future
+                    patchEle = tmp;
+                    tmp.getParentNode().removeChild(tmp);
+                    break;
+                }
+            }
+            
+            Element layerRegionEle = null;
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("name");
+                if(name.equalsIgnoreCase("layers"))
+                {
+                    layerRegionEle = tmp;
+                    break;
+                }
+            }
+            
+            if(patchEle!=null)
+            {
+                for(int i=0;i<patchList.getLength(); i++)
+                {
+                    Element projectPatchEle = (Element) patchList.item(i);
+                    patchEle.setAttribute("name", projectPatchEle.getAttribute("name"));
+                    
+                    NodeList patchEleChildren = patchEle.getElementsByTagName("Property");
+                    //Element patchEleChild = (Element) patchEleChildren.item(0);
+                    //patchEleChild.setAttribute("val", projectPatchEle.getAttribute("name"));
+                    
+                    Node patchEleImported = projectXML.importNode(patchEle, true);
+                    layerRegionEle.appendChild(patchEleImported);                    
+                }
+            }           
+                      
+            // 6. Remove empty RefineRegions
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("refinedRegion"))
+                {
+                    tmp.getParentNode().removeChild(tmp);
+                    break;
+                }
+            }
+                        
+            // 7. Remove empty RefinementRegion element
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("refinementRegion"))
+                {
+                    tmp.getParentNode().removeChild(tmp);
+                    break;
+                }
+                
+            }
+            
+            //TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            //Transformer transformer;
+            //transformer = transformerFactory.newTransformer();
+            System.err.println(ProjectXmlUtils.nodeToString(subRegionElement));
+            projectXML = subRegionElement.getOwnerDocument();
+            source = new DOMSource(projectXML);
+            result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);
+            System.err.println(ProjectXmlUtils.nodeToString(subRegionElement));
+        }
+        
+        theSubRegion = getSubRegionElement(regionName, subRegionName, project);
+        SHMBlockName = theSubRegion.getElementsByTagName("SHM");
+        
+        Element theSHMBlock = null;
+        if(SHMBlockName!=null)
+                theSHMBlock = (Element) SHMBlockName.item(0);
+        
+        return theSHMBlock;
+    }  
+    
+    public static void addPatchinSHMBlock(String patchName, Element shmEle)
+    {
+        // Add patches in Geometry tag
+        Document dom = getMasterSHMXMLDom();
+        Element docEle = dom.getDocumentElement();
+        
+        Document projectXML = null;
+        NodeList propertiesList= ((Element)docEle).getElementsByTagName("Properties");
+        NodeList propertiesListinSHM= ((Element)shmEle).getElementsByTagName("Properties");
+        Element patchEle = null;
+        for(int i=0; i<propertiesList.getLength();i++)
+        {
+            Element tmp = (Element) propertiesList.item(i);
+            String name = tmp.getAttribute("id");
+            if(name.equalsIgnoreCase("GeometryPatch"))
+            {
+                patchEle = tmp;
+                break;
+            }
+        }
+            
+        Node geometryRegionEle = null;
+        for(int i=0; i<propertiesListinSHM.getLength();i++)
+        {
+            Element tmp = (Element) propertiesListinSHM.item(i);
+            String name = tmp.getAttribute("id");
+            if(name.equalsIgnoreCase("geometryRegion"))
+            {
+                geometryRegionEle = tmp;
+                break;
+            }
+        }
+            
+        if(patchEle!=null)
+        {
+            patchEle.setAttribute("name", patchName);
+
+            NodeList patchEleChildren = patchEle.getElementsByTagName("Property");
+            Element patchEleChild = (Element) patchEleChildren.item(0);
+            patchEleChild.setAttribute("val", patchName);
+
+            projectXML = shmEle.getOwnerDocument();
+            Node patchEleImported = projectXML.importNode(patchEle, true);
+            geometryRegionEle.appendChild(patchEleImported);           
+        }
+        
+        // Add patch in Refinement tags
+        patchEle = null;
+        for(int i=0; i<propertiesList.getLength();i++)
+        {
+            Element tmp = (Element) propertiesList.item(i);
+            String name = tmp.getAttribute("id");
+            if(name.equalsIgnoreCase("RefinedPatch"))
+            {
+                patchEle = tmp;
+                break;
+            }
+        }
+            
+        Element surfaceRegionEle = null;
+        for(int i=0; i<propertiesListinSHM.getLength();i++)
+        {
+            Element tmp = (Element) propertiesListinSHM.item(i);
+            String name = tmp.getAttribute("id");
+            if(name.equalsIgnoreCase("surfaceRegion"))
+            {
+                surfaceRegionEle = tmp;
+                break;
+            }
+        }
+            
+        if(patchEle!=null)
+        {
+            //Element projectPatchEle = (Element) patchList.item(i);
+            patchEle.setAttribute("name", patchName);
+            //NodeList patchEleChildren = patchEle.getElementsByTagName("Property");            
+            Node patchEleImported = projectXML.importNode(patchEle, true);
+            surfaceRegionEle.appendChild(patchEleImported);                                
+        }
+            
+        // Add patches in Layers
+        patchEle = null;
+        for(int i=0; i<propertiesList.getLength();i++)
+        {
+            Element tmp = (Element) propertiesList.item(i);
+            String name = tmp.getAttribute("id");
+            if(name.equalsIgnoreCase("layerPatch"))
+            {
+                patchEle = tmp;
+                break;
+            }
+        }
+            
+        Element layerRegionEle = null;
+        for(int i=0; i<propertiesListinSHM.getLength();i++)
+        {
+            Element tmp = (Element) propertiesListinSHM.item(i);
+            String name = tmp.getAttribute("name");
+            if(name.equalsIgnoreCase("layers"))
+            {
+                layerRegionEle = tmp;
+                break;
+            }
+        }
+            
+        if(patchEle!=null)
+        {            
+            patchEle.setAttribute("name", patchName);
+            Node patchEleImported = projectXML.importNode(patchEle, true);
+            layerRegionEle.appendChild(patchEleImported);                                
+        }      
+        
+    }
+    
+    public static Document getMasterSHMXMLDom()
+    {
+        try 
+        {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            String loc = System.getProperty("user.dir")+"/" + "./template/MasterSHM.xml";
+            //System.out.println(loc);
+            
+            Document dom = db.parse(new File(loc));
+            return dom;
+        } catch (ParserConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (SAXException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null;
+    }
+        
+    public static void setSHMInSubRegion(String rName, String sName, FileObject projectDirectory, SnappyHexMeshSettingsPanel.SHMParams params)            
+    {
+        try 
+        {
+            Element el = getSHMBlockElement(rName, sName, projectDirectory);
+            System.out.println(ProjectXmlUtils.nodeToString((Node)el));
+            
+            setAllowFreeStandingZoneFaces(params.getAllowFreeStandingZoneFaces(), el);
+            setMeshQualitySetting(params.getErrorReduction(), el, "ErrorReduction");
+            setExpansionRatio(params.getExpansiveRatio(), el);
+            setFeatureAngle(params.getFeatureAngle(), el);
+            setFeaturesFile(params.getFeaturesFile(), el);
+            setFinalLayerThickness(params.getFinalLayerThickness(), el);
+            setFeaturesLevel(params.getFeaturesLevel(), el);
+            setRefinementSurfaces(params.getListPatches0(), el);
+            setLocationInMesh(params.getLocationInMesh(), el);
+            setMeshQualitySetting(params.getMaxBoundarySkewness(), el, "MaxBoundarySkewness");
+            setMeshQualitySetting(params.getMaxConcave(), el, "MaxConcave");
+            setMaxFaceThicknessRatio(params.getMaxFaceThicknessRatio(), el);
+            setMeshQualitySetting(params.getMinFlatness(), el, "MinFlatness");
+            setMaxGlobalCells(params.getMaxGlobalCells(), el);
+            setMeshQualitySetting(params.getMaxInternalSkewness(), el, "MaxInternalSkewness");
+            setMaxLoadUnbalance(params.getMaxLoadUnbalance(), el);
+            setMaxLocalCells(params.getMaxLocalCells(), el);
+            setMeshQualitySetting(params.getMaxNonOrtho(), el, "MaxNonOrtho");
+            setMinRefinementCells(params.getMinRefinementCells(), el);
+            setMaxThicknessToMedialRatio(params.getMaxThicknessToMedialRatio(), el);
+            setGeometryType(params.getMeshType(), el);
+            setMeshQualitySetting(params.getMinArea(), el, "MinArea");
+            setMeshQualitySetting(params.getMinDeterminant(), el, "MinDeterminant");
+            setMeshQualitySetting(params.getMinFaceWeight(), el, "MinFaceWeight");
+            setMinMedianAxisAngle(params.getMinMedianAxisAngle(), el);
+            setMeshQualitySetting(params.getMinTetQuality(), el, "MinTetQuality");
+            setMinThickness(params.getMinThickness(), el);
+            setMeshQualitySetting(params.getMinTriangleTwist(), el, "MinTriangleTwist");
+            setMeshQualitySetting(params.getMinTwist(), el, "MinTwist");
+            setMeshQualitySetting(params.getMinVol(), el, "MinVol");
+            setMeshQualitySetting(params.getMinVolRatio(), el, "MinVolRatio");
+            setNBufferCellsNoExtrude(params.getNBufferCellsNoExtrude(), el);
+            setNCellsBetweenLevels(params.getNCellsBetweenLevels(), el);
+            setNFeatureSnapIter(params.getNFeatureSnapIter(), el);
+            setNGrow(params.getNGrow(), el);
+            setNLayerIter(params.getNLayerIter(), el);
+            setNRelaxIter(params.getNRelaxIter(), el);
+            setNRelaxIter1(params.getNRelaxIter1(), el);
+            setNSmoothNormals(params.getNSmoothNormals(), el);
+            setNSmoothPatch(params.getNSmoothPatch(), el);
+            setMeshQualitySetting(params.getNSmoothScale(), el, "NSmoothScale");
+            setNSmoothSurfaceNormals(params.getNSmoothSurfaceNormals(), el);
+            setNSmoothThickness(params.getNSmoothThickness(), el);
+            setNSolverIter(params.getNSolveIter(), el);
+            setRefinementRegions(params.getRefRegion(), el);
+            setRelativeSizes(params.getRelativeSizes(), el);
+            setResolveFeatureAngle(params.getResolveFeatureAngle(), el);
+            setTolerance(params.getTolerance(), el);
+            setSHM(params.getSubRegionName(), el);           
+            
+            System.out.println(ProjectXmlUtils.nodeToString((Node)el));
+            Document projectXML = el.getOwnerDocument();
+
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer;
+            transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(projectXML);
+            StreamResult result = new StreamResult(FileUtil.toFile(projectDirectory.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);
+            
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }        
+    }        
+    
+    public static SnappyHexMeshSettingsPanel.SHMParams getSHMInSubRegion(String rName, String sName, FileObject projectDirectory)
+    {
+        SnappyHexMeshSettingsPanel.SHMParams toReturn = new SnappyHexMeshSettingsPanel.SHMParams();
+        
+        try 
+        {            
+            Element el = getSHMBlockElement(rName, sName, projectDirectory);
+            System.out.println(ProjectXmlUtils.nodeToString((Node)el));
+            
+            toReturn.setAllowFreeStandingZoneFaces(ProjectSHMXmlUtils.getAllowFreeStandingZoneFaces(el));
+            toReturn.setErrorReduction(ProjectSHMXmlUtils.getMeshQualitySetting(el, "ErrorReduction"));
+            toReturn.setExpansiveRatio(ProjectSHMXmlUtils.getExpansionRatio(el));
+            toReturn.setFeatureAngle(ProjectSHMXmlUtils.getFeatureAngle(el));
+            toReturn.setFeaturesFile(ProjectSHMXmlUtils.getFeaturesFile(el));
+            toReturn.setFinalLayerThickness(ProjectSHMXmlUtils.getFinalLayerThickness(el));
+            toReturn.setFeaturesLevel(ProjectSHMXmlUtils.getFeaturesLevel(el));
+            //toReturn.setListPatches(ProjectSHMXmlUtils.getRefinementSurfaces(el));
+            toReturn.setListPatches0(ProjectSHMXmlUtils.getRefinementSurfaces(el));
+            toReturn.setLocationInMesh(ProjectSHMXmlUtils.getLocationInMesh(el));
+            toReturn.setMaxBoundarySkewness(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MaxBoundarySkewness"));
+            toReturn.setMaxConcave(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MaxConcave"));
+            toReturn.setMaxFaceThicknessRatio(ProjectSHMXmlUtils.getMaxFaceThicknessRatio(el));
+            toReturn.setMinFlatness(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinFlatness"));
+            toReturn.setMaxGlobalCells(ProjectSHMXmlUtils.getMaxGlobalCells(el));
+            toReturn.setMaxInternalSkewness(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MaxInternalSkewness"));
+            toReturn.setMaxLoadUnbalance(ProjectSHMXmlUtils.getMaxLoadUnbalance(el));
+            toReturn.setMaxLocalCells(ProjectSHMXmlUtils.getMaxLocalCells(el));
+            toReturn.setMaxNonOrtho(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MaxNonOrtho"));
+            toReturn.setMinRefinementCells(ProjectSHMXmlUtils.getMinRefinementCells(el));
+            toReturn.setMaxThicknessToMedialRatio(ProjectSHMXmlUtils.getMaxThicknessToMedialRatio(el));
+            toReturn.setMeshType(ProjectSHMXmlUtils.getGeometryType(el));
+            toReturn.setMinArea(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinArea"));
+            toReturn.setMinDeterminant(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinDeterminant"));
+            toReturn.setMinFaceWeight(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinFaceWeight"));
+            toReturn.setMinMedianAxisAngle(ProjectSHMXmlUtils.getMinMedianAxisAngle(el));
+            toReturn.setMinTetQuality(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinTetQuality"));
+            toReturn.setMinThickness(ProjectSHMXmlUtils.getMinThickness(el));
+            toReturn.setMinTriangleTwist(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinTriangleTwist"));
+            toReturn.setMinTwist(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinTwist"));
+            toReturn.setMinVol(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinVol")); //
+            toReturn.setMinVolRatio(ProjectSHMXmlUtils.getMeshQualitySetting(el, "MinVolRatio"));
+            toReturn.setNBufferCellsNoExtrude(ProjectSHMXmlUtils.getNBufferCellsNoExtrude(el));
+            toReturn.setNCellsBetweenLevels(ProjectSHMXmlUtils.getNCellsBetweenLevels(el));
+            toReturn.setNFeatureSnapIter(ProjectSHMXmlUtils.getNFeatureSnapIter(el));
+            toReturn.setNGrow(ProjectSHMXmlUtils.getNGrow(el));
+            toReturn.setNLayerIter(ProjectSHMXmlUtils.getNLayerIter(el));
+            toReturn.setNRelaxIter(ProjectSHMXmlUtils.getNRelaxIter(el));
+            toReturn.setNRelaxIter1(ProjectSHMXmlUtils.getNRelaxIter1(el));
+            toReturn.setNSmoothNormals(ProjectSHMXmlUtils.getNSmoothNormals(el));
+            toReturn.setNSmoothPatch(ProjectSHMXmlUtils.getNSmoothPatch(el));
+            toReturn.setNSmoothScale(ProjectSHMXmlUtils.getMeshQualitySetting(el, "NSmoothScale"));
+            toReturn.setNSmoothSurfaceNormals(ProjectSHMXmlUtils.getNSmoothSurfaceNormals(el));
+            toReturn.setNSmoothThickness(ProjectSHMXmlUtils.getNSmoothThickness(el));
+            toReturn.setNSolveIter(ProjectSHMXmlUtils.getNSolveIter(el));
+            toReturn.setRefRegion(ProjectSHMXmlUtils.getRefinementRegions(el));
+            //toReturn.setRefRegion1(ProjectSHMXmlUtils.getRefinementRegions(el));
+            toReturn.setRelativeSizes(ProjectSHMXmlUtils.getRelativeSizes(el));
+            toReturn.setResolveFeatureAngle(ProjectSHMXmlUtils.getResolveFeatureAngle(el));
+            toReturn.setSubRegionName(ProjectSHMXmlUtils.getSHM(el));
+            toReturn.setTolerance(ProjectSHMXmlUtils.getTolerance(el));
+            
+            
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }   
+        
+        return toReturn;
+    }
+    
     public static Element getRefinementRegionDefElementInMasterSHM()
     {
         Element toReturn = null;
-        Document dom = ProjectXmlUtils.getMasterSHMXMLDom();
+        Document dom = getMasterSHMXMLDom();
         Element docEle = dom.getDocumentElement();
         
         NodeList propertiesList= ((Element)docEle).getElementsByTagName("Properties");
@@ -42,7 +585,7 @@ public class ProjectSHMXmlUtils
     public static Element getRefinementRegionModeElementInMasterSHM()
     {
         Element toReturn = null;
-        Document dom = ProjectXmlUtils.getMasterSHMXMLDom();
+        Document dom = getMasterSHMXMLDom();
         Element docEle = dom.getDocumentElement();
         
         NodeList propertiesList= ((Element)docEle).getElementsByTagName("Properties");
@@ -62,7 +605,7 @@ public class ProjectSHMXmlUtils
     public static Element getPatchDefElementInMasterSHM()
     {
         Element toReturn = null;
-        Document dom = ProjectXmlUtils.getMasterSHMXMLDom();
+        Document dom = getMasterSHMXMLDom();
         Element docEle = dom.getDocumentElement();
         
         NodeList propertiesList= ((Element)docEle).getElementsByTagName("Properties");
@@ -82,7 +625,7 @@ public class ProjectSHMXmlUtils
     public static Element getPatchSurfElementInMasterSHM()
     {
         Element toReturn = null;
-        Document dom = ProjectXmlUtils.getMasterSHMXMLDom();
+        Document dom = getMasterSHMXMLDom();
         Element docEle = dom.getDocumentElement();
         
         NodeList propertiesList= ((Element)docEle).getElementsByTagName("Properties");
@@ -102,7 +645,7 @@ public class ProjectSHMXmlUtils
     public static Element getPatchLayerElementInMasterSHM()
     {
         Element toReturn = null;
-        Document dom = ProjectXmlUtils.getMasterSHMXMLDom();
+        Document dom = getMasterSHMXMLDom();
         Element docEle = dom.getDocumentElement();
         
         NodeList propertiesList= ((Element)docEle).getElementsByTagName("Properties");
@@ -119,7 +662,7 @@ public class ProjectSHMXmlUtils
         return toReturn;
     }    
     
-    public static Element getElementById(Element shmEle, String id)
+    private static Element getElementById(Element shmEle, String id)
     {
         Element stlEle = null;
         NodeList propertiesList= shmEle.getElementsByTagName("Properties");
@@ -167,7 +710,7 @@ public class ProjectSHMXmlUtils
         return stlEle;
     }
     
-    public static Element getElementByNestedIds(Element shmEle, String id, String id2)
+    private static Element getElementByNestedIds(Element shmEle, String id, String id2)
     {
         Element ele = getElementById(shmEle, id);
         return getElementById(ele, id2);
@@ -273,19 +816,28 @@ public class ProjectSHMXmlUtils
         //Empty out previous elements of RefinementRegions
         Element geomElement = getElementById(shmEle, "geometry");
         NodeList refRegDefinitions = geomElement.getElementsByTagName("Properties");
+        
+        System.err.println(refRegDefinitions.getLength());
+        
         for(int i=0; i<refRegDefinitions.getLength(); i++)
         {
             Element rEl =  (Element) refRegDefinitions.item(i);
+            if (rEl==null)
+                break;
             if(rEl.getAttribute("id").equalsIgnoreCase("refinementRegion"))
                 rEl.getParentNode().removeChild(rEl);
         }
         
         Element refRegions = getElementById(shmEle, "RefinementRegions");
         NodeList refRegModes = refRegions.getElementsByTagName("Properties");
- 
-        for(int i=0; i<refRegModes.getLength(); i++)
+        
+        System.err.println(refRegModes.getLength());
+        
+        for(int i=0; i<refRegModes.getLength(); )
         {
-            Element rEl =  (Element) refRegModes.item(i) ;            
+            Element rEl =  (Element) refRegModes.item(i) ;
+            if (rEl==null)
+                break;
             if(rEl.getAttribute("id").equalsIgnoreCase("refinedRegion"))
                 rEl.getParentNode().removeChild(rEl);
         }      
@@ -301,11 +853,14 @@ public class ProjectSHMXmlUtils
             Element refRegDefEle = getRefinementRegionDefElementInMasterSHM();
             Element refRegModeEle = getRefinementRegionModeElementInMasterSHM();
             
+            System.out.println(ProjectXmlUtils.nodeToString((Node)refRegDefEle));
+            System.out.println(ProjectXmlUtils.nodeToString((Node)refRegModeEle));
+            
             refRegDefEle.setAttribute("name", r.getRefRegionName());
             NodeList refRegDefEleProps = refRegDefEle.getElementsByTagName("Property");
             for(int j=0;j<refRegDefEleProps.getLength(); j++)
             {
-                Element el = (Element)refRegDefEleProps.item(i);
+                Element el = (Element)refRegDefEleProps.item(j);
                 if(el.getAttribute("name").equalsIgnoreCase("type"))
                 {
                     el.setAttribute("val", r.getRefRegType());
@@ -324,7 +879,7 @@ public class ProjectSHMXmlUtils
             NodeList refRegModeEleProps = refRegModeEle.getElementsByTagName("Property");
             for(int j=0;j<refRegModeEleProps.getLength(); j++)
             {
-                Element el = (Element)refRegModeEleProps.item(i);
+                Element el = (Element)refRegModeEleProps.item(j);
                 if(el.getAttribute("name").equalsIgnoreCase("mode"))
                 {
                     el.setAttribute("val", r.getRefRefMode());
@@ -335,6 +890,9 @@ public class ProjectSHMXmlUtils
                 }                
             }
 
+            System.out.println(ProjectXmlUtils.nodeToString((Node)refRegDefEle));
+            System.out.println(ProjectXmlUtils.nodeToString((Node)refRegModeEle));
+            
             Document projectXML = shmEle.getOwnerDocument();
             Node refRegDefEleImported = projectXML.importNode(refRegDefEle, true);
             geomEle.appendChild(refRegDefEleImported);
@@ -356,7 +914,7 @@ public class ProjectSHMXmlUtils
     public static void setFeaturesFile(String val, Element shmEle)
     {
         Element el = getElementById(shmEle, "FeaturesFile");
-        el.setAttribute("val", val);
+        el.setAttribute("file", val);
     }    
 
     public static String getFeaturesLevel(Element shmEle)
@@ -383,11 +941,10 @@ public class ProjectSHMXmlUtils
     
     public static void setResolveFeatureAngle(String val, Element shmEle)
     {
-        Element el = getElementById(shmEle, "ResolveFeatureAngles");
+        Element el = getElementById(shmEle, "ResolveFeatureAngle");
         el.setAttribute("val", val);
     }       
     
-
     public static String getLocationInMesh(Element shmEle)
     {
         String toReturn = null;
@@ -454,7 +1011,7 @@ public class ProjectSHMXmlUtils
     
     public static void setMinRefinementCells(String val, Element shmEle)
     {
-        Element el = getElementById(shmEle, "MaxRefinementCells");
+        Element el = getElementById(shmEle, "MinRefinementCells");
         el.setAttribute("val", val);
     }  
 
@@ -564,27 +1121,33 @@ public class ProjectSHMXmlUtils
         //Empty out previous elements of RefinementRegions
         Element geomElement = getElementById(shmEle, "geometryRegion");
         NodeList patchDefinitions = geomElement.getElementsByTagName("Properties");
-        for(int i=0; i<patchDefinitions.getLength(); i++)
+        for(int i=0; i<=patchDefinitions.getLength(); )
         {
             Element rEl =  (Element) patchDefinitions.item(i);
+            if(rEl==null)
+                break;
             if(rEl.getAttribute("id").equalsIgnoreCase("geometryPatch"))
                 rEl.getParentNode().removeChild(rEl);
         }
         
         Element surfRegions = getElementById(shmEle, "SurfaceRegion");
         NodeList patchSurfs = surfRegions.getElementsByTagName("Properties");
-        for(int i=0; i<patchSurfs.getLength(); i++)
+        for(int i=0; i<=patchSurfs.getLength(); )
         {
             Element rEl =  (Element) patchSurfs.item(i) ;            
+            if(rEl==null)
+                break;
             if(rEl.getAttribute("id").equalsIgnoreCase("RefinedPatch"))
                 rEl.getParentNode().removeChild(rEl);
         }      
         
         Element layerRegions = getElementById(shmEle, "layers");
         NodeList patchLayer = layerRegions.getElementsByTagName("Properties");
-        for(int i=0; i<patchLayer.getLength(); i++)
+        for(int i=0; i<=patchLayer.getLength(); )
         {
             Element rEl =  (Element) patchLayer.item(i) ;            
+            if(rEl==null)
+                break;
             if(rEl.getAttribute("id").equalsIgnoreCase("layerPatch"))
                 rEl.getParentNode().removeChild(rEl);
         }      
@@ -602,11 +1165,15 @@ public class ProjectSHMXmlUtils
             Element PatchSurfEle = getPatchSurfElementInMasterSHM();
             Element PatchLayerEle = getPatchLayerElementInMasterSHM();
             
+            System.out.println(ProjectXmlUtils.nodeToString((Node)PatchDefEle));
+            System.out.println(ProjectXmlUtils.nodeToString((Node)PatchSurfEle));
+            System.out.println(ProjectXmlUtils.nodeToString((Node)PatchLayerEle));
+            
             PatchDefEle.setAttribute("name", r.getPatchName());
             NodeList patchDefEleProps = PatchDefEle.getElementsByTagName("Property");
             for(int j=0;j<patchDefEleProps.getLength(); j++)
             {
-                Element el = (Element)patchDefEleProps.item(i);
+                Element el = (Element)patchDefEleProps.item(j);
                 if(el.getAttribute("name").equalsIgnoreCase("name"))
                     el.setAttribute("val", r.getPatchName());
             }
@@ -615,17 +1182,17 @@ public class ProjectSHMXmlUtils
             NodeList patchSurfEleProps = PatchSurfEle.getElementsByTagName("Property");
             for(int j=0;j<patchSurfEleProps.getLength(); j++)
             {
-                Element el = (Element) patchSurfEleProps.item(i);
+                Element el = (Element) patchSurfEleProps.item(j);
                 if(el.getAttribute("name").equalsIgnoreCase("level"))
                     el.setAttribute("val", r.getPatchLevels());
             }
                                    
             PatchLayerEle.setAttribute("name", r.getPatchName());
-            NodeList patchLayerEleProps = PatchSurfEle.getElementsByTagName("Property");
+            NodeList patchLayerEleProps = PatchLayerEle.getElementsByTagName("Property");
             for(int j=0;j<patchLayerEleProps.getLength(); j++)
             {
-                Element el = (Element) patchLayerEleProps.item(i);
-                if(el.getAttribute("name").equalsIgnoreCase("layerPatch"))
+                Element el = (Element) patchLayerEleProps.item(j);
+                if(el.getAttribute("name").equalsIgnoreCase("nSurfaceLayers"))
                     el.setAttribute("val", r.getNSurfaceLayers());
             }
             
@@ -679,7 +1246,7 @@ public class ProjectSHMXmlUtils
     
     public static void setNSolverIter(String val, Element shmEle)
     {
-        Element el = getElementById(shmEle, "NSolverIter");
+        Element el = getElementById(shmEle, "NSolveIter");
         el.setAttribute("val", val);
     }    
     
@@ -837,7 +1404,6 @@ public class ProjectSHMXmlUtils
         el.setAttribute("val", val);
     }     
 
-
     public static String getNSmoothThickness(Element shmEle)
     {
         String toReturn = null;
@@ -852,7 +1418,6 @@ public class ProjectSHMXmlUtils
         el.setAttribute("val", val);
     }     
     
-
     public static String getMaxFaceThicknessRatio(Element shmEle)
     {
         String toReturn = null;
@@ -949,11 +1514,11 @@ public class ProjectSHMXmlUtils
         if(el0!=null)
             el0.setAttribute("val",val[0]);
 
-        Element el1 = getElementByNestedIds(shmEle, "castellatedMesh", id);
+        Element el1 = getElementByNestedIds(shmEle, "snap", id);
         if(el1!=null)
             el1.setAttribute("val",val[1]);
 
-        Element el2 = getElementByNestedIds(shmEle, "castellatedMesh", id);
+        Element el2 = getElementByNestedIds(shmEle, "addLayers", id);
         if(el2!=null)
             el2.setAttribute("val",val[2]);
         

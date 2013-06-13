@@ -6,19 +6,18 @@ package project.org.jcae.netbeans.of.actions;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import org.netbeans.api.project.Project;
 import org.w3c.dom.Element;
-import project.org.jcae.netbeans.of.project.ProjectUtils;
+import project.org.jcae.netbeans.of.project.ProjectSHMXmlUtils;
 
 /**
  *
- * @author mita
+ * @author mohit
  */
+
 public class SnappyHexMeshSettingsPanel extends javax.swing.JPanel {
 
     /**
@@ -37,7 +36,7 @@ public class SnappyHexMeshSettingsPanel extends javax.swing.JPanel {
         this.subRegionName = sName;
         this.project = pr;
 
-        params = ProjectUtils.getSHMInSubRegion(rName, sName, pr.getProjectDirectory());
+        params = ProjectSHMXmlUtils.getSHMInSubRegion(rName, sName, pr.getProjectDirectory());
         
     }
     
@@ -51,17 +50,6 @@ public class SnappyHexMeshSettingsPanel extends javax.swing.JPanel {
         return model;
         
     }
-    
-//    private static DefaultListModel populateListModel1(Collection<SHMParams.RefinedRegion> refRegs)
-//    {
-//        DefaultListModel model = new DefaultListModel();
-//        for(int i=0; i<refRegs.size(); i++)
-//        {
-//            model.add(i, ((ArrayList<SHMParams.RefinedRegion>)refRegs).get(i) );
-//        }
-//        return model;
-//        
-//    }
         
     public SHMParams loadParams() // Reverse of loadPanel()
     {
@@ -259,6 +247,12 @@ public class SnappyHexMeshSettingsPanel extends javax.swing.JPanel {
         
         
     }    
+    
+    public void savePanel()
+    {
+        loadParams();
+        ProjectSHMXmlUtils.setSHMInSubRegion(regionName, subRegionName, project.getProjectDirectory(), params);
+    }
     
     public boolean showDialog()
     {
@@ -2634,7 +2628,7 @@ public class SnappyHexMeshSettingsPanel extends javax.swing.JPanel {
         private String MinMedianAxisAngle;
         private String NBufferCellsNoExtrude;
         private String NLayerIter;
-        private Collection<Patches> ListPatches  = RefinementSurfaces; 
+        //private Collection<Patches> ListPatches  = RefinementSurfaces; 
         
         // Mesh Quality
         private String[] MaxNonOrtho;
@@ -3153,19 +3147,19 @@ public class SnappyHexMeshSettingsPanel extends javax.swing.JPanel {
             this.NLayerIter = NLayerIter;
         }
 
-        /**
-         * @return the ListPatches
-         */
-        public Collection<Patches> getListPatches() {
-            return ListPatches;
-        }
-
-        /**
-         * @param ListPatches the ListPatches to set
-         */
-        public void setListPatches(Collection<Patches> ListPatches) {
-            this.ListPatches = ListPatches;
-        }
+//        /**
+//         * @return the ListPatches
+//         */
+//        public Collection<Patches> getListPatches() {
+//            return ListPatches;
+//        }
+//
+//        /**
+//         * @param ListPatches the ListPatches to set
+//         */
+//        public void setListPatches(Collection<Patches> ListPatches) {
+//            this.ListPatches = ListPatches;
+//        }
 
         /**
          * @return the MaxNonOrtho
