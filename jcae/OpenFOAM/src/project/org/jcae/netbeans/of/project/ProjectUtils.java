@@ -32,6 +32,7 @@ import project.org.jcae.netbeans.of.api.Property;
 import project.org.jcae.netbeans.of.api.SelectionList;
 import project.org.jcae.netbeans.of.api.ofProp;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
+import project.org.jcae.netbeans.of.nodes.SubRegionNode;
 import static project.org.jcae.netbeans.of.project.ProjectSHMXmlUtils.getMasterSHMXMLDom;
 import static project.org.jcae.netbeans.of.project.ProjectSHMXmlUtils.setSHM;
 import static project.org.jcae.netbeans.of.project.ProjectXmlUtils.getSubRegionElement;
@@ -85,13 +86,37 @@ public class ProjectUtils
                 for(int i=0; i<srName.getLength();i++)
                 {
                     Element sregion = (Element) srName.item(i);
-                     sRegions.add(sregion.getAttribute("name"));
+                    if(sregion.getParentNode().isSameNode(theRegion))
+                        sRegions.add(sregion.getAttribute("name"));
                 }
             }
         }
         return sRegions;
         
     }
+    
+    public static Collection<String> getSubRegions(String regionName, String sName, FileObject project) 
+    {
+        Collection<String>  sRegions = new ArrayList<String>();
+        
+        Element theSubRegion = ProjectXmlUtils.getSubRegionElement(regionName, sName, project);
+        
+        if(theSubRegion!=null)
+        {
+            NodeList srName = theSubRegion.getElementsByTagName("SubRegion");
+            if(srName!=null)
+            {
+                for(int i=0; i<srName.getLength();i++)
+                {
+                    Element sregion = (Element) srName.item(i);
+                    if(sregion.getParentNode().isSameNode(theSubRegion))
+                        sRegions.add(sregion.getAttribute("name"));
+                }
+            }
+        }
+        return sRegions;
+        
+    }    
 
     public static Collection<String> getFaceZones(String rName, FileObject project) 
     {
@@ -1124,5 +1149,75 @@ public class ProjectUtils
             }
         }
 
+    }
+    
+    public static void mergeSubRegions(String regionName, String SubRegionMergee, String subRegionMergedInto, FileObject projectDirectory  )
+    {
+        try {
+            Element docEle = ProjectXmlUtils.getRegionElement(regionName, projectDirectory);
+            NodeList sNames = docEle.getElementsByTagName("SubRegion");
+            Element subRegionMergeeElement = null;
+            Element subRegionMergedIntoElement = null;
+            
+            for(int i=0; i<sNames.getLength();i++)
+            {
+                Element el  = (Element) sNames.item(i);
+                if(el.getAttribute("name").equalsIgnoreCase(SubRegionMergee))
+                {
+                    subRegionMergeeElement = el;
+                }
+                if(el.getAttribute("name").equalsIgnoreCase(subRegionMergedInto))
+                {
+                    subRegionMergedIntoElement = el;
+                }
+            }
+            
+            subRegionMergeeElement.getParentNode().removeChild(subRegionMergeeElement);
+            
+            subRegionMergedIntoElement.appendChild(subRegionMergeeElement);
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(docEle.getOwnerDocument());
+            StreamResult result = new StreamResult(FileUtil.toFile(projectDirectory.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
+    }
+    
+    public static void unmergeSubRegions(String regionName, String SubRegionMergee, String subRegionMergedInto, FileObject projectDirectory  )
+    {
+        try {
+            Element docEle = ProjectXmlUtils.getRegionElement(regionName, projectDirectory);
+            NodeList sNames = docEle.getElementsByTagName("SubRegion");
+            Element subRegionMergeeElement = null;
+            //Element subRegionMergedIntoElement = null;
+            
+            for(int i=0; i<sNames.getLength();i++)
+            {
+                Element el  = (Element) sNames.item(i);
+                if(el.getAttribute("name").equalsIgnoreCase(SubRegionMergee))
+                {
+                    subRegionMergeeElement = el;
+                }
+            }
+            
+            subRegionMergeeElement.getParentNode().removeChild(subRegionMergeeElement);
+            
+            docEle.appendChild(subRegionMergeeElement);
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(docEle.getOwnerDocument());
+            StreamResult result = new StreamResult(FileUtil.toFile(projectDirectory.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
     }
 }

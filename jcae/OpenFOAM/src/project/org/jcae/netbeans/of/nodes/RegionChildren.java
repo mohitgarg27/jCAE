@@ -27,17 +27,6 @@ public class RegionChildren extends Children.Array  {
     
     public void addChildren(Collection<Node> nodes)
     {
-//        Set<Node> set = new HashSet<Node>();
-//        for(Node n:getNodes())
-//                set.add(n);
-//
-//        for(Node n:nodes)
-//                set.add(n);
-//
-//        nodes.clear();
-//        for(Node n:set)
-//                nodes.add(n);
-//        refresh();
         
         Collection<Node> set = new ArrayList<Node>();
         for(Node n:getNodes())
