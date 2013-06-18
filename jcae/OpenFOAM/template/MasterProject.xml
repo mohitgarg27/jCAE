@@ -27,6 +27,7 @@ and open the template in the editor.
                                 </Stitch>
                             </Stitches>
                     </SubRegion>
+                    <Stitch name="" patchName1="" patchName2="" cmdLineParamList="" />                    
                     <Zones>
                             <FaceZone name ="" Patch=""/>
                             <CellZone name ="">

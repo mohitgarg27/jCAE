@@ -82,6 +82,11 @@ public class RegionChildren extends Children.Array  {
         return new ZonesNode(rName, pr);
     }
     
+    private static StitchesNode getStitchesNodes(String rName, Project pr)
+    {        
+        return new StitchesNode(rName, pr);
+    }
+    
     private static Collection<SubRegionNode> getSubRegionNodes(String rName, Project pr)
     {
         Collection<SubRegionNode> toReturn = new ArrayList<SubRegionNode>();
@@ -104,7 +109,7 @@ public class RegionChildren extends Children.Array  {
                 toReturn.add((Node) n);
             }       
         toReturn.add(0,getZonesNodes(rName, pr));
-        
+        toReturn.add(getStitchesNodes(rName, pr));
         return toReturn.toArray(new Node[]{});
     }    
 }

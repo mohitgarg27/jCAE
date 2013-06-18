@@ -157,6 +157,26 @@ public class ProjectUtils
         }
         return cZones;
     }    
+
+    public static Collection<String> getStitches(String rName, FileObject projectDirectory) 
+    {
+        Collection<String>  stitches = new ArrayList<String>();        
+        Element theRegion = ProjectXmlUtils.getRegionElement(rName, projectDirectory);
+        
+        if(theRegion!=null)
+        {
+            NodeList sNames = theRegion.getElementsByTagName("Stitch");
+            if(sNames!=null)
+            {
+                for(int i=0; i<sNames.getLength();i++)
+                {
+                    Element s = (Element) sNames.item(i);
+                     stitches.add(s.getAttribute("name"));
+                }
+            }
+        }
+        return stitches;
+    }
     
     public static Collection<String> getPatches(String sName, String rName, FileObject project) 
     {
@@ -456,6 +476,38 @@ public class ProjectUtils
         return true;
     } 
     
+    public static void addStitchElement(String stitchName, String pName, String pName0, String rName, FileObject projectDirectory) 
+    {
+        try {
+            Document dom = ProjectXmlUtils.getMasterProjectXMLDom();
+            Element docEle = dom.getDocumentElement();
+            NodeList sEls = docEle.getElementsByTagName("Stitch");
+
+            Element thePatch = (Element) sEls.item(0);
+            thePatch.setAttribute("name", stitchName);
+            thePatch.setAttribute("patchName1", pName);
+            thePatch.setAttribute("patchName1", pName0);
+                    
+            Element regionElement = ProjectXmlUtils.getRegionElement(rName, projectDirectory);
+            
+            Document projectXML = regionElement.getOwnerDocument();
+            Node theStitchImported = projectXML.importNode(thePatch, true);
+            
+            regionElement.appendChild(theStitchImported);
+           
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer;
+            transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(projectXML);
+            StreamResult result = new StreamResult(FileUtil.toFile(projectDirectory.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);                
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+    
     public static boolean updateRegionElement(String newRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
     {           
         Element regionElement = ProjectXmlUtils.getRegionElement(regionName, project);
@@ -657,6 +709,44 @@ public class ProjectUtils
         return true;
     }          
 
+
+    public static void removeStitchElement(String sName, String rName, FileObject projectDirectory) 
+    {   
+        try {
+            Element theRegion = ProjectXmlUtils.getRegionElement(rName, projectDirectory);
+            
+            if(theRegion!=null)
+            {
+                NodeList sNames = theRegion.getElementsByTagName("Stitch");
+                if(sNames!=null)
+                {
+                    for(int i=0; i<sNames.getLength();i++)
+                    {
+                        Element s = (Element) sNames.item(i);
+                         if(s.getAttribute("name").equalsIgnoreCase(sName))
+                         {
+                             s.getParentNode().removeChild(s);
+                             break;
+                         }
+                    }
+                }
+            }
+     
+            Document projectXML = theRegion.getOwnerDocument();
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer;
+            transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(projectXML);
+            StreamResult result = new StreamResult(FileUtil.toFile(projectDirectory.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
+    }
+    
     public static void copyPatchElement(PatchNode n, String sName, String rName, FileObject projectDirectory) throws TransformerConfigurationException, TransformerException 
     {
         addPatchElement(n.getpName(), sName, rName, projectDirectory);

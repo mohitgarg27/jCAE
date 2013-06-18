@@ -21,6 +21,7 @@ import project.org.jcae.netbeans.of.actions.RemovePatchAction;
 import project.org.jcae.netbeans.of.actions.RenamePatchAction;
 import project.org.jcae.netbeans.of.actions.ViewPatchAction;
 import project.org.jcae.netbeans.of.actions.PatchFlavor;
+import project.org.jcae.netbeans.of.actions.StitchPatchAction;
 import project.org.jcae.netbeans.of.project.ProjectUtils;
 
 /**
@@ -55,7 +56,8 @@ public class PatchNode extends AbstractNode
         return new Action[]{
                     SystemAction.get(ViewPatchAction.class),
                     SystemAction.get(RenamePatchAction.class),
-                    SystemAction.get(RemovePatchAction.class)
+                    SystemAction.get(RemovePatchAction.class),
+                    SystemAction.get(StitchPatchAction.class)
                     //SystemAction.get( MergePatchAction.class)
                 };
     }     
