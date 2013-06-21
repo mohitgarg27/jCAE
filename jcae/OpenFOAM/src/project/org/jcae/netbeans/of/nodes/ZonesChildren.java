@@ -4,6 +4,7 @@
  */
 package project.org.jcae.netbeans.of.nodes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,13 +12,14 @@ import java.util.List;
 import org.netbeans.api.project.Project;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
 import project.org.jcae.netbeans.of.project.ProjectUtils;
 
 /**
  *
  * @author mogargaa65
  */
-class ZonesChildren extends Children.Array {
+public class ZonesChildren extends Children.Array {
     
     public ZonesChildren(String rName, Project pr) 
     {
@@ -68,5 +70,38 @@ class ZonesChildren extends Children.Array {
         
         return toReturn.toArray(new Node[]{});
     }     
+    
+    public void addChildren(Collection<Node> nodes)
+    {
+        Collection<Node> set = new ArrayList<Node>();
+        for(Node n:getNodes())
+                set.add(n);
+
+        for(Node n:nodes)
+                set.add(n);
+
+        this.nodes = set;
+        refresh();
+    }
+    
+    public void removeChildren( Node node)
+    {
+        
+        Collection<Node> set = new ArrayList<Node>();
+        for(Node n:getNodes())
+        {
+            if(node!=n)
+            set.add(n);
+        }
+                
+        this.nodes = set;
+        try {
+            node.destroy();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+
+        refresh();
+    }       
     
 }

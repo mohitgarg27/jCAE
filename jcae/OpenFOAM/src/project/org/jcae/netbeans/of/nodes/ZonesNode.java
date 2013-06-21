@@ -5,17 +5,21 @@
 package project.org.jcae.netbeans.of.nodes;
 
 import java.awt.Image;
+import javax.swing.Action;
 import org.netbeans.api.project.Project;
 import org.openide.nodes.AbstractNode;
 import org.openide.util.ImageUtilities;
+import org.openide.util.actions.SystemAction;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import project.org.jcae.netbeans.of.actions.AddCellZoneAction;
+import project.org.jcae.netbeans.of.actions.AddFaceZoneAction;
 
 /**
  *
  * @author mogargaa65
  */
-class ZonesNode extends AbstractNode
+public class ZonesNode extends AbstractNode
 {
     
     private Project project;
@@ -53,4 +57,12 @@ class ZonesNode extends AbstractNode
     public String getrName() {
         return rName;
     }
+    
+    @Override
+    public Action[] getActions(boolean arg0) {
+        return new Action[]{
+                    SystemAction.get(AddFaceZoneAction.class),
+                    SystemAction.get(AddCellZoneAction.class)
+                };
+    }     
 }

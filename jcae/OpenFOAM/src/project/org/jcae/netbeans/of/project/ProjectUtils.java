@@ -508,6 +508,79 @@ public class ProjectUtils
         }
     }
     
+
+    public static void addFaceZoneElement(String regionName, String zoneName, String subRegionName, String patchName, FileObject projectDirectory) 
+    {
+        try 
+        {
+            Document dom = ProjectXmlUtils.getMasterProjectXMLDom();
+            Element docEle = dom.getDocumentElement();
+            NodeList sEls = docEle.getElementsByTagName("FaceZone");
+
+            Element theZone = (Element) sEls.item(0);
+            theZone.setAttribute("name", zoneName);
+            theZone.setAttribute("SubRegion", subRegionName);
+            theZone.setAttribute("Patch", patchName);
+                    
+            Element regionElement = ProjectXmlUtils.getRegionElement(regionName, projectDirectory);
+            
+            Document projectXML = regionElement.getOwnerDocument();
+            Node theZoneImported = projectXML.importNode(theZone, true);
+            
+            regionElement.appendChild(theZoneImported);
+           
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer;
+            transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(projectXML);
+            StreamResult result = new StreamResult(FileUtil.toFile(projectDirectory.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }        
+    }
+    
+    public static void addCellZoneElement(String regionName, String zoneName, String[] lower, String[] upper, FileObject projectDirectory) 
+    {
+        try 
+        {
+            Document dom = ProjectXmlUtils.getMasterProjectXMLDom();
+            Element docEle = dom.getDocumentElement();
+            NodeList sEls = docEle.getElementsByTagName("CellZone");
+
+            Element theZone = (Element) sEls.item(0);
+            theZone.setAttribute("name", zoneName);
+            
+            theZone.setAttribute("minX", lower[0]);
+            theZone.setAttribute("minY", lower[1]);
+            theZone.setAttribute("minZ", lower[2]);
+
+            theZone.setAttribute("maxX", upper[0]);
+            theZone.setAttribute("maxY", upper[1]);
+            theZone.setAttribute("maxZ", upper[2]);
+                    
+            Element regionElement = ProjectXmlUtils.getRegionElement(regionName, projectDirectory);
+            
+            Document projectXML = regionElement.getOwnerDocument();
+            Node theZoneImported = projectXML.importNode(theZone, true);
+            
+            regionElement.appendChild(theZoneImported);
+           
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer;
+            transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(projectXML);
+            StreamResult result = new StreamResult(FileUtil.toFile(projectDirectory.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }          
+    }
+    
     public static boolean updateRegionElement(String newRegionName, String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
     {           
         Element regionElement = ProjectXmlUtils.getRegionElement(regionName, project);
@@ -1309,5 +1382,55 @@ public class ProjectUtils
             Exceptions.printStackTrace(ex);
         }
         
+    }
+
+    public static void removeZoneElement(String zName, String rName, FileObject projectDirectory) 
+    {
+        try {
+            Element theRegion = ProjectXmlUtils.getRegionElement(rName, projectDirectory);
+            
+            if(theRegion!=null)
+            {
+                NodeList sNames = theRegion.getElementsByTagName("FaceZone");
+                if(sNames!=null)
+                {
+                    for(int i=0; i<sNames.getLength();i++)
+                    {
+                        Element s = (Element) sNames.item(i);
+                         if(s.getAttribute("name").equalsIgnoreCase(zName))
+                         {
+                             s.getParentNode().removeChild(s);
+                             break;
+                         }
+                    }
+                }
+                
+                sNames = theRegion.getElementsByTagName("CellZone");
+                if(sNames!=null)
+                {
+                    for(int i=0; i<sNames.getLength();i++)
+                    {
+                        Element s = (Element) sNames.item(i);
+                         if(s.getAttribute("name").equalsIgnoreCase(zName))
+                         {
+                             s.getParentNode().removeChild(s);
+                             break;
+                         }
+                    }
+                }                
+            }
+     
+            Document projectXML = theRegion.getOwnerDocument();
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer;
+            transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(projectXML);
+            StreamResult result = new StreamResult(FileUtil.toFile(projectDirectory.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }        
     }
 }

@@ -41,7 +41,7 @@ public class RemoveStitchAction extends CookieAction
         StitchesNode ssNode = (StitchesNode) sNode.getParentNode();
         StitchesChildren sChild = (StitchesChildren) ssNode.getLookup().lookup(StitchesChildren.class);
         
-         int n = JOptionPane.showConfirmDialog(null, "Are you sure?","Deleting Region", JOptionPane.YES_NO_OPTION);
+         int n = JOptionPane.showConfirmDialog(null, "Are you sure?","Deleting Stitch", JOptionPane.YES_NO_OPTION);
         // n=0 means true
         
         if(n==0)

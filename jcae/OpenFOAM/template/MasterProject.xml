@@ -29,23 +29,8 @@ and open the template in the editor.
                     </SubRegion>
                     <Stitch name="" patchName1="" patchName2="" cmdLineParamList="" />                    
                     <Zones>
-                            <FaceZone name ="" Patch=""/>
-                            <CellZone name ="">
-                                <Function name="min" editable="true">
-                                    <Params>
-                                        <Param name="Param1" val="0"/>
-                                        <Param name="Param2" val="0"/>
-                                        <Param name="Param3" val="0"/>
-                                    </Params>
-                                </Function>
-                                <Function name="max" editable="true">
-                                    <Params>
-                                        <Param name="Param1" val="1"/>
-                                        <Param name="Param2" val="1"/>
-                                        <Param name="Param3" val="1"/>
-                                    </Params>
-                                </Function>
-                            </CellZone>
+                            <FaceZone name ="" Region="" Patch=""/>
+                            <CellZone name ="" type="" minX="" minY="" minZ="" maxX="" maxY="" maxZ="" />
                     </Zones>
                 </Region>        
         </Project>        

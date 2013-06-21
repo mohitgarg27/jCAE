@@ -5,20 +5,23 @@
 package project.org.jcae.netbeans.of.nodes;
 
 import java.awt.Image;
+import javax.swing.Action;
 import org.netbeans.api.project.Project;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
+import org.openide.util.actions.SystemAction;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import project.org.jcae.netbeans.of.actions.RemoveFaceZoneAction;
 import project.org.jcae.netbeans.of.project.ProjectUtils;
 
 /**
  *
  * @author mogargaa65
  */
-class FaceZoneNode extends AbstractNode 
+public class FaceZoneNode extends AbstractNode 
 {
 
     private Project project;
@@ -64,5 +67,12 @@ class FaceZoneNode extends AbstractNode
             Sheet sheet=super.createSheet();
             sheet.put(ProjectUtils.createFaceZoneSheetSet(fName, rName, project.getProjectDirectory()));
             return sheet;
-    }    
+    }   
+    
+    @Override
+    public Action[] getActions(boolean arg0) {
+        return new Action[]{
+                    SystemAction.get(RemoveFaceZoneAction.class)      
+                };
+    }     
 }
