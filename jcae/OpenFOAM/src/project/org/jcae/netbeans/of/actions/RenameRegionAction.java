@@ -43,6 +43,9 @@ public class RenameRegionAction extends CookieAction
         String s = (String)JOptionPane.showInputDialog( null, "Rename","Rename Region", JOptionPane.PLAIN_MESSAGE, null, null, rNode.getrName());
         ProjectChildren rcNode = rNode.getParentNode().getLookup().lookup(ProjectChildren.class);
        
+        if(s.equalsIgnoreCase(rNode.getrName()))
+            return;
+        
         try {
             ProjectUtils.updateRegionElement(s, rNode.getrName(), project.getProjectDirectory());
             rcNode.renameChildren(rNode, s);

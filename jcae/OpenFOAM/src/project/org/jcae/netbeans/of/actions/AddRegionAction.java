@@ -48,6 +48,7 @@ public class AddRegionAction extends CookieAction
         //a.setVisible(true);
         a.showDialog();
         String rName = a.getRegionName();
+        String rType = a.getRegionType();
         
         if(rName.trim().isEmpty())
         {
@@ -56,8 +57,8 @@ public class AddRegionAction extends CookieAction
         }
         try 
         {
-            ProjectUtils.addRegionElement(rName, pr.getProjectDirectory());
-            RegionNode rNode = new RegionNode(rName, pr);
+            ProjectUtils.addRegionElement(rName, rType, pr.getProjectDirectory());
+            RegionNode rNode = new RegionNode(rName, rType, pr);
             Collection<Node> nColl = new ArrayList<Node>();
             nColl.add(rNode);
             prChild.addChildren(nColl);            

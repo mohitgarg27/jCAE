@@ -10,7 +10,7 @@ and open the template in the editor.
                         <Solver name=""/>            
                         <SHM location=""/>
                 </OpenFOAM >
-                <Region name="">
+                <Region name="" type="">
                     <SubRegion name="">
                             <BGBlock>
                                     <BGPatch name="">

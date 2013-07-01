@@ -4,16 +4,12 @@
  */
 package project.org.jcae.netbeans.of.actions;
 
-import java.util.Arrays;
 import org.netbeans.api.project.Project;
 import org.openide.nodes.Node;
 import org.openide.util.HelpCtx;
 import org.openide.util.actions.CookieAction;
-import project.org.jcae.netbeans.of.nodes.BGBlockChildren;
-import project.org.jcae.netbeans.of.nodes.BGBlockNode;
 import project.org.jcae.netbeans.of.nodes.SubRegionChildren;
 import project.org.jcae.netbeans.of.nodes.SubRegionNode;
-import project.org.jcae.netbeans.of.project.ProjectUtils;
 
 /**
  *

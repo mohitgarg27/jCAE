@@ -24,6 +24,8 @@ import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import project.org.jcae.netbeans.of.actions.AddSubRegionAction;
+import project.org.jcae.netbeans.of.actions.RegionConstantSettingsAction;
+import project.org.jcae.netbeans.of.actions.RegionSystemSettingsAction;
 import project.org.jcae.netbeans.of.actions.RemoveRegionAction;
 import project.org.jcae.netbeans.of.actions.RenameRegionAction;
 import project.org.jcae.netbeans.of.actions.SubRegionFlavor;
@@ -40,18 +42,25 @@ public class RegionNode extends AbstractNode {
     
     private Project project;
     private String rName;
+    private String rType;
     
-    public RegionNode(String rName, Project pr)
+    public RegionNode(String rName, String rType, Project pr)
     {
         super(new RegionChildren(rName, pr), new MyLookup());
         this.project = pr;
         this.rName = rName; 
+        this.rType = rType;
         setIconBaseWithExtension(REGION_ICON);
         setDisplayName(rName);
         ((MyLookup)getLookup()).setDelegates(new AbstractLookup(instanceContent));        
         instanceContent.add(pr);        
         instanceContent.add(this);        
-        instanceContent.add(getChildren());       
+        instanceContent.add(getChildren());   
+        
+        if(rType==null)
+        {
+            this.rType = ProjectUtils.getRegionType(rName, project.getProjectDirectory());
+        }
     }
     
     @Override
@@ -74,7 +83,9 @@ public class RegionNode extends AbstractNode {
                     //Utilities.actionsForPath("Actions/Project/").get(0), 
                     ((Action) new AddSubRegionAction()),
                     ((Action) new RemoveRegionAction()),
-                    ((Action) new RenameRegionAction())
+                    ((Action) new RenameRegionAction()),
+                    ((Action) new RegionConstantSettingsAction()),
+                ((Action) new RegionSystemSettingsAction())
                 };
     } 
     @Override
@@ -194,4 +205,18 @@ public class RegionNode extends AbstractNode {
         });
         return added;
     }    
+
+    /**
+     * @return the rType
+     */
+    public String getrType() {
+        return rType;
+    }
+
+    /**
+     * @param rType the rType to set
+     */
+    public void setrType(String rType) {
+        this.rType = rType;
+    }
 }

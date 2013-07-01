@@ -7,9 +7,7 @@ package project.org.jcae.netbeans.of.nodes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -91,7 +89,7 @@ public class ProjectChildren extends Children.Array  {
         Collection<String> regions = ProjectUtils.getRegions(pr.getProjectDirectory());
         
         for(String rName: regions)
-            toReturn.add(new RegionNode(rName, pr));
+            toReturn.add(new RegionNode(rName, null, pr));
         
         return toReturn;
     }

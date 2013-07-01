@@ -4,8 +4,13 @@
  */
 package project.org.jcae.netbeans.of.project;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.xml.transform.Transformer;
@@ -32,9 +37,6 @@ import project.org.jcae.netbeans.of.api.Property;
 import project.org.jcae.netbeans.of.api.SelectionList;
 import project.org.jcae.netbeans.of.api.ofProp;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
-import project.org.jcae.netbeans.of.nodes.SubRegionNode;
-import static project.org.jcae.netbeans.of.project.ProjectSHMXmlUtils.getMasterSHMXMLDom;
-import static project.org.jcae.netbeans.of.project.ProjectSHMXmlUtils.setSHM;
 import static project.org.jcae.netbeans.of.project.ProjectXmlUtils.getSubRegionElement;
 
 /**
@@ -347,7 +349,7 @@ public class ProjectUtils
     /*
     * Add/Update/Delete Elements****************
     */
-    public static boolean addRegionElement(String regionName, FileObject project) throws TransformerConfigurationException, TransformerException
+    public static boolean addRegionElement(String regionName, String regionType, FileObject project) throws TransformerConfigurationException, TransformerException
     {           
         Document dom = ProjectXmlUtils.getMasterProjectXMLDom();
         Element docEle = dom.getDocumentElement();
@@ -355,6 +357,7 @@ public class ProjectUtils
 
         Element theRegion = (Element) sName.item(0);
         theRegion.setAttribute("name", regionName);
+        theRegion.setAttribute("type", regionType);
                 
         Element rootElement = ProjectXmlUtils.getRootElement(project);
         
@@ -372,6 +375,36 @@ public class ProjectUtils
         transformer.transform(source, result);
 
         ProjectFileUtils.makeDir(project.getPath()+"/"+regionName);
+        // Copy constant settings files in region based on type
+        if(regionType.equalsIgnoreCase("fluid"))
+        {
+            String locRAS = System.getProperty("user.dir")+"/" + "./template/settings/RASProperties";
+            String locG = System.getProperty("user.dir")+"/" + "./template/settings/g";
+            String locRadiation = System.getProperty("user.dir")+"/" + "./template/settings/radiationProperties";
+            String locTransport = System.getProperty("user.dir")+"/" + "./template/settings/transportProperties";
+            String locTurbulence = System.getProperty("user.dir")+"/" + "./template/settings/turbulenceProperties";            
+
+            ProjectFileUtils.copyFile(locRAS, project.getPath()+"/"+regionName+"/"+"RASProperties" );
+            ProjectFileUtils.copyFile(locG, project.getPath()+"/"+regionName+"/"+"g" );
+            ProjectFileUtils.copyFile(locRadiation, project.getPath()+"/"+regionName+"/"+"radiationProperties" );
+            ProjectFileUtils.copyFile(locTransport, project.getPath()+"/"+regionName+"/"+"transportProperties" );
+            ProjectFileUtils.copyFile(locTurbulence, project.getPath()+"/"+regionName+"/"+"turbulenceProperties" );            
+        }
+        else if(regionType.equalsIgnoreCase("solid"))
+        {
+            String locThermal = System.getProperty("user.dir")+"/" + "./template/settings/thermalProperties";
+
+            ProjectFileUtils.copyFile(locThermal, project.getPath()+"/"+regionName+"/"+"thermalProperties" );                        
+        }
+            
+        String locControlDict = System.getProperty("user.dir")+"/" + "./template/settings/controlDict";
+        String locFVSchemes = System.getProperty("user.dir")+"/" + "./template/settings/fvSchemes";
+        String locFVSolution = System.getProperty("user.dir")+"/" + "./template/settings/fvSolution";
+
+        ProjectFileUtils.copyFile(locControlDict , project.getPath()+"/"+regionName+"/"+"controlDict" );
+        ProjectFileUtils.copyFile(locFVSchemes, project.getPath()+"/"+regionName+"/"+"fvSchemes" );
+        ProjectFileUtils.copyFile(locFVSolution, project.getPath()+"/"+regionName+"/"+"fvSolution" );
+                    
         return true;
     }
 
@@ -1432,5 +1465,57 @@ public class ProjectUtils
         } catch (TransformerException ex) {
             Exceptions.printStackTrace(ex);
         }        
+    }
+    
+    public static String readFile( String filePath )
+    {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader( new FileReader (filePath));
+            String line = null;
+            StringBuilder stringBuilder = new StringBuilder();
+            String ls = System.getProperty("line.separator");
+            try {
+                while( ( line = reader.readLine() ) != null ) 
+                {
+                    stringBuilder.append( line );
+                    stringBuilder.append( ls );
+                }
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            return stringBuilder.toString();
+        } catch (FileNotFoundException ex) {
+            Exceptions.printStackTrace(ex);
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        return null;
+    }    
+    
+    public static void writeFile(String text, String filePath)
+    {
+        PrintStream out = null;
+        try {
+            out = new PrintStream(new FileOutputStream(filePath));
+            out.print(text);
+        }
+        catch (FileNotFoundException ex) 
+        {
+            Exceptions.printStackTrace(ex);
+        }        
+        finally {
+            if (out != null) out.close();
+        }
+    }
+
+    public static String getRegionType(String rName, FileObject project) 
+    {
+        Element regionElement = ProjectXmlUtils.getRegionElement(rName, project);
+        return regionElement.getAttribute("type");
     }
 }
