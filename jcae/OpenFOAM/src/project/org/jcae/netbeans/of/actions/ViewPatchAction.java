@@ -4,19 +4,15 @@
  */
 package project.org.jcae.netbeans.of.actions;
 
+import java.io.File;
 import javax.swing.JOptionPane;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
+import org.jcae.mesh.xmldata.MeshExporter;
 import org.netbeans.api.project.Project;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
 import org.openide.util.actions.CookieAction;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
-import project.org.jcae.netbeans.of.nodes.PatchesChildren;
-import project.org.jcae.netbeans.of.nodes.RegionChildren;
-import project.org.jcae.netbeans.of.nodes.SubRegionNode;
-import project.org.jcae.netbeans.of.project.ProjectUtils;
+import project.org.jcae.netbeans.of.project.BrepToSTL;
 
 /**
  *
@@ -45,6 +41,12 @@ public class ViewPatchAction extends CookieAction
 
         // View code
         JOptionPane.showMessageDialog(null, "Viewing...");
+        
+        // Sample code to test amibe
+        //BrepToSTL b = new BrepToSTL(new File("/home/mita/Downloads/cdce/sample1/s1/Face1.brep"));
+        //b.performAction();
+        File fo = new File("/home/mita/Downloads/cdce/sample1/s1/Face1");
+        new MeshExporter.STL(fo.getAbsolutePath()).write("/home/mita/Downloads/cdce/sample1/s1/Face1.stl");
         
     }
 

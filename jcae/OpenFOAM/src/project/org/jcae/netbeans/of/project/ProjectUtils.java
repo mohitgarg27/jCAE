@@ -1518,4 +1518,11 @@ public class ProjectUtils
         Element regionElement = ProjectXmlUtils.getRegionElement(rName, project);
         return regionElement.getAttribute("type");
     }
+    
+    public static void brepToSTL(FileObject fo)
+    {
+        File f = FileUtil.toFile(fo);
+        
+        
+    }
 }
