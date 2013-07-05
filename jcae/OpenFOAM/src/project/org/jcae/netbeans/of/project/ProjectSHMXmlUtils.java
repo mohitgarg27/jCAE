@@ -23,6 +23,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -74,6 +75,16 @@ public class ProjectSHMXmlUtils
                 if(name.equalsIgnoreCase("STL"))
                 {
                     tmp.setAttribute("name", subRegionName+".stl");
+                    
+                    NodeList propertyList= ((Element)tmp).getElementsByTagName("Property");
+                    for(int j = 0; j<propertyList.getLength(); j++)
+                    {
+                        Element tmp1 = (Element) propertyList.item(j);
+                        if(tmp1.getAttribute("id").equalsIgnoreCase("subRegionName"))
+                        {
+                            tmp1.setAttribute("val", subRegionName);
+                        }
+                    }
                     break;
                 }
             }            
@@ -147,10 +158,32 @@ public class ProjectSHMXmlUtils
                 {
                     
                     propEl.setAttribute("file", subRegionName+".eMesh");
+                    propEl.setAttribute("val", subRegionName+".eMesh");
                     break;
                 }
             }
-                    
+
+            Element refSurf = null;
+            for(int i=0; i<propertiesList.getLength();i++)
+            {
+                Element tmp = (Element) propertiesList.item(i);
+                String name = tmp.getAttribute("id");
+                if(name.equalsIgnoreCase("refinementSurfaces"))
+                {
+                    refSurf = tmp;
+                    NodeList nl = refSurf.getElementsByTagName("Properties");
+                    for(int j=0; j<nl.getLength();j++)
+                    {
+                        Element prEl = (Element) nl.item(j);
+                        if(prEl.getAttribute("name").equalsIgnoreCase(""))
+                        {
+                            prEl.setAttribute("name", subRegionName);
+                        }                                        
+                    }
+                    break;
+                }
+            }            
+            
             patchEle = null;
             for(int i=0; i<propertiesList.getLength();i++)
             {

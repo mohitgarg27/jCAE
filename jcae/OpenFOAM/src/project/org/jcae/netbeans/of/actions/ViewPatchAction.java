@@ -13,6 +13,7 @@ import org.openide.util.HelpCtx;
 import org.openide.util.actions.CookieAction;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
 import project.org.jcae.netbeans.of.project.BrepToSTL;
+import project.org.jcae.netbeans.of.project.ProjectUtils;
 
 /**
  *
@@ -45,9 +46,14 @@ public class ViewPatchAction extends CookieAction
         // Sample code to test amibe
         //BrepToSTL b = new BrepToSTL(new File("/home/mita/Downloads/cdce/sample1/s1/Face1.brep"));
         //b.performAction();
-        File fo = new File("/home/mita/Downloads/cdce/sample1/s1/Face1");
-        new MeshExporter.STL(fo.getAbsolutePath()).write("/home/mita/Downloads/cdce/sample1/s1/Face1.stl");
+        //File fo = new File("/home/mita/Downloads/cdce/sample1/s1/Face1");
+        //new MeshExporter.STL(fo.getAbsolutePath()).write("/home/mita/Downloads/cdce/sample1/s1/Face1.stl");
         
+        String s = ProjectUtils.createDict(pNode.getsName(), pNode.getrName(), project.getProjectDirectory());
+        System.out.println(s);
+        
+        s = ProjectUtils.createBlockMeshDict(pNode.getsName(), pNode.getrName(), project.getProjectDirectory());
+        System.out.println(s);
     }
 
     @Override

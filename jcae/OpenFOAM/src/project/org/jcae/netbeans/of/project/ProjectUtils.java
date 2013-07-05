@@ -29,6 +29,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.openide.filesystems.FileLock;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import project.org.jcae.netbeans.of.actions.BGBlockPanel;
 import project.org.jcae.netbeans.of.api.Function;
@@ -1525,4 +1526,187 @@ public class ProjectUtils
         
         
     }
+
+    // Create SnappyHexMeshDict for the specified subRegion
+    public static String createDict(String sName, String rName, FileObject projectDirectory) 
+    {
+        Element subRegElement = ProjectXmlUtils.getSubRegionElement(rName, sName, projectDirectory);
+        Element shmEle = null;
+        NodeList nl = subRegElement.getElementsByTagName("SHM");
+        if(nl.getLength()!=0)
+            shmEle = (Element) nl.item(0);
+                
+        //return processDictElement(shmEle);
+        return processDictElement(nl.item(0), -1);
+    }
+    
+    private static String processDictElement(Node el, int tabLevel)
+    {
+        String tabStr = "\t";
+        String s = "";
+        String eleName = el.getNodeName();
+        
+        if(eleName.equalsIgnoreCase("Properties"))
+        {   
+            NamedNodeMap nn = el.getAttributes();
+            Node name = nn.getNamedItem("name");
+            if(name == null)
+                name = nn.getNamedItem("id");
+            
+            //s = s + repeat(tabStr, tabLevel);            
+            s = s + "\n" + repeat(tabStr, tabLevel) + name.getNodeValue() +"\n" +repeat(tabStr, tabLevel) + "{";
+        }
+
+        if(eleName.equalsIgnoreCase("Property"))
+        {   
+            NamedNodeMap nn = el.getAttributes();
+            Node name = nn.getNamedItem("name");
+            if(name == null)
+                name = nn.getNamedItem("id");
+            
+            Node val = nn.getNamedItem("val");
+            
+            s = s + "\n" + repeat(tabStr, tabLevel) + name.getNodeValue() + "\t" + val.getNodeValue() + ";";
+        }
+
+        if(eleName.equalsIgnoreCase("Function"))
+        {   
+            NamedNodeMap nn = el.getAttributes();
+            Node name = nn.getNamedItem("name");
+            if(name == null)
+                name = nn.getNamedItem("id");
+
+            s = s + "\n"+ repeat(tabStr, tabLevel) + name.getNodeValue() + "\n" +repeat(tabStr, tabLevel) + "(";
+        }
+        
+        NodeList nl = el.getChildNodes();
+        int len = nl.getLength();
+
+        for(int i=0; i<nl.getLength(); i++)
+        {
+            Node n = nl.item(i);
+            System.out.println(ProjectXmlUtils.nodeToString(n));
+            System.out.println("________________________________________________");
+            
+            s = s + processDictElement(nl.item(i), tabLevel+1);                           
+        }
+            
+        if(eleName.equalsIgnoreCase("Properties"))
+        {   
+            s = s +"\n"+ repeat(tabStr, tabLevel) + "}";
+        }
+        if(eleName.equalsIgnoreCase("Function"))
+        {   
+            s = s +"\n"+repeat(tabStr, tabLevel)+");";
+        }
+
+        return s;
+    }
+    
+    // Create SnappyHexMeshDict for the specified subRegion
+    public static String createBlockMeshDict(String sName, String rName, FileObject projectDirectory) 
+    {
+        try {
+            Element BgElement = ProjectXmlUtils.getBGBlockElement(rName, sName, projectDirectory);
+//            Element shmEle = null;
+//            NodeList nl = BgElement.getElementsByTagName("SHM");
+//            if(nl.getLength()!=0)
+//                shmEle = (Element) nl.item(0);
+//                    
+            //return processDictElement(shmEle);
+            return processBlockMeshDictElement(BgElement, -1);
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+            return null;
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+            return null;
+        }
+        
+    }
+    
+    private static String processBlockMeshDictElement(Node el, int tabLevel)
+    {
+        String tabStr = "\t";
+        String s = "";
+        String eleName = el.getNodeName();
+        
+        if(eleName.equalsIgnoreCase("Properties"))
+        {   
+            NamedNodeMap nn = el.getAttributes();
+            Node name = nn.getNamedItem("name");
+            if(name == null)
+                name = nn.getNamedItem("id");
+            if(name == null)
+                name = nn.getNamedItem("key");
+            
+            //s = s + repeat(tabStr, tabLevel);            
+            s = s + "\n" + repeat(tabStr, tabLevel) + name.getNodeValue() +"\n" +repeat(tabStr, tabLevel) + "{";
+        }
+
+        if(eleName.equalsIgnoreCase("Property"))
+        {   
+            NamedNodeMap nn = el.getAttributes();
+            Node name = nn.getNamedItem("name");
+            if(name == null)
+                name = nn.getNamedItem("id");
+            if(name == null)
+                name = nn.getNamedItem("key");
+                        
+            Node val = nn.getNamedItem("val");
+            
+            s = s + "\n" + repeat(tabStr, tabLevel) + name.getNodeValue() + "\t" + val.getNodeValue() + ";";
+        }
+
+        if(eleName.equalsIgnoreCase("Function"))
+        {   
+            NamedNodeMap nn = el.getAttributes();
+            Node name = nn.getNamedItem("name");
+            if(name == null)
+                name = nn.getNamedItem("id");
+            if(name == null)
+                name = nn.getNamedItem("key");
+
+            s = s + "\n"+ repeat(tabStr, tabLevel) + name.getNodeValue() + "\n" +repeat(tabStr, tabLevel) + "(";
+        }
+        
+        NodeList nl = el.getChildNodes();
+        int len = nl.getLength();
+
+        for(int i=0; i<nl.getLength(); i++)
+        {
+            Node n = nl.item(i);
+            System.out.println(ProjectXmlUtils.nodeToString(n));
+            System.out.println("________________________________________________");
+            
+            s = s + processBlockMeshDictElement(nl.item(i), tabLevel+1);                           
+        }
+            
+        if(eleName.equalsIgnoreCase("Properties"))
+        {   
+            s = s +"\n"+ repeat(tabStr, tabLevel) + "}";
+        }
+        if(eleName.equalsIgnoreCase("Function"))
+        {   
+            s = s +"\n"+repeat(tabStr, tabLevel)+");";
+        }
+
+        return s;
+    }    
+    
+//    public static String createBlocMesgDict()
+//    {
+//        
+//    }
+    
+    public static String repeat(String s, int n) {
+        if(s == null) {
+            return null;
+        }
+        final StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < n; i++) {
+            sb.append(s);
+        }
+        return sb.toString();
+    }    
 }
