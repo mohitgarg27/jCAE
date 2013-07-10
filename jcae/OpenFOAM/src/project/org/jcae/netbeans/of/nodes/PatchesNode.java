@@ -98,7 +98,7 @@ public class PatchesNode extends AbstractNode {
                         if(n.getName().toLowerCase().startsWith("face"))
                         {
                             ProjectUtils.addPatchElement(n.getName(), sName, rName, project.getProjectDirectory());
-                            n.saveImpl(project.getProjectDirectory().getPath()+"/"+rName+"/"+sName+"/"+n.getName());
+                            n.saveImpl(project.getProjectDirectory().getPath()+"/"+rName+"/"+sName+"/"+n.getName()+".brep");
                             PatchesChildren pChild = getLookup().lookup(PatchesChildren.class);
                             Collection<Node> nColl = new ArrayList<Node>();
                             nColl.add(new PatchNode(n.getName(), sName, rName, project));

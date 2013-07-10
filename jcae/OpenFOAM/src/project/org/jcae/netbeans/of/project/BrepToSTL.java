@@ -23,18 +23,20 @@ package project.org.jcae.netbeans.of.project;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
+import org.jcae.mesh.xmldata.MeshExporter;
 import org.jcae.netbeans.options.OptionNode;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.modules.InstalledFileLocator;
-import org.openide.nodes.Node;
 import org.openide.util.Cancellable;
 import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
@@ -141,50 +143,79 @@ public class BrepToSTL
             }
         }
     }
-
-	protected String getClassPath()
-	{
-		return InstalledFileLocator.getDefault().locate(
-			"modules/ext/amibe.jar", "org.jcae.netbeans", false).getPath();
-	}
-	
-	private void runInOtherVM(List<String> args, File pyFile, InputOutput io)
-		throws IOException
-	{
-		ProcessBuilder pb = new ProcessBuilder();
-		String ext = Utilities.isWindows() ? ".bat" : "";
-		File f = InstalledFileLocator.getDefault().locate(
-				"modules/jython/bin/jython" + ext, "org.jcae.netbeans.mesh", false);
-		pb.command().add(f.getPath());
-		for (String s:OptionNode.getJVMOptions()) {
-			if (s.startsWith("-") && !s.startsWith("-D")) {
-				s = "-J" + s;
-			}
-			pb.command().add(s);
-		}
-		String home = System.getProperty("netbeans.user");
-		File dir = new File(new File(new File(new File(home), "var"), "cache"), "jython");
-		pb.command().add("-Dpython.cachedir="+dir.getPath());
-		pb.environment().put("CLASSPATH", getClassPath());
-		pb.command().add(pyFile.getPath());
-		pb.command().addAll(args);
-		pb.environment().put("JAVA_HOME", System.getProperty("java.home"));		
-		runProcess(pb, io);
-	}
+    
+    public void generateSTL()
+    {
+        String fPath = fo.getAbsolutePath().substring(0,fo.getAbsolutePath().lastIndexOf("."));
+        File f = new File(fPath);
+        String stlPath = fo.getAbsolutePath().substring(0,fo.getAbsolutePath().lastIndexOf("."))+".stl";
+        new MeshExporter.STL(f.getAbsolutePath()).write(stlPath);
         
-	protected List<String> getArguments() 
-        {
-            
-            String parLoc = fo.getAbsolutePath().substring(0,fo.getAbsolutePath().lastIndexOf(".")); 
-            File amibeDir = new File(parLoc);
-            amibeDir.mkdir();
-            
-            ArrayList<String> l = new ArrayList<String>();
-            l.add(fo.getAbsolutePath());
-            l.add(amibeDir.getAbsolutePath());
-            l.add(Double.toString(1.0));
-            l.add(Double.toString(0.0));
-            return l;
-        }
+        // Put the name of the solid in the generated STL file
+        //File stlFile = new File( fo.getAbsolutePath().lastIndexOf(".")+".stl");
+        
+//        try 
+//        {
+//            RandomAccessFile raf = new RandomAccessFile(fo.getAbsolutePath().lastIndexOf(".")+".stl", "rw");
+//            raf.seek(0);
+//            String fLine = raf.readLine().trim();
+//            if(fLine.startsWith("solid"))
+//            {
+//                
+//            }
+//        } 
+//        catch (FileNotFoundException ex) 
+//        {
+//            Exceptions.printStackTrace(ex);
+//        } catch (IOException ex) {
+//            Exceptions.printStackTrace(ex);
+//        }
+        
+    }
+
+    protected String getClassPath()
+    {
+            return InstalledFileLocator.getDefault().locate(
+                    "modules/ext/amibe.jar", "org.jcae.netbeans", false).getPath();
+    }
+	
+    private void runInOtherVM(List<String> args, File pyFile, InputOutput io)
+            throws IOException
+    {
+            ProcessBuilder pb = new ProcessBuilder();
+            String ext = Utilities.isWindows() ? ".bat" : "";
+            File f = InstalledFileLocator.getDefault().locate(
+                            "modules/jython/bin/jython" + ext, "org.jcae.netbeans.mesh", false);
+            pb.command().add(f.getPath());
+            for (String s:OptionNode.getJVMOptions()) {
+                    if (s.startsWith("-") && !s.startsWith("-D")) {
+                            s = "-J" + s;
+                    }
+                    pb.command().add(s);
+            }
+            String home = System.getProperty("netbeans.user");
+            File dir = new File(new File(new File(new File(home), "var"), "cache"), "jython");
+            pb.command().add("-Dpython.cachedir="+dir.getPath());
+            pb.environment().put("CLASSPATH", getClassPath());
+            pb.command().add(pyFile.getPath());
+            pb.command().addAll(args);
+            pb.environment().put("JAVA_HOME", System.getProperty("java.home"));		
+            runProcess(pb, io);
+    }
+
+    protected List<String> getArguments() 
+    {
+
+        String parLoc = fo.getAbsolutePath().substring(0,fo.getAbsolutePath().lastIndexOf(".")); 
+        File amibeDir = new File(parLoc);
+        amibeDir.mkdir();
+
+        ArrayList<String> l = new ArrayList<String>();
+        l.add(fo.getAbsolutePath());
+        l.add(amibeDir.getAbsolutePath());
+        l.add(Double.toString(1.0));
+        l.add(Double.toString(0.0));
+        return l;
+    }
 
 }

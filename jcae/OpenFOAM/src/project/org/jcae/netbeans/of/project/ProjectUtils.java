@@ -5,10 +5,12 @@
 package project.org.jcae.netbeans.of.project;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.netbeans.api.annotations.common.StaticResource;
+import org.netbeans.spi.project.ui.support.FileSensitiveActions;
 import org.openide.filesystems.FileLock;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -376,6 +379,9 @@ public class ProjectUtils
         transformer.transform(source, result);
 
         ProjectFileUtils.makeDir(project.getPath()+"/"+regionName);
+        File constFile = new File(project.getPath()+"/"+regionName+"/constant/");
+        constFile.mkdir();
+        
         // Copy constant settings files in region based on type
         if(regionType.equalsIgnoreCase("fluid"))
         {
@@ -385,26 +391,29 @@ public class ProjectUtils
             String locTransport = System.getProperty("user.dir")+"/" + "./template/settings/transportProperties";
             String locTurbulence = System.getProperty("user.dir")+"/" + "./template/settings/turbulenceProperties";            
 
-            ProjectFileUtils.copyFile(locRAS, project.getPath()+"/"+regionName+"/"+"RASProperties" );
-            ProjectFileUtils.copyFile(locG, project.getPath()+"/"+regionName+"/"+"g" );
-            ProjectFileUtils.copyFile(locRadiation, project.getPath()+"/"+regionName+"/"+"radiationProperties" );
-            ProjectFileUtils.copyFile(locTransport, project.getPath()+"/"+regionName+"/"+"transportProperties" );
-            ProjectFileUtils.copyFile(locTurbulence, project.getPath()+"/"+regionName+"/"+"turbulenceProperties" );            
+            ProjectFileUtils.copyFile(locRAS, project.getPath()+"/"+regionName+"/constant/"+"RASProperties" );
+            ProjectFileUtils.copyFile(locG, project.getPath()+"/"+regionName+"/constant/"+"g" );
+            ProjectFileUtils.copyFile(locRadiation, project.getPath()+"/"+regionName+"/constant/"+"radiationProperties" );
+            ProjectFileUtils.copyFile(locTransport, project.getPath()+"/"+regionName+"/constant/"+"transportProperties" );
+            ProjectFileUtils.copyFile(locTurbulence, project.getPath()+"/"+regionName+"/constant/"+"turbulenceProperties" );            
         }
         else if(regionType.equalsIgnoreCase("solid"))
         {
             String locThermal = System.getProperty("user.dir")+"/" + "./template/settings/thermalProperties";
-
-            ProjectFileUtils.copyFile(locThermal, project.getPath()+"/"+regionName+"/"+"thermalProperties" );                        
+            ProjectFileUtils.copyFile(locThermal, project.getPath()+"/"+regionName+"/constant/"+"thermalProperties" );                        
         }
             
         String locControlDict = System.getProperty("user.dir")+"/" + "./template/settings/controlDict";
         String locFVSchemes = System.getProperty("user.dir")+"/" + "./template/settings/fvSchemes";
         String locFVSolution = System.getProperty("user.dir")+"/" + "./template/settings/fvSolution";
 
-        ProjectFileUtils.copyFile(locControlDict , project.getPath()+"/"+regionName+"/"+"controlDict" );
-        ProjectFileUtils.copyFile(locFVSchemes, project.getPath()+"/"+regionName+"/"+"fvSchemes" );
-        ProjectFileUtils.copyFile(locFVSolution, project.getPath()+"/"+regionName+"/"+"fvSolution" );
+        
+        File sysFile = new File(project.getPath()+"/"+regionName+"/system/");
+        sysFile.mkdir();
+        
+        ProjectFileUtils.copyFile(locControlDict , project.getPath()+"/"+regionName+"/system/"+"controlDict" );
+        ProjectFileUtils.copyFile(locFVSchemes, project.getPath()+"/"+regionName+"/system/"+"fvSchemes" );
+        ProjectFileUtils.copyFile(locFVSolution, project.getPath()+"/"+regionName+"/system/"+"fvSolution" );
                     
         return true;
     }
@@ -445,7 +454,7 @@ public class ProjectUtils
 
         Element thePatch = (Element) pName.item(0);
         thePatch.setAttribute("name", patchName);
-        thePatch.setAttribute("brepLocation", project.getPath()+"/"+regionName+"/"+subRegionName+"/"+patchName);
+        thePatch.setAttribute("brepLocation", project.getPath()+"/"+regionName+"/"+subRegionName+"/"+patchName+".brep");
                 
         Element subRegionElement = ProjectXmlUtils.getSubRegionElement(regionName, subRegionName, project);
         
@@ -1497,22 +1506,6 @@ public class ProjectUtils
         }
         return null;
     }    
-    
-    public static void writeFile(String text, String filePath)
-    {
-        PrintStream out = null;
-        try {
-            out = new PrintStream(new FileOutputStream(filePath));
-            out.print(text);
-        }
-        catch (FileNotFoundException ex) 
-        {
-            Exceptions.printStackTrace(ex);
-        }        
-        finally {
-            if (out != null) out.close();
-        }
-    }
 
     public static String getRegionType(String rName, FileObject project) 
     {
@@ -1522,13 +1515,11 @@ public class ProjectUtils
     
     public static void brepToSTL(FileObject fo)
     {
-        File f = FileUtil.toFile(fo);
-        
-        
+        File f = FileUtil.toFile(fo);        
     }
 
     // Create SnappyHexMeshDict for the specified subRegion
-    public static String createDict(String sName, String rName, FileObject projectDirectory) 
+    public static String createDict(String sName, String rName, FileObject projectDirectory, String stage) 
     {
         Element subRegElement = ProjectXmlUtils.getSubRegionElement(rName, sName, projectDirectory);
         Element shmEle = null;
@@ -1537,10 +1528,10 @@ public class ProjectUtils
             shmEle = (Element) nl.item(0);
                 
         //return processDictElement(shmEle);
-        return processDictElement(nl.item(0), -1);
+        return processDictElement(nl.item(0), -1, stage);
     }
     
-    private static String processDictElement(Node el, int tabLevel)
+    private static String processDictElement(Node el, int tabLevel, String stage)
     {
         String tabStr = "\t";
         String s = "";
@@ -1552,6 +1543,12 @@ public class ProjectUtils
             Node name = nn.getNamedItem("name");
             if(name == null)
                 name = nn.getNamedItem("id");
+            
+            if(name.getNodeValue().equalsIgnoreCase("meshQualityControls"))
+            {
+                s = s + handleSHMQualityControl(el, tabLevel, stage);
+                return s;
+            }
             
             //s = s + repeat(tabStr, tabLevel);            
             s = s + "\n" + repeat(tabStr, tabLevel) + name.getNodeValue() +"\n" +repeat(tabStr, tabLevel) + "{";
@@ -1585,10 +1582,9 @@ public class ProjectUtils
         for(int i=0; i<nl.getLength(); i++)
         {
             Node n = nl.item(i);
-            System.out.println(ProjectXmlUtils.nodeToString(n));
-            System.out.println("________________________________________________");
-            
-            s = s + processDictElement(nl.item(i), tabLevel+1);                           
+//            System.out.println(ProjectXmlUtils.nodeToString(n));
+//            System.out.println("________________________________________________");            
+            s = s + processDictElement(nl.item(i), tabLevel+1, stage);                           
         }
             
         if(eleName.equalsIgnoreCase("Properties"))
@@ -1608,13 +1604,9 @@ public class ProjectUtils
     {
         try {
             Element BgElement = ProjectXmlUtils.getBGBlockElement(rName, sName, projectDirectory);
-//            Element shmEle = null;
-//            NodeList nl = BgElement.getElementsByTagName("SHM");
-//            if(nl.getLength()!=0)
-//                shmEle = (Element) nl.item(0);
-//                    
-            //return processDictElement(shmEle);
-            return processBlockMeshDictElement(BgElement, -1);
+
+            String parentNode = BgElement.getTagName();
+            return processBlockMeshDictElement(BgElement, -1, parentNode);
         } catch (TransformerConfigurationException ex) {
             Exceptions.printStackTrace(ex);
             return null;
@@ -1625,7 +1617,7 @@ public class ProjectUtils
         
     }
     
-    private static String processBlockMeshDictElement(Node el, int tabLevel)
+    private static String processBlockMeshDictElement(Node el, int tabLevel, String parentTagName)
     {
         String tabStr = "\t";
         String s = "";
@@ -1666,21 +1658,30 @@ public class ProjectUtils
                 name = nn.getNamedItem("id");
             if(name == null)
                 name = nn.getNamedItem("key");
+            
+            Node prefix = nn.getNamedItem("prefix");
+            
+            if( parentTagName.equalsIgnoreCase("Function") ) 
+            {
+                s = s + "\n " + ((prefix == null)?"":prefix.getNodeValue()) +name.getNodeValue() + " ( ";
+            }
+            else
+                s = s + "\n"+ repeat(tabStr, tabLevel) + ((prefix == null)?"":prefix.getNodeValue()) + name.getNodeValue() + "\n" +repeat(tabStr, tabLevel) + "(";
+        }
 
-            s = s + "\n"+ repeat(tabStr, tabLevel) + name.getNodeValue() + "\n" +repeat(tabStr, tabLevel) + "(";
+        if(eleName.equalsIgnoreCase("Param"))
+        {   
+            NamedNodeMap nn = el.getAttributes();
+            Node val = nn.getNamedItem("val");
+
+            s = s + " " + val.getNodeValue() + " ";
         }
         
         NodeList nl = el.getChildNodes();
         int len = nl.getLength();
 
         for(int i=0; i<nl.getLength(); i++)
-        {
-            Node n = nl.item(i);
-            System.out.println(ProjectXmlUtils.nodeToString(n));
-            System.out.println("________________________________________________");
-            
-            s = s + processBlockMeshDictElement(nl.item(i), tabLevel+1);                           
-        }
+            s = s + processBlockMeshDictElement(nl.item(i), tabLevel+1, eleName);
             
         if(eleName.equalsIgnoreCase("Properties"))
         {   
@@ -1688,17 +1689,26 @@ public class ProjectUtils
         }
         if(eleName.equalsIgnoreCase("Function"))
         {   
-            s = s +"\n"+repeat(tabStr, tabLevel)+");";
+            NamedNodeMap nn = el.getAttributes();
+            Node name = nn.getNamedItem("name");
+            if(name == null)
+                name = nn.getNamedItem("id");
+            if(name == null)
+                name = nn.getNamedItem("key");
+            
+            if( parentTagName.equalsIgnoreCase("Function") ) 
+            {
+                s = s +")";
+            }
+            else
+            {                
+                s = s +"\n"+repeat(tabStr, tabLevel)+");";
+            }
         }
 
         return s;
     }    
-    
-//    public static String createBlocMesgDict()
-//    {
-//        
-//    }
-    
+        
     public static String repeat(String s, int n) {
         if(s == null) {
             return null;
@@ -1708,5 +1718,195 @@ public class ProjectUtils
             sb.append(s);
         }
         return sb.toString();
+    }    
+
+    private static String handleSHMQualityControl(Node el, int tabLevel, String stage) 
+    {
+        String tabStr = "\t";
+        String s = "";
+        String eleName = el.getNodeName();
+        
+        NodeList nl = el.getChildNodes();
+        System.out.println(ProjectXmlUtils.nodeToString(el));
+        
+        for(int i=0; i<nl.getLength(); i++)
+        {
+            Node n = nl.item(i);
+            
+            if(n.getNodeName().equalsIgnoreCase("Properties"))
+            {   
+                
+                System.out.println(ProjectXmlUtils.nodeToString(nl.item(i)));
+                NamedNodeMap nn = n.getAttributes();
+                Node id = nn.getNamedItem("id");
+
+                if(id.getNodeValue().equalsIgnoreCase(stage))
+                {
+                    s = s + "\n" + repeat(tabStr, tabLevel) + "meshQualityControls" +"\n" +repeat(tabStr, tabLevel) + "{";
+                    NodeList nl1 = nl.item(i).getChildNodes();                    
+                    for(int j=0;j<nl1.getLength(); j++)
+                    {
+                        s = s + processDictElement(nl1.item(j), tabLevel+1, stage);
+                    }
+                    s = s +"\n"+ repeat(tabStr, tabLevel) + "}";
+                }
+            }           
+        }
+        return s;
+    }
+    
+    public static void generateSTLsInSubregion(String subRegion, String region, FileObject project)
+    {
+        Element theSubRegion = ProjectXmlUtils.getSubRegionElement(region, subRegion, project);
+        
+        if(theSubRegion!=null)
+        {
+            NodeList srChild = theSubRegion.getChildNodes();
+            if(srChild!=null)
+            {
+                for(int i=0; i<srChild.getLength();i++)
+                {
+                    Node patchNode = srChild.item(i);
+                    if(patchNode.getNodeName().equalsIgnoreCase("Patch"))
+                    {
+                        NamedNodeMap nn = patchNode.getAttributes();
+                        Node name = nn.getNamedItem("name");
+                        if(name!=null)
+                        {
+                            String brepPath = project.getPath()+"/"+region+"/"+subRegion+"/"+name.getNodeValue()+".brep";
+                            BrepToSTL b = new BrepToSTL(new File(brepPath));
+                            b.performAction();
+                            b.generateSTL();
+                        }
+                    }
+                }
+            }
+        }
+        
+        try 
+        {
+            File stlFIle = new File(project.getPath()+"/"+region+"/"+subRegion+"/"+subRegion+".stl");        
+            stlFIle.createNewFile();                    
+            BufferedWriter writer = new BufferedWriter(new FileWriter(stlFIle));
+        
+            File folder = new File(project.getPath()+"/"+region+"/"+subRegion);
+            File[] stls = folder.listFiles();
+            for(int i=0; i<stls.length; i++)
+            {
+                if(stls[i].getName().endsWith(".stl") && !(stls[i].getName().equalsIgnoreCase(stlFIle.getName())))
+                {
+                    BufferedReader reader = new BufferedReader(new FileReader(stls[i]));
+                    
+                    String lineToRemove = "bbb";
+                    String currentLine;
+
+                    while((currentLine = reader.readLine()) != null) 
+                    {
+                        String trimmedLine = currentLine.trim();
+                        if(trimmedLine.startsWith("solid ")) 
+                        {
+                            currentLine = "solid " + stls[i].getName().substring(0, stls[i].getName().indexOf(".") )+ "\n";
+                        }
+                        writer.write(currentLine+"\n");
+                    }
+                    
+                    reader.close();
+                }
+            }
+            writer.close();
+        } 
+        catch (IOException ex) 
+        {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+    
+    /*
+     * Method to setup directories for subregions so that SHM can be run
+     * 1. Generating stl from Breps and merging them
+     * 2. Copying controlDict, fvSchemes, fvSolution and other system settings from region 
+     * 3. Generating BlockMeshDict
+     * 4. Generating SnappyHexMeshDict    
+     * 
+     */
+    public static void generateSHMCases(String shmStage, FileObject project) throws IOException
+    {
+        // Iterate over all regions and subregions within
+        
+        Collection<String> regions = ProjectUtils.getRegions(project);        
+        for(String region: regions)
+        {
+            Collection<String> subRegions = ProjectUtils.getSubRegions(region, project);
+            for(String subRegion: subRegions)
+            {
+                /*create stls
+                * 
+                */
+                ProjectUtils.generateSTLsInSubregion(subRegion, region, project);
+                
+               /* create dir structure 
+                * 1. Create {subRegion}/0 dir
+                * 2. Create {subRegion}/constant/ and copy const settings files
+                * 3. Create {subRegion}/constant/polymesh and create blockMeshDict in it
+                * 4. Create {subRegion}/constant/triSurface and put STL in it
+                * 5. Create {subRegion}/system and put system setting files in it
+                * 6. Create {subRegion}/system/SnappyHexMeshDict
+                * 7. Create {subRegion}/system/decomposeParDict
+                */
+                
+                String regionLoc = project.getPath()+"/"+region;
+                String subRegionLoc = project.getPath()+"/"+region+"/"+subRegion;
+                
+                // 1
+                File dir0 = new File(subRegionLoc+"/"+"0");
+                dir0.mkdir();
+                
+                // 2
+                File constantDir = new File(subRegionLoc+"/"+"constant");
+                constantDir.mkdir();                
+                ProjectFileUtils.copyDir(regionLoc+"/constant", constantDir.getPath());
+                
+//                File regionDir = new File(regionLoc);
+//                for(File f : regionDir.listFiles())
+//                {
+//                    if(f.isFile())
+//                    {
+//                        String destPath = constantDir.getAbsolutePath()+"/"+f.getName();
+//                        ProjectFileUtils.copyFile(f.getAbsolutePath(), destPath);
+//                    }
+//                }
+                
+                // 3
+                File polymeshDir = new File(constantDir.getPath()+"/"+"polymesh");
+                polymeshDir.mkdir();
+                
+                File blockMeshDictFile =  new File(polymeshDir.getPath()+"/"+"blockMeshDict");
+                blockMeshDictFile.createNewFile();                
+                ProjectFileUtils.writeFile(ProjectUtils.createBlockMeshDict(subRegion, region, project), blockMeshDictFile.getAbsolutePath());
+                
+                // 4
+                File trisurfaceDir = new File(constantDir.getPath()+"/"+"triSurface");
+                trisurfaceDir.mkdir();
+                String stlFileLoc = subRegionLoc+"/"+subRegion+".stl";
+                String stlFileNewLoc = trisurfaceDir+"/"+subRegion+".stl";
+                ProjectFileUtils.copyFile(stlFileLoc, stlFileNewLoc);
+
+                // 5
+                File systemDir = new File(subRegionLoc+"/"+"system");
+                systemDir.mkdir();                
+                ProjectFileUtils.copyDir(regionLoc+"/system", systemDir.getPath());
+
+                // 6
+                File snappyHexMeshDictFile =  new File(systemDir.getPath()+"/"+"snappyHexMeshDict");
+                snappyHexMeshDictFile.createNewFile();
+                ProjectFileUtils.writeFile(ProjectUtils.createDict(subRegion, region, project, shmStage), snappyHexMeshDictFile.getPath());
+
+                // 7
+                File decomposeParDictFile = new File(systemDir.getPath()+"/decomposeParDict");
+                decomposeParDictFile.createNewFile();
+                String locDPDict= System.getProperty("user.dir")+"/" + "./template/settings/decomposeParDict";
+                ProjectFileUtils.copyFile(locDPDict, decomposeParDictFile.getPath());
+            }
+        }           
     }    
 }

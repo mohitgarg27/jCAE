@@ -5,10 +5,12 @@
 package project.org.jcae.netbeans.of.actions;
 
 import java.io.File;
+import java.io.IOException;
 import javax.swing.JOptionPane;
 import org.jcae.mesh.xmldata.MeshExporter;
 import org.netbeans.api.project.Project;
 import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
 import org.openide.util.actions.CookieAction;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
@@ -41,19 +43,26 @@ public class ViewPatchAction extends CookieAction
         PatchNode pNode = activatedNodes[0].getLookup().lookup(PatchNode.class);        
 
         // View code
-        JOptionPane.showMessageDialog(null, "Viewing...");
-        
-        // Sample code to test amibe
-        //BrepToSTL b = new BrepToSTL(new File("/home/mita/Downloads/cdce/sample1/s1/Face1.brep"));
-        //b.performAction();
-        //File fo = new File("/home/mita/Downloads/cdce/sample1/s1/Face1");
-        //new MeshExporter.STL(fo.getAbsolutePath()).write("/home/mita/Downloads/cdce/sample1/s1/Face1.stl");
-        
-        String s = ProjectUtils.createDict(pNode.getsName(), pNode.getrName(), project.getProjectDirectory());
-        System.out.println(s);
-        
-        s = ProjectUtils.createBlockMeshDict(pNode.getsName(), pNode.getrName(), project.getProjectDirectory());
-        System.out.println(s);
+        //JOptionPane.showMessageDialog(null, "Viewing...");
+        try {
+            // Sample code to test amibe
+            ProjectUtils.generateSHMCases("snap", project.getProjectDirectory());
+            //ProjectUtils.generateSTLsInSubregion(pNode.getsName(), pNode.getrName(), project.getProjectDirectory());
+            //BrepToSTL b = new BrepToSTL(new File("/home/mita/Downloads/cdce/solid/solSub2/Face3.brep"));
+            //BrepToSTL b = new BrepToSTL(new File("/home/mita/Downloads/cdce/sample1/s1/Face1.brep"));
+            //b.performAction();
+            //b.generateSTL();
+            //File fo = new File("/home/mita/Downloads/cdce/sample1/s1/Face1");
+            //new MeshExporter.STL(fo.getAbsolutePath()).write("/home/mita/Downloads/cdce/sample1/s1/Face1.stl");
+            
+            //String s1 = ProjectUtils.createDict(pNode.getsName(), pNode.getrName(), project.getProjectDirectory(), "snap");
+            //System.out.println(s1);
+            //
+            //String s = ProjectUtils.createBlockMeshDict(pNode.getsName(), pNode.getrName(), project.getProjectDirectory());
+            //System.out.println(s);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 
     @Override

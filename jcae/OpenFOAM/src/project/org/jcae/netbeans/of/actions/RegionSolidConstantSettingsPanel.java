@@ -7,6 +7,7 @@ package project.org.jcae.netbeans.of.actions;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import org.openide.filesystems.FileObject;
+import project.org.jcae.netbeans.of.project.ProjectFileUtils;
 import project.org.jcae.netbeans.of.project.ProjectUtils;
 
 /**
@@ -48,7 +49,7 @@ public class RegionSolidConstantSettingsPanel extends javax.swing.JPanel {
     
     public void save()
     {
-        ProjectUtils.writeFile(jTAThermal.getText(), project.getPath() + "/" + regionName + "/" + "thermalProperties" );        
+        ProjectFileUtils.writeFile(jTAThermal.getText(), project.getPath() + "/" + regionName + "/" + "thermalProperties" );        
     }
     
     /**

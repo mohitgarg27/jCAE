@@ -7,6 +7,7 @@ package project.org.jcae.netbeans.of.actions;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import org.openide.filesystems.FileObject;
+import project.org.jcae.netbeans.of.project.ProjectFileUtils;
 import project.org.jcae.netbeans.of.project.ProjectUtils;
 
 /**
@@ -52,11 +53,11 @@ public class RegionFluidConstantSettingsPanel extends javax.swing.JPanel {
     
     public void save()
     {
-        ProjectUtils.writeFile(jTAG.getText(), project.getPath() + "/" + regionName + "/" + "g" );
-        ProjectUtils.writeFile(jTARadiation.getText(), project.getPath() + "/" + regionName + "/" + "radiationProperties" );
-        ProjectUtils.writeFile(jTARas.getText(), project.getPath() + "/" + regionName + "/" + "RASProperties" );
-        ProjectUtils.writeFile(jTATransport.getText(), project.getPath() + "/" + regionName + "/" + "transportProperties" );
-        ProjectUtils.writeFile(jTATurbulence.getText(), project.getPath() + "/" + regionName + "/" + "turbulenceProperties" );
+        ProjectFileUtils.writeFile(jTAG.getText(), project.getPath() + "/" + regionName + "/" + "g" );
+        ProjectFileUtils.writeFile(jTARadiation.getText(), project.getPath() + "/" + regionName + "/" + "radiationProperties" );
+        ProjectFileUtils.writeFile(jTARas.getText(), project.getPath() + "/" + regionName + "/" + "RASProperties" );
+        ProjectFileUtils.writeFile(jTATransport.getText(), project.getPath() + "/" + regionName + "/" + "transportProperties" );
+        ProjectFileUtils.writeFile(jTATurbulence.getText(), project.getPath() + "/" + regionName + "/" + "turbulenceProperties" );
         
     }
 

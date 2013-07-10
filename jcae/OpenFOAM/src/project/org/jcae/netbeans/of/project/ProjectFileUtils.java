@@ -6,9 +6,12 @@ package project.org.jcae.netbeans.of.project;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -160,4 +163,19 @@ public class ProjectFileUtils
         }
     }  
     
+    public static void writeFile(String text, String filePath)
+    {
+        PrintStream out = null;
+        try {
+            out = new PrintStream(new FileOutputStream(filePath));
+            out.print(text);
+        }
+        catch (FileNotFoundException ex) 
+        {
+            Exceptions.printStackTrace(ex);
+        }        
+        finally {
+            if (out != null) out.close();
+        }
+    }    
 }

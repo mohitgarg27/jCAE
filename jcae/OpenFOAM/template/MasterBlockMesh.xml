@@ -10,10 +10,10 @@ and open the template in the editor.
     
     <!--- Used while intantiation of BlockMesh.xml  -->
     <Properties key="FoamFile" editable="false" >
-        <Property key="version" defVal="2.0" val=""/>
-        <Property key="format" defVal="ascii" val=""/>
-        <Property key="class" defVal="dictionary" val=""/>
-        <Property key="object" defVal="blockMeshDict" val=""/>            
+        <Property key="version" val="2.0"/>
+        <Property key="format" val="ascii"/>
+        <Property key="class" val="dictionary"/>
+        <Property key="object" val="blockMeshDict"/>            
     </Properties>  
     
     <Property key="convertToMeters" defVal="1" val="1"/>    
