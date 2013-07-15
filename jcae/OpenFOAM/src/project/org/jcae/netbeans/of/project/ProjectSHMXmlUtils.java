@@ -157,8 +157,8 @@ public class ProjectSHMXmlUtils
                 if(propEl.getAttribute("id").equalsIgnoreCase("featuresFile"))
                 {
                     
-                    propEl.setAttribute("file", subRegionName+".eMesh");
-                    propEl.setAttribute("val", subRegionName+".eMesh");
+                    propEl.setAttribute("file", "\""+ subRegionName+".eMesh\"");
+                    propEl.setAttribute("val", "\""+ subRegionName+".eMesh\"");
                     break;
                 }
             }

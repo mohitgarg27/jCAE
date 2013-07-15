@@ -134,7 +134,7 @@ public class BrepToSTL
             {
                 File pyFile = InstalledFileLocator.getDefault().locate(
                                 "amibe-python/mesh.py",  "org.jcae.netbeans", false);
-                InputOutput io = IOProvider.getDefault().getIO("mesh", true);
+                InputOutput io = IOProvider.getDefault().getIO("Meshing-"+fo.getName(), true);
                 runInOtherVM(args, pyFile, io);
             }
             catch(IOException ex)

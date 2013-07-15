@@ -41,6 +41,7 @@ import project.org.jcae.netbeans.of.api.Property;
 import project.org.jcae.netbeans.of.api.SelectionList;
 import project.org.jcae.netbeans.of.api.ofProp;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
+import project.org.jcae.netbeans.of.process.SHMProcess;
 import static project.org.jcae.netbeans.of.project.ProjectXmlUtils.getSubRegionElement;
 
 /**
@@ -1563,7 +1564,10 @@ public class ProjectUtils
             
             Node val = nn.getNamedItem("val");
             
-            s = s + "\n" + repeat(tabStr, tabLevel) + name.getNodeValue() + "\t" + val.getNodeValue() + ";";
+            if(name.getNodeValue().equalsIgnoreCase(stage))
+                s = s + "\n" + repeat(tabStr, tabLevel) + name.getNodeValue() + "\t" + "true" + ";";            
+            else
+                s = s + "\n" + repeat(tabStr, tabLevel) + name.getNodeValue() + "\t" + val.getNodeValue() + ";";
         }
 
         if(eleName.equalsIgnoreCase("Function"))
@@ -1829,7 +1833,7 @@ public class ProjectUtils
      * 4. Generating SnappyHexMeshDict    
      * 
      */
-    public static void generateSHMCases(String shmStage, FileObject project) throws IOException
+    public static void generateSHMCases(FileObject project) throws IOException
     {
         // Iterate over all regions and subregions within
         
@@ -1866,18 +1870,8 @@ public class ProjectUtils
                 constantDir.mkdir();                
                 ProjectFileUtils.copyDir(regionLoc+"/constant", constantDir.getPath());
                 
-//                File regionDir = new File(regionLoc);
-//                for(File f : regionDir.listFiles())
-//                {
-//                    if(f.isFile())
-//                    {
-//                        String destPath = constantDir.getAbsolutePath()+"/"+f.getName();
-//                        ProjectFileUtils.copyFile(f.getAbsolutePath(), destPath);
-//                    }
-//                }
-                
                 // 3
-                File polymeshDir = new File(constantDir.getPath()+"/"+"polymesh");
+                File polymeshDir = new File(constantDir.getPath()+"/"+"polyMesh");
                 polymeshDir.mkdir();
                 
                 File blockMeshDictFile =  new File(polymeshDir.getPath()+"/"+"blockMeshDict");
@@ -1899,14 +1893,29 @@ public class ProjectUtils
                 // 6
                 File snappyHexMeshDictFile =  new File(systemDir.getPath()+"/"+"snappyHexMeshDict");
                 snappyHexMeshDictFile.createNewFile();
-                ProjectFileUtils.writeFile(ProjectUtils.createDict(subRegion, region, project, shmStage), snappyHexMeshDictFile.getPath());
+                ProjectFileUtils.writeFile(ProjectUtils.createDict(subRegion, region, project, "castellatedMesh"), snappyHexMeshDictFile.getPath());
 
                 // 7
                 File decomposeParDictFile = new File(systemDir.getPath()+"/decomposeParDict");
                 decomposeParDictFile.createNewFile();
                 String locDPDict= System.getProperty("user.dir")+"/" + "./template/settings/decomposeParDict";
                 ProjectFileUtils.copyFile(locDPDict, decomposeParDictFile.getPath());
+                
+                performSHMMeshing(subRegion, region, project);
             }
         }           
     }    
+    
+    private static void performSHMMeshing(String sName, String rName, FileObject project)
+    {
+        SHMProcess proc = new SHMProcess(null, sName, rName, project);
+        proc.performAction();
+    }
+    
+    public static void updateSHMDictWithNewStage(String sName, String rName, FileObject projectDirectory, String stage)
+    {
+        File systemDir = new File(projectDirectory.getPath()+"/"+rName+"/"+sName+"/"+"system");
+        File snappyHexMeshDictFile =  new File(systemDir.getPath()+"/"+"snappyHexMeshDict");
+        ProjectFileUtils.writeFile(ProjectUtils.createDict(sName, rName, projectDirectory, stage), snappyHexMeshDictFile.getPath());
+    }
 }

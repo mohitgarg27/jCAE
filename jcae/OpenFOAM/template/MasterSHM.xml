@@ -63,11 +63,11 @@ and open the template in the editor.
         
         <Properties name="refinementSurfaces"  id="refinementSurfaces">        
             <Properties name=""  >     
-                    <Property name="level"  val="(2,3)"/>
+                    <Property name="level"  val="(2 3)"/>
                     <Properties name="regions"  id="surfaceRegion">  
                         <!--Repeatable-->
                         <Properties name=""  id="RefinedPatch" >  
-                            <Property name="level"  val="(0,0)"/>
+                            <Property name="level"  val="(0 0)"/>
                         </Properties>
                     </Properties>
             </Properties>
@@ -81,7 +81,7 @@ and open the template in the editor.
             </Properties> 
         </Properties> 
          
-        <Property name="locationInMesh"  val="(0,0,0)" id="locationInMesh"/>
+        <Property name="locationInMesh"  val="(0 0 0)" id="locationInMesh"/>
         
     </Properties>
          
