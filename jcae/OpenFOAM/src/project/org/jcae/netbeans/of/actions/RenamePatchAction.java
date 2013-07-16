@@ -45,14 +45,17 @@ public class RenamePatchAction extends CookieAction
         PatchesChildren pcNode = activatedNodes[0].getParentNode().getLookup().lookup(PatchesChildren.class);
         
         String s = (String)JOptionPane.showInputDialog( null, "Rename","Rename Patch", JOptionPane.PLAIN_MESSAGE, null, null, pNode.getpName());
-                
-        try {
-            ProjectUtils.updatePatchElement(s, pNode.getpName(), pNode.getsName(), pNode.getrName(), project.getProjectDirectory());
-            pcNode.renameChildren(pNode, s);
-        } catch (TransformerConfigurationException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (TransformerException ex) {
-            Exceptions.printStackTrace(ex);
+
+        if(!s.equalsIgnoreCase(pNode.getpName()))
+        {
+            try {
+                ProjectUtils.updatePatchElement(s, pNode.getpName(), pNode.getsName(), pNode.getrName(), project.getProjectDirectory());
+                pcNode.renameChildren(pNode, s);
+            } catch (TransformerConfigurationException ex) {
+                Exceptions.printStackTrace(ex);
+            } catch (TransformerException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
     }
 
