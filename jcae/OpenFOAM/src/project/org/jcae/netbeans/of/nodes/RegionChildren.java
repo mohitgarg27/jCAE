@@ -7,10 +7,9 @@ package project.org.jcae.netbeans.of.nodes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.netbeans.api.project.Project;
+import org.openide.filesystems.FileObject;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import project.org.jcae.netbeans.of.project.ProjectUtils;
@@ -41,7 +40,68 @@ public class RegionChildren extends Children.Array  {
         this.nodes = set;
         refresh();
     }
+      
+    public void moveUp(Node node, String rName, FileObject project)
+    {        
+        Collection<Node> set = new ArrayList<Node>();
+        for(Node n:getNodes())
+        {
+            if(n.equals(node) && !set.isEmpty())
+            {
+                Node tmp = null;
+                for(Node ntmp: set)
+                    tmp = ntmp;
+
+                set.remove(tmp);
+                if(tmp instanceof SubRegionNode && n instanceof SubRegionNode)
+                {
+                    ProjectUtils.reorderSubRegionPos(rName, ((SubRegionNode)tmp).getsName(), ((SubRegionNode)n).getsName(), project );
+                }
+                set.add(n);
+                set.add(tmp);
+            }
+            else
+                set.add(n);
+        }
         
+        this.nodes = set;
+        refresh();
+    }
+
+    public void moveDown(Node node, String rName, FileObject project)
+    {        
+        Collection<Node> set = new ArrayList<Node>();
+        boolean flag = false;
+        
+        for(Node n:getNodes())
+        {
+            if(flag)
+            {
+                Node tmp = null;
+                for(Node ntmp: set)
+                    tmp = ntmp;
+
+                set.remove(tmp);
+                set.add(n);
+                set.add(tmp);
+                if(tmp instanceof SubRegionNode && n instanceof SubRegionNode)
+                {
+                    ProjectUtils.reorderSubRegionPos(rName, ((SubRegionNode)tmp).getsName(), ((SubRegionNode)n).getsName(), project );
+                }
+                flag = false;
+            }
+            else
+                set.add(n);
+
+            if(n.equals(node))
+                flag = true;
+        }
+        
+        this.nodes = set;
+        refresh();
+    }
+
+    
     public void removeChildren( Node node)
     {
         

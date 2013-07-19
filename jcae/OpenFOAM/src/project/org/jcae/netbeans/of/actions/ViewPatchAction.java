@@ -42,8 +42,20 @@ public class ViewPatchAction extends CookieAction
         try {
             // Sample code to test amibe
             
-            ProjectUtils.generateSHMCases(project.getProjectDirectory());
-                        
+            if(true)
+            {
+                if(false)
+                {
+                    ProjectUtils.generateSHMCases(project.getProjectDirectory());
+                    ProjectUtils.performMeshMergers(project.getProjectDirectory());
+                    ProjectUtils.performMeshStitches(project.getProjectDirectory());
+                }
+                ProjectUtils.performZoneCreation(project.getProjectDirectory());
+            }
+            //ProjectUtils.performStitches(project.getProjectDirectory());
+            
+            //ProjectUtils.performZoneCreation(project.getProjectDirectory());
+            
             //ProjectUtils.generateSTLsInSubregion(pNode.getsName(), pNode.getrName(), project.getProjectDirectory());
             //BrepToSTL b = new BrepToSTL(new File("/home/mita/Downloads/cdce/solid/solSub2/Face3.brep"));
             //BrepToSTL b = new BrepToSTL(new File("/home/mita/Downloads/cdce/sample1/s1/Face1.brep"));

@@ -116,6 +116,13 @@ public abstract class ExternalProcess
             });
             new Redirector(p.getInputStream(), io.getOut()).start();
             new Redirector(p.getErrorStream(), io.getErr()).start();
+            
+            File logFile = new File(path+"/"+args.get(0)+"-"+name+".log");
+            logFile.createNewFile();
+            PrintWriter logWriter = new PrintWriter(logFile);
+            new Redirector(p.getInputStream(), logWriter).start();
+            new Redirector(p.getErrorStream(), logWriter).start();
+            
             final ProgressHandle ph = ProgressHandleFactory.createHandle(name,
                             new Cancellable() {
                                     @Override
@@ -133,6 +140,7 @@ public abstract class ExternalProcess
                     Exceptions.printStackTrace(ex);
             } finally {
                     ph.finish();
+                    logWriter.close();
             }
     }
 

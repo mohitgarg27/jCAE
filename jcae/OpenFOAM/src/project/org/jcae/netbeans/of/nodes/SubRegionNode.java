@@ -27,6 +27,8 @@ import org.openide.util.datatransfer.ExTransferable;
 import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import project.org.jcae.netbeans.of.actions.MoveDownSubRegionAction;
+import project.org.jcae.netbeans.of.actions.MoveUpSubRegionAction;
 import project.org.jcae.netbeans.of.actions.RemoveSubRegionAction;
 import project.org.jcae.netbeans.of.actions.RenameSubRegionAction;
 import project.org.jcae.netbeans.of.actions.SnappyHexMeshAction;
@@ -80,7 +82,9 @@ public class SubRegionNode extends AbstractNode {
                     //Utilities.actionsForPath("Actions/Project/").get(0), 
                     ((Action) new RemoveSubRegionAction()),
                     ((Action) new RenameSubRegionAction()),
-                    ((Action) new SnappyHexMeshAction())
+                    ((Action) new SnappyHexMeshAction()),
+                    ((Action) new MoveUpSubRegionAction()),
+                    ((Action) new MoveDownSubRegionAction())
                 };
     }     
     

@@ -8,11 +8,9 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.xml.transform.Transformer;
@@ -30,7 +28,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.netbeans.api.annotations.common.StaticResource;
-import org.netbeans.spi.project.ui.support.FileSensitiveActions;
 import org.openide.filesystems.FileLock;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -41,7 +38,10 @@ import project.org.jcae.netbeans.of.api.Property;
 import project.org.jcae.netbeans.of.api.SelectionList;
 import project.org.jcae.netbeans.of.api.ofProp;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
+import project.org.jcae.netbeans.of.process.SHMMergeProcess;
 import project.org.jcae.netbeans.of.process.SHMProcess;
+import project.org.jcae.netbeans.of.process.SHMStitchProcess;
+import project.org.jcae.netbeans.of.process.SHMZoneProcess;
 import static project.org.jcae.netbeans.of.project.ProjectXmlUtils.getSubRegionElement;
 
 /**
@@ -98,9 +98,30 @@ public class ProjectUtils
                 }
             }
         }
-        return sRegions;
-        
+        return sRegions;        
     }
+
+    public static Collection<String> getAllNestedSubRegions(String regionName, FileObject project)
+    {
+        Collection<String>  sRegions = new ArrayList<String>();
+        
+        Element theRegion = ProjectXmlUtils.getRegionElement(regionName, project);
+        
+        if(theRegion!=null)
+        {
+            NodeList srName = theRegion.getElementsByTagName("SubRegion");
+            if(srName!=null)
+            {
+                for(int i=0; i<srName.getLength();i++)
+                {
+                    Element sregion = (Element) srName.item(i);
+                    sRegions.add(sregion.getAttribute("name"));
+                }
+            }
+        }
+        return sRegions;        
+    }
+    
     
     public static Collection<String> getSubRegions(String regionName, String sName, FileObject project) 
     {
@@ -172,13 +193,17 @@ public class ProjectUtils
         
         if(theRegion!=null)
         {
-            NodeList sNames = theRegion.getElementsByTagName("Stitch");
+            NodeList sNames = theRegion.getChildNodes();
             if(sNames!=null)
             {
                 for(int i=0; i<sNames.getLength();i++)
                 {
-                    Element s = (Element) sNames.item(i);
-                     stitches.add(s.getAttribute("name"));
+                    Node s = sNames.item(i);
+                    if(s.getNodeName().equalsIgnoreCase("Stitch"))
+                    {
+                        NamedNodeMap nn = s.getAttributes();
+                        stitches.add(nn.getNamedItem("name").getNodeValue());
+                    }                    
                 }
             }
         }
@@ -193,13 +218,17 @@ public class ProjectUtils
         
         if(theRegion!=null)
         {
-            NodeList pName = theRegion.getElementsByTagName("Patch");
+            NodeList pName = theRegion.getChildNodes();
             if(pName!=null)
             {
                 for(int i=0; i<pName.getLength();i++)
                 {
-                    Element p = (Element) pName.item(i);
-                     patches.add(p.getAttribute("name"));
+                    Node s = pName.item(i);
+                    if(s.getNodeName().equalsIgnoreCase("Patch"))
+                    {
+                        NamedNodeMap nn = s.getAttributes();
+                        patches.add(nn.getNamedItem("name").getNodeValue());
+                    }                    
                 }
             }
         }
@@ -230,13 +259,17 @@ public class ProjectUtils
         
         if(theRegion!=null)
         {
-            NodeList pName = theRegion.getElementsByTagName("BGPatch");
+            NodeList pName = theRegion.getChildNodes();
             if(pName!=null)
             {
                 for(int i=0; i<pName.getLength();i++)
                 {
-                    Element p = (Element) pName.item(i);
-                     bgPatches.add(p.getAttribute("name"));
+                    Node s = pName.item(i);
+                    if(s.getNodeName().equalsIgnoreCase("BGPatch"))
+                    {
+                        NamedNodeMap nn = s.getAttributes();
+                        bgPatches.add(nn.getNamedItem("name").getNodeValue());
+                    }                    
                 }
             }
         }
@@ -530,7 +563,7 @@ public class ProjectUtils
             Element thePatch = (Element) sEls.item(0);
             thePatch.setAttribute("name", stitchName);
             thePatch.setAttribute("patchName1", pName);
-            thePatch.setAttribute("patchName1", pName0);
+            thePatch.setAttribute("patchName2", pName0);
                     
             Element regionElement = ProjectXmlUtils.getRegionElement(rName, projectDirectory);
             
@@ -715,12 +748,12 @@ public class ProjectUtils
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
 
-        File f = new File(project.getPath()+"/"+regionName+"/"+subRegionName+"/"+patchName);
+        File f = new File(project.getPath()+"/"+regionName+"/"+subRegionName+"/"+patchName+".brep");
         FileObject rFile = FileUtil.toFileObject(f);
 
         try {
             FileLock fl = rFile.lock();            
-            rFile.rename(fl, newPatchName, "");
+            rFile.rename(fl, newPatchName, "brep");
             fl.releaseLock();
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
@@ -825,7 +858,6 @@ public class ProjectUtils
         }
         return true;
     }          
-
 
     public static void removeStitchElement(String sName, String rName, FileObject projectDirectory) 
     {   
@@ -1840,7 +1872,7 @@ public class ProjectUtils
         Collection<String> regions = ProjectUtils.getRegions(project);        
         for(String region: regions)
         {
-            Collection<String> subRegions = ProjectUtils.getSubRegions(region, project);
+            Collection<String> subRegions = ProjectUtils.getAllNestedSubRegions(region, project);
             for(String subRegion: subRegions)
             {
                 /*create stls
@@ -1918,4 +1950,162 @@ public class ProjectUtils
         File snappyHexMeshDictFile =  new File(systemDir.getPath()+"/"+"snappyHexMeshDict");
         ProjectFileUtils.writeFile(ProjectUtils.createDict(sName, rName, projectDirectory, stage), snappyHexMeshDictFile.getPath());
     }
+
+    public static void performMeshMergers(FileObject project) 
+    {
+        Collection<String> regions = ProjectUtils.getRegions(project);
+        for(String region: regions)
+        {
+            Collection<String> subRegions = ProjectUtils.getSubRegions(region, project);
+            for(String subRegion: subRegions)
+            {
+                recursiveMerging(region, subRegion, project);
+            }
+        }
+    }
+       
+    private static void recursiveMerging(String region, String subRegion, FileObject project)
+    {
+        Element subRegionEle = getSubRegionElement(region, subRegion, project);
+        
+        NodeList nl = subRegionEle.getChildNodes();
+        for(int i=0; i<nl.getLength();i++)
+        {
+            if(nl.item(i).getNodeName().equals("SubRegion"))
+            {
+                NamedNodeMap nn = nl.item(i).getAttributes();
+                Node name = nn.getNamedItem("name");
+                String nestedSubRegionName = name.getNodeValue();
+                
+                //  Perform merging on inner subRegion
+                recursiveMerging(region, nestedSubRegionName, project);
+                
+                SHMMergeProcess shmMergeProc = new SHMMergeProcess(null, subRegion, nestedSubRegionName, region, project);
+                shmMergeProc.performAction();
+            }
+        }
+    }
+
+    public static void reorderSubRegionPos(String rName, String tmp, String afterThis, FileObject project)
+    {
+        try 
+        {
+            Element rNode = ProjectXmlUtils.getRegionElement(rName, project);
+            Node tmpNode=null, afterThisNode=null;
+            
+            NodeList nl = rNode.getChildNodes();
+            
+            for(int i=0; i<nl.getLength(); i++)
+            {
+                if(nl.item(i).getNodeName().equals("SubRegion"))
+                {
+                    Node n = nl.item(i);
+                    NamedNodeMap nn = n.getAttributes();
+                    Node name = nn.getNamedItem("name");
+                    if(name.getNodeValue().equalsIgnoreCase(tmp))
+                        tmpNode = n;
+                    if(name.getNodeValue().equalsIgnoreCase(afterThis))
+                        afterThisNode = n;                
+                }
+            }
+            Document projectXML = rNode.getOwnerDocument();
+            tmpNode.getParentNode().insertBefore( afterThisNode, tmpNode);
+           
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer;
+            transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(projectXML);
+            StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
+            transformer.transform(source, result);
+            
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+    
+    public static void performMeshStitches(FileObject project)
+    {
+        Collection<String> regions = ProjectUtils.getRegions(project);
+        for(String region: regions)
+        {
+            String primarySubReg = getPrimarySubRegion(region, project);
+            
+            Element regEle = ProjectXmlUtils.getRegionElement(region, project);
+            NodeList nl = regEle.getElementsByTagName("Stitch");
+            
+            for(int i=0; i<nl.getLength();i++)
+            {
+                NamedNodeMap nn = nl.item(i).getAttributes();
+                Node name = nn.getNamedItem("name");
+                Node patch1 = nn.getNamedItem("patchName1");
+                Node patch2 = nn.getNamedItem("patchName2");
+                
+                SHMStitchProcess shmStProc = new SHMStitchProcess(null, patch1.getNodeValue(), patch2.getNodeValue(), primarySubReg, region, project);
+                shmStProc.performAction();
+            }
+        }
+    }
+    
+    private static String getPrimarySubRegion(String rName, FileObject project)
+    {
+        String toReturn = "";
+        Element regionEle = ProjectXmlUtils.getRegionElement(rName, project);
+        NodeList nl = regionEle.getChildNodes();
+        for(int i=0; i<nl.getLength();i++)
+        {
+            if(nl.item(i).getNodeName().equalsIgnoreCase("SubRegion"))
+            {
+                NamedNodeMap nn = nl.item(i).getAttributes();
+                Node name = nn.getNamedItem("name");
+                toReturn = name.getNodeValue();
+                break;
+            }
+        }
+        return toReturn;
+    }
+
+    public static void performZoneCreation(FileObject project) 
+    {
+        Collection<String> regions = ProjectUtils.getRegions(project);
+        for(String region: regions)
+        {
+            String primarySubReg = getPrimarySubRegion(region, project);
+            
+            Element regEle = ProjectXmlUtils.getRegionElement(region, project);
+            
+            NodeList nl = regEle.getElementsByTagName("FaceZone");
+            for(int i=0; i<nl.getLength();i++)
+            {
+                NamedNodeMap nn = nl.item(i).getAttributes();
+                Node name = nn.getNamedItem("name");
+                Node patch = nn.getNamedItem("Patch");
+                
+                SHMZoneProcess shmZProc = new SHMZoneProcess(null, name.getNodeValue(), "Face", "patchToFace", patch.getNodeValue(), primarySubReg , region, project);
+                shmZProc.performAction();
+            }
+            
+            NodeList nl1 = regEle.getElementsByTagName("CellZone");
+            for(int i=0; i<nl1.getLength();i++)
+            {
+                NamedNodeMap nn = nl1.item(i).getAttributes();
+                Node name = nn.getNamedItem("name");
+                
+                Node maxX = nn.getNamedItem("maxX");
+                Node maxY = nn.getNamedItem("maxY");
+                Node maxZ = nn.getNamedItem("maxZ");
+                Node minX = nn.getNamedItem("minX");
+                Node minY = nn.getNamedItem("minY");
+                Node minZ = nn.getNamedItem("minZ");
+
+                String params = "(" + minX.getNodeValue() +" " + minY.getNodeValue()+ " " + minZ.getNodeValue() + ")" ;
+                params = params + " (" + maxX.getNodeValue() +" " + maxY.getNodeValue()+ " " + maxZ.getNodeValue() + ")";
+                SHMZoneProcess shmZProc = new SHMZoneProcess(null, name.getNodeValue(), "Cell", "boxToCell", params, primarySubReg , region, project);
+                shmZProc.performAction();
+            }
+        }
+
+    }
+    
 }

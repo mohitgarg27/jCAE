@@ -22,8 +22,6 @@ and open the template in the editor.
                             </Patches>
                             <Stitches>
                                 <Stitch PatchName="">
-                                    <Patch1>  </Patch1>
-                                    <Patch2>  </Patch2>
                                 </Stitch>
                             </Stitches>
                     </SubRegion>

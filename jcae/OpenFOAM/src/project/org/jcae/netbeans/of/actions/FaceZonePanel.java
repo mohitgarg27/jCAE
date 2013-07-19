@@ -6,9 +6,7 @@ package project.org.jcae.netbeans.of.actions;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import org.netbeans.api.project.Project;
@@ -20,7 +18,6 @@ import project.org.jcae.netbeans.of.project.ProjectUtils;
  */
 public class FaceZonePanel extends javax.swing.JPanel 
 {
-
     String regionName;
     Project project;
     
@@ -36,7 +33,7 @@ public class FaceZonePanel extends javax.swing.JPanel
         project = pr;
         
         params = new FZParams();
-        jCBSubRegions.setModel(populateListModel(ProjectUtils.getSubRegions(regionName, project.getProjectDirectory())));
+        jCBSubRegions.setModel(populateListModel(ProjectUtils.getAllNestedSubRegions(regionName, project.getProjectDirectory())));
         
         jCBSubRegions.setSelectedIndex(0);
         jCBSubRegionsActionPerformed(null);
