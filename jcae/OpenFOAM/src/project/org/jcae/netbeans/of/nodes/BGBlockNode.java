@@ -10,6 +10,7 @@ import javax.swing.Action;
 import org.netbeans.api.project.Project;
 import org.openide.nodes.AbstractNode;
 import org.openide.util.ImageUtilities;
+import org.openide.util.actions.SystemAction;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import project.org.jcae.netbeans.of.actions.BGBlockMeshAction;
@@ -69,7 +70,7 @@ public class BGBlockNode extends AbstractNode
     public Action[] getActions(boolean popup) {
         
         ArrayList<Action> actions=new ArrayList<Action>();
-        actions.add(new BGBlockMeshAction()) ;
+        actions.add( SystemAction.get( BGBlockMeshAction.class)) ;
         return actions.toArray(new Action[actions.size()]);
     }    
 }

@@ -9,16 +9,11 @@ import javax.swing.Action;
 import org.netbeans.api.project.Project;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
-import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
 import org.openide.util.actions.SystemAction;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
-import project.org.jcae.netbeans.of.actions.RemovePatchAction;
 import project.org.jcae.netbeans.of.actions.RemoveStitchAction;
-import project.org.jcae.netbeans.of.actions.RenamePatchAction;
-import project.org.jcae.netbeans.of.actions.ViewPatchAction;
-import project.org.jcae.netbeans.of.project.ProjectUtils;
 
 /**
  *

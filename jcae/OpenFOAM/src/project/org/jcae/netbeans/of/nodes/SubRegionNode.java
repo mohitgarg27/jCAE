@@ -13,16 +13,13 @@ import java.util.Collection;
 import java.util.List;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import org.jcae.netbeans.cad.NBShapeFlavor;
-import org.jcae.netbeans.cad.NbShape;
 import org.netbeans.api.project.Project;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Node;
 import org.openide.nodes.Sheet;
 import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
+import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.ExTransferable;
 import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.AbstractLookup;
@@ -34,7 +31,6 @@ import project.org.jcae.netbeans.of.actions.RenameSubRegionAction;
 import project.org.jcae.netbeans.of.actions.SnappyHexMeshAction;
 import project.org.jcae.netbeans.of.actions.SubRegionFlavor;
 import project.org.jcae.netbeans.of.project.ProjectUtils;
-import project.org.jcae.netbeans.of.project.ProjectXmlUtils;
 
 /**
  *
@@ -80,11 +76,11 @@ public class SubRegionNode extends AbstractNode {
                     //CommonProjectActions.newFileAction(),
                     //CommonProjectActions.copyProjectAction(),
                     //Utilities.actionsForPath("Actions/Project/").get(0), 
-                    ((Action) new RemoveSubRegionAction()),
-                    ((Action) new RenameSubRegionAction()),
-                    ((Action) new SnappyHexMeshAction()),
-                    ((Action) new MoveUpSubRegionAction()),
-                    ((Action) new MoveDownSubRegionAction())
+                    (SystemAction.get(RemoveSubRegionAction.class)),
+                    (SystemAction.get(RenameSubRegionAction.class)),
+                    (SystemAction.get(SnappyHexMeshAction.class)),
+                    (SystemAction.get(MoveUpSubRegionAction.class)),
+                    (SystemAction.get(MoveDownSubRegionAction.class))
                 };
     }     
     

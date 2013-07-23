@@ -19,6 +19,7 @@ import org.openide.nodes.Node;
 import org.openide.nodes.Sheet;
 import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
+import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.ExTransferable;
 import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.AbstractLookup;
@@ -81,11 +82,11 @@ public class RegionNode extends AbstractNode {
                     //CommonProjectActions.newFileAction(),
                     //CommonProjectActions.copyProjectAction(),
                     //Utilities.actionsForPath("Actions/Project/").get(0), 
-                    ((Action) new AddSubRegionAction()),
-                    ((Action) new RemoveRegionAction()),
-                    ((Action) new RenameRegionAction()),
-                    ((Action) new RegionConstantSettingsAction()),
-                ((Action) new RegionSystemSettingsAction())
+                    (SystemAction.get(AddSubRegionAction.class)),
+                    (SystemAction.get(RemoveRegionAction.class)),
+                    (SystemAction.get(RenameRegionAction.class)),
+                    (SystemAction.get(RegionConstantSettingsAction.class)),
+                ( SystemAction.get(RegionSystemSettingsAction.class))
                 };
     } 
     @Override
