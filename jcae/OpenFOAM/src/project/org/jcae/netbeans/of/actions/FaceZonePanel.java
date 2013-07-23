@@ -14,7 +14,7 @@ import project.org.jcae.netbeans.of.project.ProjectUtils;
 
 /**
  *
- * @author mita
+ * @author mohit
  */
 public class FaceZonePanel extends javax.swing.JPanel 
 {

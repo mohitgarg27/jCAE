@@ -33,7 +33,7 @@ import static project.org.jcae.netbeans.of.project.ProjectXmlUtils.getSubRegionE
 
 /**
  *
- * @author mita
+ * @author mohit
  */
 public class ProjectSHMXmlUtils 
 {
