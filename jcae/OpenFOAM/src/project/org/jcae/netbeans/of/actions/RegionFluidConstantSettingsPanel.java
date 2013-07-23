@@ -43,21 +43,21 @@ public class RegionFluidConstantSettingsPanel extends javax.swing.JPanel {
     public void load()
     {
         // Get settings file and load file data
-        jTAG.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/" + "g" ));
-        jTARadiation.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/" + "radiationProperties" ));
-        jTARas.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/" + "RASProperties" ));
-        jTATransport.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/" + "transportProperties" ));
-        jTATurbulence.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/" + "turbulenceProperties" ));
+        jTAG.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/constant/" + "g" ));
+        jTARadiation.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/constant/" + "radiationProperties" ));
+        jTARas.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/constant/" + "RASProperties" ));
+        jTATransport.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/constant/" + "transportProperties" ));
+        jTATurbulence.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/constant/" + "turbulenceProperties" ));
         
     }
     
     public void save()
     {
-        ProjectFileUtils.writeFile(jTAG.getText(), project.getPath() + "/" + regionName + "/" + "g" );
-        ProjectFileUtils.writeFile(jTARadiation.getText(), project.getPath() + "/" + regionName + "/" + "radiationProperties" );
-        ProjectFileUtils.writeFile(jTARas.getText(), project.getPath() + "/" + regionName + "/" + "RASProperties" );
-        ProjectFileUtils.writeFile(jTATransport.getText(), project.getPath() + "/" + regionName + "/" + "transportProperties" );
-        ProjectFileUtils.writeFile(jTATurbulence.getText(), project.getPath() + "/" + regionName + "/" + "turbulenceProperties" );
+        ProjectFileUtils.writeFile(jTAG.getText(), project.getPath() + "/" + regionName + "/constant/" + "g" );
+        ProjectFileUtils.writeFile(jTARadiation.getText(), project.getPath() + "/" + regionName + "/constant/" + "radiationProperties" );
+        ProjectFileUtils.writeFile(jTARas.getText(), project.getPath() + "/" + regionName + "/constant/" + "RASProperties" );
+        ProjectFileUtils.writeFile(jTATransport.getText(), project.getPath() + "/" + regionName + "/constant/" + "transportProperties" );
+        ProjectFileUtils.writeFile(jTATurbulence.getText(), project.getPath() + "/" + regionName + "/constant/" + "turbulenceProperties" );
         
     }
 
