@@ -54,9 +54,7 @@ public class PatchFieldInfo1 extends javax.swing.JPanel {
             }
         }        
     }
-        
-    
-        
+
     PatchNode pNode;
     Project pr;
     String patchSelected;

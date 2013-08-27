@@ -782,9 +782,12 @@ public class ProjectUtils
         FileObject rFile = FileUtil.toFileObject(f);
 
         try {
-            FileLock fl = rFile.lock();            
-            rFile.delete(fl);
-            fl.releaseLock();
+            if(rFile!=null)
+            {
+                FileLock fl = rFile.lock();            
+                rFile.delete(fl);
+                fl.releaseLock();
+            }
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }        

@@ -14,6 +14,7 @@ import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
 import org.openide.nodes.Node;
 import org.openide.util.Utilities;
+import org.openide.util.actions.SystemAction;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import project.org.jcae.netbeans.of.actions.AddRegionAction;
@@ -63,7 +64,7 @@ public class ProjectNode extends AbstractNode {
                     //CommonProjectActions.newFileAction(),
                     //CommonProjectActions.copyProjectAction(),
                     //Utilities.actionsForPath("Actions/Project/").get(0), 
-                    ((Action) new AddRegionAction()),
+                    ( SystemAction.get( AddRegionAction.class)),
                     CommonProjectActions.deleteProjectAction(),                    
                     CommonProjectActions.closeProjectAction()
                 };

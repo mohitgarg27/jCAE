@@ -93,9 +93,9 @@ public final class PatchInfoTopComponent extends TopComponent {
             setLayout(new GridLayout(2,1));
             JPanel j = new PatchBasicInfo(pNode, p);
             add(j);
-            JPanel j1 = new PatchFieldInfo1(pNode, p);
+            //JPanel j1 = new PatchFieldInfo1(pNode, p);
             //JPanel j1 = new PatchBasicInfo(pNode, p);
-            add(j1);
+            //add(j1);
         }
         else
             removeAll();

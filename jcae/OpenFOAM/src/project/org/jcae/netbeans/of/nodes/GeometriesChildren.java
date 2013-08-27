@@ -37,7 +37,7 @@ public class GeometriesChildren extends Children.Array{
         FileObject geomFolder = proj.getFileObject("Geometries");
         if(geomFolder==null)
             return null;
-        
+        geomFolder.refresh();
         FileObject[] geoms = geomFolder.getChildren();
         ArrayList<Node> toReturn = new ArrayList<Node>(geoms.length);
 
