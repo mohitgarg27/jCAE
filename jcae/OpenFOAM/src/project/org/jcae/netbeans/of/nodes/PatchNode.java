@@ -6,12 +6,23 @@ package project.org.jcae.netbeans.of.nodes;
 
 import java.awt.Image;
 import java.awt.datatransfer.Transferable;
+import java.io.File;
 import java.io.IOException;
 import javax.swing.Action;
+import org.jcae.netbeans.cad.BrepDataObject;
+import org.jcae.netbeans.cad.BrepNode;
+import org.jcae.netbeans.cad.NbShape;
+import org.jcae.netbeans.cad.ShapeNode;
+import org.jcae.netbeans.cad.ViewShapeCookie;
 import org.netbeans.api.project.Project;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Sheet;
+import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.ExTransferable;
@@ -38,6 +49,11 @@ public class PatchNode extends AbstractNode
     private final String PATCH_ICON="project/org/jcae/netbeans/of/resources/PatchNodeIcon.png";
     private final InstanceContent instanceContent = new InstanceContent();
     
+    private NbShape shape = null;
+    private ViewShapeCookie shapeCookie;
+    private BrepDataObject bdo;
+    private BrepNode geomNode;
+    
     public PatchNode(String pName, String sName, String rName, Project pr)
     {        
         super(Children.LEAF, new MyLookup());
@@ -49,6 +65,28 @@ public class PatchNode extends AbstractNode
         ((MyLookup)getLookup()).setDelegates(new AbstractLookup(instanceContent));        
         instanceContent.add(this);                
         instanceContent.add(pr);  
+        load();
+        instanceContent.add(shape);
+        instanceContent.add(shapeCookie);
+        instanceContent.add(bdo);
+        instanceContent.add(geomNode);
+    }
+    
+    public void load()
+    {
+        if(getShape()==null)
+        {
+            try {
+                String loc = project.getProjectDirectory().getPath()+"/"+rName+"/"+sName+"/"+pName+".brep";
+                setShape(new NbShape(loc));                
+                FileObject fo = FileUtil.toFileObject(new File(loc));
+                bdo = (BrepDataObject)DataObject.find(fo);
+                geomNode = (BrepNode)bdo.getNodeDelegate();
+                shapeCookie = new ViewShapeCookie(this);
+            } catch (DataObjectNotFoundException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
     }
     
     @Override
@@ -143,5 +181,25 @@ public class PatchNode extends AbstractNode
         });
         return added;
     }    
+
+    /**
+     * @return the shape
+     */
+    public NbShape getShape() {
+        return shape;
+    }
+
+    /**
+     * @param shape the shape to set
+     */
+    public void setShape(NbShape shape) {
+        this.shape = shape;
+    }
+
+    public String getName()
+    {
+        return pName;
+    }
+            
     
 }

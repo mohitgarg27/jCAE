@@ -162,6 +162,7 @@ public class SubRegionNode extends AbstractNode {
                         Collection<Node> nColl = new ArrayList<Node>();
                         nColl.add(n);
                         srcNode.addChildren(nColl);
+                        JOptionPane.showMessageDialog(null, "Merger instruction successful");
 
                     } catch (UnsupportedFlavorException ex) {
                         Exceptions.printStackTrace(ex);

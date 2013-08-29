@@ -5,6 +5,9 @@
 package project.org.jcae.netbeans.of.actions;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import org.jcae.netbeans.cad.NbShape;
+import org.jcae.netbeans.cad.ViewShapeCookie;
 import org.netbeans.api.project.Project;
 import org.openide.nodes.Node;
 import org.openide.util.HelpCtx;
@@ -35,8 +38,17 @@ public class ViewPatchAction extends CookieAction
     {
         Project project = activatedNodes[0].getLookup().lookup(Project.class);
         PatchNode pNode = activatedNodes[0].getLookup().lookup(PatchNode.class);        
-
-        JOptionPane.showMessageDialog(null, "Viewing not implemented");        
+        NbShape shape = activatedNodes[0].getLookup().lookup(NbShape.class);
+        final ViewShapeCookie vs = activatedNodes[0].getLookup().lookup(ViewShapeCookie.class);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                vs.view();
+            }
+        });
+        
+        //JOptionPane.showMessageDialog(null, "Viewing not implemented");        
+        
     }
 
     @Override
