@@ -48,8 +48,7 @@ public class SubRegionChildren extends Children.Array{
     Project project;
     
     public SubRegionChildren( String sName, String rName, Project pr) 
-    {
-        super( Arrays.asList(SubRegionChildren.generateNodes(sName, rName, pr)));
+    {        super( Arrays.asList(SubRegionChildren.generateNodes(sName, rName, pr)));
     }
     
     public void addChildren(Collection<Node> nodes)

@@ -12,43 +12,42 @@ import org.netbeans.api.project.Project;
 import org.openide.nodes.Node;
 import org.openide.util.HelpCtx;
 import org.openide.util.actions.CookieAction;
+import project.org.jcae.netbeans.of.nodes.BGBlockNode;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
 
 /**
  *
  * @author mogargaa65
  */
-public class ViewPatchAction extends CookieAction
+public class ViewBGBlockAction extends CookieAction
 {
 
     @Override
     protected int mode() 
     {
-        return CookieAction.MODE_ALL;
+        return CookieAction.MODE_EXACTLY_ONE;
     }
 
     @Override
     protected Class<?>[] cookieClasses() 
     {
-        return new Class[] { PatchNode.class };
+        return new Class[] { BGBlockNode.class };
     }
 
     @Override
     protected void performAction(Node[] activatedNodes) 
     {
-        for(Node n:activatedNodes)
-        {
-            //Project project = n.getLookup().lookup(Project.class);
-            //PatchNode pNode = n.getLookup().lookup(PatchNode.class);        
-            NbShape shape = n.getLookup().lookup(NbShape.class);
-            final ViewShapeCookie vs = n.getLookup().lookup(ViewShapeCookie.class);
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    vs.view();
-                }
-            });
-        }
+        Project project = activatedNodes[0].getLookup().lookup(Project.class);
+        //BGBlockNode bgNode = activatedNodes[0].getLookup().lookup(BGBlockNode.class);
+        NbShape shape = activatedNodes[0].getLookup().lookup(NbShape.class);
+        final ViewShapeCookie vs = activatedNodes[0].getLookup().lookup(ViewShapeCookie.class);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                vs.view();
+            }
+        });
+        
         //JOptionPane.showMessageDialog(null, "Viewing not implemented");        
         
     }

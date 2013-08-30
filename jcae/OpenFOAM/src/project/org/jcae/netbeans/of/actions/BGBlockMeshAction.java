@@ -4,9 +4,7 @@
  */
 package project.org.jcae.netbeans.of.actions;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import org.netbeans.api.project.Project;
 import org.openide.nodes.Node;
 import org.openide.util.HelpCtx;
@@ -50,6 +48,7 @@ public class BGBlockMeshAction extends CookieAction
             ProjectUtils.setBlockMeshInSubRegion(bgNewParams, bgBlockNode.getrName(), bgBlockNode.getsName(), pr.getProjectDirectory());
             Node[] nodes = BGBlockChildren.generateNodes(bgBlockNode.getsName(), bgBlockNode.getrName(), pr);
             bgChild.addChildren(Arrays.asList(nodes));
+            bgBlockNode.load();
         }        
     }
 
