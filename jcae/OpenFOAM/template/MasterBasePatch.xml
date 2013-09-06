@@ -3,21 +3,18 @@
 To change this template, choose Tools | Templates
 and open the template in the editor.
 -->
-
-
 <!--- Defining structures of base patches  -->
-
 <Patches>
-    <Patch type="patch" >
-    </Patch>
+    <BasePatch type="patch" >
+    </BasePatch>
 
-    <Patch type="wall" >
-    </Patch>
+    <BasePatch type="wall" >
+    </BasePatch>
 
-    <Patch type="symmetry" >
-    </Patch>
+    <BasePatch type="symmetry" >
+    </BasePatch>
 
-    <Patch type="regionCouple" >
+    <BasePatch type="regionCouple" >
             <Property key="shadowRegion" defVal="" val="" >
                 <SelectionList source="Project.xml" tag="Region" />
             </Property>
@@ -26,5 +23,5 @@ and open the template in the editor.
             </Property>
             <Property key="attached" defVal="off" val=""/>
             <Property key="isWall" defVal="on" val=""/>
-    </Patch>
+    </BasePatch>
 </Patches>

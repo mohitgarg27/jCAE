@@ -28,6 +28,7 @@ import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.ExTransferable;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import project.org.jcae.netbeans.of.actions.PatchBoundaryAction;
 import project.org.jcae.netbeans.of.actions.RemovePatchAction;
 import project.org.jcae.netbeans.of.actions.RenamePatchAction;
 import project.org.jcae.netbeans.of.actions.ViewPatchAction;
@@ -95,6 +96,7 @@ public class PatchNode extends AbstractNode
                     SystemAction.get(ViewPatchAction.class),
                     SystemAction.get(RenamePatchAction.class),
                     SystemAction.get(RemovePatchAction.class),
+                    SystemAction.get(PatchBoundaryAction.class),
                     SystemAction.get(StitchPatchAction.class)
                     //SystemAction.get( MergePatchAction.class)
                 };

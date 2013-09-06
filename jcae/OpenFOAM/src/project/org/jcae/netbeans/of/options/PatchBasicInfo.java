@@ -4,22 +4,16 @@
  */
 package project.org.jcae.netbeans.of.options;
 
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Vector;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import org.netbeans.api.project.Project;
-import org.openide.awt.ColorComboBox;
+import org.w3c.dom.Element;
 import project.org.jcae.netbeans.of.api.Property;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
 import project.org.jcae.netbeans.of.project.ProjectUtils;
+import project.org.jcae.netbeans.of.project.ProjectXmlUtils;
 
 /**
  *
@@ -27,51 +21,90 @@ import project.org.jcae.netbeans.of.project.ProjectUtils;
  */
 public class PatchBasicInfo extends javax.swing.JPanel 
 {
-
     public class SubPanel extends JPanel 
-    {
-        
+    {        
+        private boolean manSet = false;
         public SubPanel()
         {
-            //setLayout(new GridLayout(0,2));
-            //this.patchSelected = patchSelected;
-            //initComponents1();
-            
-            //setBackground(Color.white);
-            setBorder(BorderFactory.createTitledBorder("Properties")); 
         }
         
-        public void initComponents() 
+        private void loadGUI(boolean flag)
         {
-            Collection<Property> collProp = ProjectUtils.getBasePatchTypeProperties(patchSelected, pNode, pr.getProjectDirectory());
-            
+            if(flag)
+            {
+                manSet = true;
+                jComboBox1.setSelectedItem(ProjectUtils.getStoredPatchType(pNode, pr.getProjectDirectory()));
+                collProp = ProjectUtils.getStoredBasePatchTypeProperties(patchStored, pNode, pr.getProjectDirectory());
+                manSet = false;
+            }
+            else
+            {
+                collProp = ProjectUtils.getBasePatchTypeProperties(patchSelected, pNode, pr.getProjectDirectory());
+            }
             // Create panel based on collProp
             if(collProp!=null)
             {
                 setLayout(new GridLayout(collProp.size(), 1));
-                
+
                 for(int i=0;i<collProp.size();i++)
                 {
                     Property p = ((ArrayList<Property>) collProp).get(i);
                     add(p.loadGraphics());
                 }
             }
-        }        
+        }
+
+        public void initComponents() 
+        {
+            String patchStored = ProjectUtils.getStoredPatchType(pNode, pr.getProjectDirectory());
+            
+            if(patchStored.equals(""))
+            {
+                if(!patchSelected.equals(""))
+                    loadGUI(false);
+            }
+            else
+            {
+                if(!patchSelected.equals("") && !patchSelected.equals(patchStored))
+                    loadGUI(false);
+                else if(patchSelected.equals("") || patchStored.equals(patchSelected))
+                    loadGUI(true);
+            }
+        }
     }
-    
+    Collection<Property> collProp;
     PatchNode pNode;
     Project pr;
-    String patchSelected;
+    String patchSelected="";
+    String patchStored="";
     /**
      * Creates new form PatchBasicInfo
      */
     public PatchBasicInfo(PatchNode pNode, Project pr) {
         initComponents();
-        setBorder(BorderFactory.createTitledBorder("Basic Type"));                
+        //setBorder(BorderFactory.createTitledBorder("Basic Type"));                
         this.pNode = pNode;
-        this.pr = pr;
+        this.pr = pr;        
     }
 
+    public void load()
+    {
+        ((SubPanel)jPanel1).removeAll();
+        ((SubPanel)jPanel1).repaint();
+        ((SubPanel)jPanel1).initComponents();
+    }
+    
+    public void save()
+    {
+        /* 1. Get selectedPatch, get project, patch names etc
+         * 2. Get the BasePatch element 
+         * 3. Collect info from Collection<ofProp>(or property), put in element
+         * 4. Send element to XML
+         */
+        
+        ProjectUtils.setBasePatchTypeProperties(patchSelected, pNode, pr.getProjectDirectory(), collProp);        
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -84,6 +117,7 @@ public class PatchBasicInfo extends javax.swing.JPanel
         jComboBox1 = new javax.swing.JComboBox(ProjectUtils.getBasePatches());
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new SubPanel();
+        jSeparator2 = new javax.swing.JSeparator();
 
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -110,13 +144,15 @@ public class PatchBasicInfo extends javax.swing.JPanel
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(57, 57, 57)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(37, 37, 37)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(27, Short.MAX_VALUE))
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -125,15 +161,19 @@ public class PatchBasicInfo extends javax.swing.JPanel
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         patchSelected = (String) jComboBox1.getSelectedItem();
-        //jPanel1 = new SubPanel();
+        if(((SubPanel)jPanel1).manSet)
+            return;
+        
         ((SubPanel)jPanel1).removeAll();
         ((SubPanel)jPanel1).repaint();
         ((SubPanel)jPanel1).initComponents();
@@ -143,5 +183,6 @@ public class PatchBasicInfo extends javax.swing.JPanel
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JSeparator jSeparator2;
     // End of variables declaration//GEN-END:variables
 }

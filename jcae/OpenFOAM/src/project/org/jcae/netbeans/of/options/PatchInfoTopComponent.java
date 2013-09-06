@@ -4,6 +4,7 @@
  */
 package project.org.jcae.netbeans.of.options;
 
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import javax.swing.JPanel;
 import org.netbeans.api.project.Project;
@@ -53,15 +54,18 @@ public final class PatchInfoTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(PatchInfoTopComponent.class, "PatchInfoTopComponent.border.title"))); // NOI18N
+        setAutoscrolls(true);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 388, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGap(0, 273, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -90,12 +94,17 @@ public final class PatchInfoTopComponent extends TopComponent {
         {
             removeAll();
             setDisplayName(pNode.getpName());
-            setLayout(new GridLayout(2,1));
+            //setLayout(new GridLayout(0,1));
+            setLayout(new FlowLayout());
             JPanel j = new PatchBasicInfo(pNode, p);
             add(j);
             //JPanel j1 = new PatchFieldInfo1(pNode, p);
-            //JPanel j1 = new PatchBasicInfo(pNode, p);
-            //add(j1);
+            JPanel j1 = new PatchBasicInfo(pNode, p);
+            add(j1);
+            JPanel j2 = new PatchBasicInfo(pNode, p);
+            add(j2);
+            JPanel j3 = new PatchBasicInfo(pNode, p);
+            add(j3);
         }
         else
             removeAll();

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -46,7 +47,7 @@ public class Function implements ofProp
         }
         return jPanel;
     }
-    
+
     /**
      * @return the key
      */
@@ -88,4 +89,5 @@ public class Function implements ofProp
     public void setParams(Collection<Param> params) {
         this.params = params;
     }
+
 }

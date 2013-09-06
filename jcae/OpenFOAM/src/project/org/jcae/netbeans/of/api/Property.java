@@ -10,6 +10,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -95,7 +96,39 @@ public class Property implements ofProp
         }
         
         return jPanel;
-    }
+    }    
+    
+    public void setVals()
+    {
+        if(secondaryVal==null)
+        {
+            jPanel = new JPanel(new GridLayout(1, 2 ));
+            jKey = new JLabel(key);
+            jPanel.add(jKey);
+            
+            if(sl==null)
+            {
+                val=((JTextField)jVal).getText();
+            }
+            else
+            {
+                val =  ((JComboBox)jVal).getSelectedItem().toString();
+            }            
+        }
+        else
+        {
+            if(sl==null)
+            {
+                val=((JTextField)jVal).getText();
+            }
+            else
+            {
+                val =  ((JComboBox)jVal).getSelectedItem().toString();
+            }  
+            secondaryVal = ((JTextField)jSecondaryVal).getText();            
+        }
+    }        
+    
     /**
      * @return the key
      */
@@ -221,7 +254,5 @@ public class Property implements ofProp
     public void setjSecondaryVal(JComponent jSecondaryVal) {
         this.jSecondaryVal = jSecondaryVal;
     }
-    
-    
     
 }

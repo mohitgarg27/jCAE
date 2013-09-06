@@ -933,7 +933,7 @@ public class ProjectUtils
         
         Document dom = ProjectXmlUtils.getMasterBasePatchXMLDom();
         Element docEle = dom.getDocumentElement();
-        NodeList sName = docEle.getElementsByTagName("Patch");
+        NodeList sName = docEle.getElementsByTagName("BasePatch");
         if(sName!=null)
         {
             for(int i=0; i<sName.getLength();i++)
@@ -946,9 +946,34 @@ public class ProjectUtils
         return patches.toArray(new String[patches.size()]);
    }
 
+    public static String getStoredPatchType(PatchNode pNode, FileObject projectDirectory)
+    {
+        Element patchElement = ProjectXmlUtils.getPatchBaseTypeElement(pNode.getpName(), pNode.getsName(), pNode.getrName(), projectDirectory);
+        if(patchElement!=null)
+            return patchElement.getAttribute("type");
+        return "";
+    }
+    
+    public static Collection<Property> getStoredBasePatchTypeProperties(String patchSelected, PatchNode pNode, FileObject projectDirectory) 
+    {
+        Collection<Property> collProp = new ArrayList<Property>();
+        
+        // Get PatchInfo tag from Patch tag
+        // Check if patchSelected="patch type from the tag" or empty
+        Element patchElement = ProjectXmlUtils.getPatchBaseTypeElement(pNode.getpName(), pNode.getsName(), pNode.getrName(), projectDirectory);
+        
+        //Element patchElement = ProjectXmlUtils.getBasePatchTypeElement(patchSelected);
+        extractPopertiesFromBasePatchElement(patchElement, collProp, projectDirectory);
+        
+        return collProp;        
+    }
+    
     public static Collection<Property> getBasePatchTypeProperties(String patchSelected, PatchNode pNode, FileObject projectDirectory) 
     {
         Collection<Property> collProp = new ArrayList<Property>();
+        
+        // Get PatchInfo tag from Patch tag
+        // Check if patchSelected="patch type from the tag" or empty
         
         Element patchElement = ProjectXmlUtils.getBasePatchTypeElement(patchSelected);
         extractPopertiesFromBasePatchElement(patchElement, collProp, projectDirectory);
@@ -1006,6 +1031,38 @@ public class ProjectUtils
             
         }
     }
+
+    public static void setBasePatchTypeProperties(String patchSelected, PatchNode pNode, FileObject projectDirectory, Collection<Property> collProp)
+    {
+        Element patchElement = ProjectXmlUtils.getBasePatchTypeElement(patchSelected);
+        NodeList nl = patchElement.getElementsByTagName("Property");
+        if(nl!=null)
+        {
+            for(int i=0; i<nl.getLength(); i++)
+            {
+                Element prop = (Element) nl.item(i);
+                String type = prop.getAttribute("key");
+                if(collProp!=null)
+                {
+                    for(Property p: collProp)
+                    {
+                        p.setVals();
+                        if(type.equals(p.getKey()))
+                        {
+                            prop.setAttribute("val", p.getVal());                            
+                        }
+                    }
+                }
+            }
+        }
+        
+        //System.out.println(ProjectXmlUtils.nodeToString((Node)patchElement));
+    }    
+    private static void extractPopertiesFromPropCollectionToBasePatch(Element element, Collection<Property> collProp, FileObject projectDirectory)
+    {
+
+    }
+    
     
     public static Collection<String> getElementsByTagName(FileObject project, String tagName) 
     {

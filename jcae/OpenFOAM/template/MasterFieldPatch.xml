@@ -8,7 +8,7 @@ and open the template in the editor.
 <!--- Defining structures of base patches  -->
 <FieldPatches>
 
-    <FieldPatch type="symmetry" >
+    <FieldPatch type="symmetry" fieldfFile="" >
             <Property key="value" defVal="uniform" val="" defaultSecondaryVal="0.03" secondaryVal=""/>
     </FieldPatch>   
 

@@ -18,6 +18,8 @@ and open the template in the editor.
                             </BGBlock>
                             <Patches>
                                     <Patch name="" brepLocation="">
+                                        <PatchInfo>                                            
+                                        </PatchInfo>                                            
                                     </Patch>
                             </Patches>
                             <Stitches>

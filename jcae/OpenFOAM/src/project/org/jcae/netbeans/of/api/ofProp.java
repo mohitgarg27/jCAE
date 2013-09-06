@@ -5,6 +5,7 @@
 package project.org.jcae.netbeans.of.api;
 
 import javax.swing.JPanel;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -13,4 +14,5 @@ import javax.swing.JPanel;
 public interface ofProp 
 {
         public JPanel loadGraphics();
+        //public Node generateXMLTag();        
 }

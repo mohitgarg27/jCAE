@@ -51,6 +51,7 @@ public class ProjectXmlUtils
         }
         return sw.toString();
     }
+    
     public static void printDocument(FileObject project, OutputStream out) throws IOException, TransformerException 
     {
         Document doc = getXMLDom(project);
@@ -396,7 +397,7 @@ public class ProjectXmlUtils
         Document dom = getMasterBasePatchXMLDom();
         Element docEle = dom.getDocumentElement();
         System.out.println(nodeToString(docEle));
-        NodeList sName = docEle.getElementsByTagName("Patch");
+        NodeList sName = docEle.getElementsByTagName("BasePatch");
         if(sName!=null)
         {
             for(int i=0; i<sName.getLength();i++)
@@ -456,6 +457,24 @@ public class ProjectXmlUtils
             }
         }
         return patchTypeEl;
+    }
+
+    public static Element getPatchBaseTypeElement(String pName, String sName, String rName, FileObject projectDirectory) 
+    {
+        Element toRet = null;
+        Element patchEle = getPatchElement(pName, rName, sName, projectDirectory);
+        NodeList nl = patchEle.getElementsByTagName("BasePatch");
+        
+        if(nl!=null)
+        {
+            for (int i=0; i<nl.getLength();i++)
+            {
+                toRet = (Element) nl.item(i);
+                break;                
+            }
+        }
+        return toRet;
+    
     }
     
 }
