@@ -29,6 +29,11 @@ public class Param
             jComponent = new JTextField(val); 
     }
     
+    public void setVals()
+    {
+        val = ((JTextField) jComponent).getText();
+    }
+    
     /**
      * @return the key
      */

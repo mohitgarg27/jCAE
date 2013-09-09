@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import org.netbeans.api.project.Project;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
 import project.org.jcae.netbeans.of.options.PatchBasicInfo;
-import project.org.jcae.netbeans.of.options.PatchFieldInfo1;
+import project.org.jcae.netbeans.of.options.PatchFieldInfo;
 
 /**
  *
@@ -68,43 +68,59 @@ public class PatchBoundaryPanel extends javax.swing.JPanel
             jPanel1.add(j1);
             ((PatchBasicInfo)j1).load();
             
-            j2 = new PatchFieldInfo1(pNode, project);            
+            j2 = new PatchFieldInfo(pNode, project, "K");            
             jPanel2.setLayout(new GridLayout());
             jPanel2.add(j2);
+            ((PatchFieldInfo)j2).load();
 
-            j3 = new PatchFieldInfo1(pNode, project);            
+            j3 = new PatchFieldInfo(pNode, project, "kappaEff");            
             jPanel3.setLayout(new GridLayout());
             jPanel3.add(j3);
-
-            j4 = new PatchFieldInfo1(pNode, project);            
+            ((PatchFieldInfo)j3).load();
+            
+            j4 = new PatchFieldInfo(pNode, project, "nut");            
             jPanel4.setLayout(new GridLayout());
             jPanel4.add(j4);
+            ((PatchFieldInfo)j4).load();
 
-            j5 = new PatchFieldInfo1(pNode, project);            
+            j5 = new PatchFieldInfo(pNode, project, "omega");            
             jPanel5.setLayout(new GridLayout());
             jPanel5.add(j5);
+            ((PatchFieldInfo)j5).load();
             
-            j6 = new PatchFieldInfo1(pNode, project);            
+            j6 = new PatchFieldInfo(pNode, project, "p_rgh");            
             jPanel6.setLayout(new GridLayout());
             jPanel6.add(j6);
+            ((PatchFieldInfo)j6).load();
 
-            j7 = new PatchFieldInfo1(pNode, project);            
+            j7 = new PatchFieldInfo(pNode, project, "T");            
             jPanel7.setLayout(new GridLayout());
             jPanel7.add(j7);
+            ((PatchFieldInfo)j7).load();
             
-            j8 = new PatchFieldInfo1(pNode, project);            
+            j8 = new PatchFieldInfo(pNode, project, "U");            
             jPanel8.setLayout(new GridLayout());
             jPanel8.add(j8);
+            ((PatchFieldInfo)j8).load();
             
-            j9 = new PatchFieldInfo1(pNode, project);            
+            j9 = new PatchFieldInfo(pNode, project, "material");            
             jPanel9.setLayout(new GridLayout());
             jPanel9.add(j9);
+            ((PatchFieldInfo)j9).load();
             
     }
     
     public void save()
     {
         ((PatchBasicInfo)j1).save();
+        ((PatchFieldInfo)j2).save();
+        ((PatchFieldInfo)j3).save();
+        ((PatchFieldInfo)j4).save();
+        ((PatchFieldInfo)j5).save();
+        ((PatchFieldInfo)j6).save();
+        ((PatchFieldInfo)j7).save();
+        ((PatchFieldInfo)j8).save();
+        ((PatchFieldInfo)j9).save();
     }
 
     /**

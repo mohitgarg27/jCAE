@@ -3,102 +3,100 @@
 To change this template, choose Tools | Templates
 and open the template in the editor.
 -->
-
-
 <!--- Defining structures of base patches  -->
 <FieldPatches>
 
-    <FieldPatch type="symmetry" fieldfFile="" >
+    <FieldPatch type="symmetry" fieldFile="" >
             <Property key="value" defVal="uniform" val="" defaultSecondaryVal="0.03" secondaryVal=""/>
     </FieldPatch>   
 
-    <FieldPatch type="kqRWallFunction" >
+    <FieldPatch type="kqRWallFunction" fieldFile="" >
             <Property key="value" defVal="uniform" val="" defaultSecondaryVal="0.03" secondaryVal=""/>
     </FieldPatch>   
 
-    <FieldPatch type="inletOutlet" >
+    <FieldPatch type="inletOutlet" fieldFile="" >
             <Property key="inletValue" defVal="uniform" val="" defaultSecondaryVal="0.03" secondaryVal=""/>
             <Property key="value" defVal="uniform" val="" defaultSecondaryVal="0.03" secondaryVal=""/>
     </FieldPatch>   
 
-    <FieldPatch type="turbulentIntensityKineticEnergyInlet" >
+    <FieldPatch type="turbulentIntensityKineticEnergyInlet" fieldFile=""  >
             <Property key="intensity" defVal="0.05" val="" />
             <Property key="value" defVal="uniform" val="" defaultSecondaryVal="0.03" secondaryVal=""/>
     </FieldPatch>   
 
-    <FieldPatch type="zeroGradient" >
+    <FieldPatch type="zeroGradient" fieldFile="" >
     </FieldPatch>   
 
-    <FieldPatch type="chtRcThermalDiffusivity" >
+    <FieldPatch type="chtRcThermalDiffusivity" fieldFile="" >
             <Property key="remoteField" defVal="k" val="" />
             <Property key="value" defVal="uniform" val="" defaultSecondaryVal="1e-3" secondaryVal=""/>
     </FieldPatch>   
 
-    <FieldPatch type="nutSpalartAllmarasWallFunction" >
+    <FieldPatch type="nutSpalartAllmarasWallFunction" fieldFile="" >
             <Property key="cmu" defVal="0.09" val="" />
             <Property key="kappa" defVal="0.41" val="" />
             <Property key="e" defVal="9.8" val="" />
             <Property key="value" defVal="uniform" val="" defaultSecondaryVal="0" secondaryVal=""/>
     </FieldPatch>   
 
-    <FieldPatch type="calculated" >           
+    <FieldPatch type="calculated" fieldFile="" >           
             <Property key="value" defVal="uniform" val="" defaultSecondaryVal="0" secondaryVal=""/>
     </FieldPatch>   
 
-    <FieldPatch type="omegaWallFunction" >
+    <FieldPatch type="omegaWallFunction" fieldFile="" >
             <Property key="cmu" defVal="0.09" val="" />
             <Property key="kappa" defVal="0.41" val="" />
             <Property key="e" defVal="9.8" val="" />
             <Property key="value" defVal="uniform" val="" defaultSecondaryVal="10" secondaryVal=""/>
     </FieldPatch>   
 
-    <FieldPatch type="bouyantPressure" >
+    <FieldPatch type="bouyantPressure" fieldFile="" >
             <Property key="rho" defVal="rhok" val="" />                
     </FieldPatch>   
 
-    <FieldPatch type="fixedMeanValue" >
+    <FieldPatch type="fixedMeanValue" fieldFile="" >
             <Property key="meanValue" defVal="0" val="" />    
             <Property key="value" defVal="uniform" val="" defaultSecondaryVal="0" secondaryVal=""/>            
     </FieldPatch>  
 
-    <FieldPatch type="fixedValue" >        
+    <FieldPatch type="fixedValue" fieldFile="" >        
             <Property key="value" defVal="uniform" val="" defaultSecondaryVal="0" secondaryVal=""/>            
     </FieldPatch>   
 
-    <FieldPatch type="chtRcTemperature" >
+    <FieldPatch type="chtRcTemperature" fieldFile="" >
             <Property key="radiation" defVal="off" val="" />
             <Property key="remoteField" defVal="T" val="" />
             <Property key="k" defVal="kappEff" val="" />
             <Property key="value" defVal="296" val="" defaultSecondaryVal="10" secondaryVal=""/>
     </FieldPatch>   
 
-    <FieldPatch type="extendedWallHeatTransfer" >
+    <FieldPatch type="extendedWallHeatTransfer" fieldFile="" >
             <Property key="radiation" defVal="off" val="" />
             <Property key="Tinf" defVal="0" val="" />
             <Property key="k" defVal="kappEff" val="" />
             <Property key="hc" defVal="0.6" val="" />
             <Property key="alpha" defVal="50" val="" />
             <Property key="value" defVal="296" val="" defaultSecondaryVal="10" secondaryVal=""/>
-            <Function name="radiationSources" editable="true" separator=" ">
+            <Function key="radiationSources" editable="true" separator=" ">
             </Function>
     </FieldPatch>   
 
-    <FieldPatch type="flowRateInletVelocity" >
+    <FieldPatch type="flowRateInletVelocity" fieldFile="" >
             <Property key="flowRate" defVal="0" val="" />
             <Property key="value" defVal="uniform(0 0 0 )" val=""/>
-<!--                <value>
-                    <Function name="uniform" editable="true">
+<!--                <value>-->
+                    <Function key="uniform" editable="true">
                         <Params>
                             <Param key="Param1" val="0"/>
                             <Param key="Param2" val="0"/>
                             <Param key="Param3" val="0"/>
                         </Params>
                     </Function>
-                </value>
+               <!-- </value>
             </Property>                -->
     </FieldPatch>      
 
-    <FieldPatch type="chtRcThermalDiffusivitySlave" >        
+    <FieldPatch type="chtRcThermalDiffusivitySlave" fieldFile="" >        
             <Property key="remoteField" defVal="kappaEff" val="" />
             <Property key="value" defVal="1e-3" val="" defaultSecondaryVal="10" secondaryVal=""/>        
     </FieldPatch>   

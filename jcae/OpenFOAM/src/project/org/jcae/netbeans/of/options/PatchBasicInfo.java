@@ -8,12 +8,13 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.JPanel;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.netbeans.api.project.Project;
-import org.w3c.dom.Element;
+import org.openide.util.Exceptions;
 import project.org.jcae.netbeans.of.api.Property;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
 import project.org.jcae.netbeans.of.project.ProjectUtils;
-import project.org.jcae.netbeans.of.project.ProjectXmlUtils;
 
 /**
  *
@@ -96,13 +97,18 @@ public class PatchBasicInfo extends javax.swing.JPanel
     
     public void save()
     {
-        /* 1. Get selectedPatch, get project, patch names etc
-         * 2. Get the BasePatch element 
-         * 3. Collect info from Collection<ofProp>(or property), put in element
-         * 4. Send element to XML
-         */
-        
-        ProjectUtils.setBasePatchTypeProperties(patchSelected, pNode, pr.getProjectDirectory(), collProp);        
+        try {
+            /* 1. Get selectedPatch, get project, patch names etc
+             * 2. Get the BasePatch element 
+             * 3. Collect info from Collection<ofProp>(or property), put in element
+             * 4. Send element to XML
+             */        
+            ProjectUtils.setBasePatchTypeProperties(patchSelected, pNode, pr.getProjectDirectory(), collProp);
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
     
     /**

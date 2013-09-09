@@ -102,9 +102,9 @@ public class Property implements ofProp
     {
         if(secondaryVal==null)
         {
-            jPanel = new JPanel(new GridLayout(1, 2 ));
-            jKey = new JLabel(key);
-            jPanel.add(jKey);
+            //jPanel = new JPanel(new GridLayout(1, 2 ));
+            //jKey = new JLabel(key);
+            //jPanel.add(jKey);
             
             if(sl==null)
             {

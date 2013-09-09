@@ -923,7 +923,8 @@ public class ProjectUtils
 //        
 //        return newName;
 //    }
-
+    
+    // Base patches    
     public static String[] getBasePatches() 
     {
         
@@ -945,7 +946,7 @@ public class ProjectUtils
                
         return patches.toArray(new String[patches.size()]);
    }
-
+    
     public static String getStoredPatchType(PatchNode pNode, FileObject projectDirectory)
     {
         Element patchElement = ProjectXmlUtils.getPatchBaseTypeElement(pNode.getpName(), pNode.getsName(), pNode.getrName(), projectDirectory);
@@ -954,6 +955,7 @@ public class ProjectUtils
         return "";
     }
     
+    //
     public static Collection<Property> getStoredBasePatchTypeProperties(String patchSelected, PatchNode pNode, FileObject projectDirectory) 
     {
         Collection<Property> collProp = new ArrayList<Property>();
@@ -1032,7 +1034,7 @@ public class ProjectUtils
         }
     }
 
-    public static void setBasePatchTypeProperties(String patchSelected, PatchNode pNode, FileObject projectDirectory, Collection<Property> collProp)
+    public static void setBasePatchTypeProperties(String patchSelected, PatchNode pNode, FileObject projectDirectory, Collection<Property> collProp) throws TransformerConfigurationException, TransformerException
     {
         Element patchElement = ProjectXmlUtils.getBasePatchTypeElement(patchSelected);
         NodeList nl = patchElement.getElementsByTagName("Property");
@@ -1057,29 +1059,45 @@ public class ProjectUtils
         }
         
         //System.out.println(ProjectXmlUtils.nodeToString((Node)patchElement));
-    }    
-    private static void extractPopertiesFromPropCollectionToBasePatch(Element element, Collection<Property> collProp, FileObject projectDirectory)
-    {
-
-    }
-    
-    
-    public static Collection<String> getElementsByTagName(FileObject project, String tagName) 
-    {
-        Collection<String>  sPatches = new ArrayList<String>();
-        
-        NodeList nPatches = ProjectXmlUtils.getAllElementsByTagName(project, tagName);
-        
-        if(nPatches!=null)
+        // Get Patch tag from Project.xml
+        Element patchEle = ProjectXmlUtils.getPatchElement(pNode.getpName(), pNode.getrName(), pNode.getsName(), projectDirectory);
+        Element patchInfoEle = null, basePatchEle=null;
+        NodeList nl1 = patchEle.getElementsByTagName("PatchInfo");
+        if(nl1!=null)
         {
-            for(int i=0; i<nPatches.getLength(); i++)
+            for(int i=0; i<nl1.getLength(); i++)
             {
-                sPatches.add( ((Element)nPatches.item(i)).getAttribute("name") );
+                patchInfoEle = (Element) nl1.item(i);
+                break;
             }
         }
-        return sPatches;
-    }      
+        NodeList nl2 = patchEle.getElementsByTagName("BasePatch");
+        if(nl2!=null)
+        {
+            for(int i=0; i<nl2.getLength(); i++)
+            {
+                basePatchEle = (Element) nl2.item(i);
+                break;
+            }
+        }
+        if(basePatchEle!=null)
+            basePatchEle.getParentNode().removeChild(basePatchEle);
+    
 
+        Document patchEleDoc = patchInfoEle.getOwnerDocument();
+        Node patchElementImported = patchEleDoc.importNode(patchElement, true);
+        patchInfoEle.appendChild(patchElementImported);
+        
+        System.out.println(ProjectXmlUtils.nodeToString((Node)patchInfoEle));
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(patchEle.getOwnerDocument());
+        StreamResult result = new StreamResult(FileUtil.toFile(projectDirectory.getFileObject(OFProjectFactory.PROJECT_FILE)));
+        transformer.transform(source, result);        
+    }   
+    
+    // Field patches
     public static String[] getFieldPatches() 
     {
         
@@ -1100,7 +1118,29 @@ public class ProjectUtils
         return patches.toArray(new String[patches.size()]);
    }    
 
-    public static Collection<ofProp> getFieldPatchTypeProperties(String patchSelected, PatchNode pNode, FileObject projectDirectory) 
+    public static String getStoredFieldPatchType(PatchNode pNode, FileObject projectDirectory, String field)
+    {
+        Element patchElement = ProjectXmlUtils.getPatchFieldTypeElement(pNode.getpName(), pNode.getsName(), pNode.getrName(), projectDirectory, field);
+        if(patchElement!=null)
+            return patchElement.getAttribute("type");
+        return "";
+    }    
+    
+    public static Collection<ofProp> getStoredFieldPatchTypeProperties(String patchSelected, PatchNode pNode, FileObject projectDirectory, String field) 
+    {
+        Collection<ofProp> collProp = new ArrayList<ofProp>();
+        
+        // Get PatchInfo tag from Patch tag
+        // Check if patchSelected="patch type from the tag" or empty
+        Element patchElement = ProjectXmlUtils.getPatchFieldTypeElement(pNode.getpName(), pNode.getsName(), pNode.getrName(), projectDirectory, field);
+        
+        //Element patchElement = ProjectXmlUtils.getBasePatchTypeElement(patchSelected);
+        extractPopertiesFromFieldPatchElement(patchElement, collProp, projectDirectory);
+        
+        return collProp;        
+    }
+    
+    public static Collection<ofProp> getFieldPatchTypeProperties(String patchSelected, PatchNode pNode, FileObject projectDirectory, String field) 
     {
         Collection<ofProp> collProp = new ArrayList<ofProp>();
         
@@ -1122,8 +1162,12 @@ public class ProjectUtils
                 Property p = new Property();
                 p.setVal( ( (Element) propNames.item(i)).getAttribute("val") );
                 p.setDefVal( ( (Element) propNames.item(i)).getAttribute("defVal") );
-                p.setSecondaryVal( ( (Element) propNames.item(i)).getAttribute("secondaryVal") );
-                p.setDefSecondaryVal( ( (Element) propNames.item(i)).getAttribute("defaultSecondaryVal") );
+                
+                if(!( (Element) propNames.item(i)).getAttribute("secondaryVal").equals(""))
+                {
+                    p.setSecondaryVal( ( (Element) propNames.item(i)).getAttribute("secondaryVal") );
+                    p.setDefSecondaryVal( ( (Element) propNames.item(i)).getAttribute("defaultSecondaryVal") );
+                }
 
                 p.setKey(( (Element) propNames.item(i)).getAttribute("key") );
                 
@@ -1180,7 +1224,138 @@ public class ProjectUtils
                 collProp.add(f);
             }
         }
+    }       
+    
+    public static void setFieldPatchTypeProperties(String patchSelected, PatchNode pNode, FileObject projectDirectory, Collection<ofProp> collProp, String field) throws TransformerConfigurationException, TransformerException, TransformerException 
+    {
+        Element patchElement = ProjectXmlUtils.getFieldPatchTypeElement(patchSelected);
+        patchElement.setAttribute("fieldFile", field );
+
+        NodeList nl = patchElement.getElementsByTagName("Property");
+        if(nl!=null)
+        {
+            for(int i=0; i<nl.getLength(); i++)
+            {
+                Element prop = (Element) nl.item(i);
+                String type = prop.getAttribute("key");
+                if(collProp!=null)
+                {
+                    for(ofProp p: collProp)
+                    {
+                        if(p instanceof Property)
+                        {
+                            Property pr = (Property) p;
+                            pr.setVals();
+                            if(type.equals(pr.getKey()))
+                            {
+                                prop.setAttribute("val", pr.getVal());
+                                if(pr.getSecondaryVal()!=null)
+                                    if(!pr.getSecondaryVal().equals(""))
+                                        prop.setAttribute("secondaryVal", pr.getSecondaryVal());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        nl = patchElement.getElementsByTagName("Function");
+        if(nl!=null)
+        {
+            for(int i=0; i<nl.getLength(); i++)
+            {
+                Element funcEle = (Element) nl.item(i);
+                String type = funcEle.getAttribute("key");
+                if(collProp!=null)
+                {
+                    for(ofProp p: collProp)
+                    {
+                        if(p instanceof Function)
+                        {
+                            Function fn = (Function) p;
+                            fn.setVals();
+                            if(type.equals(fn.getKey()))
+                            {
+                                NodeList nlParams = funcEle.getElementsByTagName("Param");
+                                for(int j=0;j<nlParams.getLength();j++)
+                                {
+                                    Element paramEle = (Element) nlParams.item(j);
+                                    //Param p;
+                                    for(Param prm: fn.getParams())
+                                    {
+                                        if(prm.getKey().equals(paramEle.getAttribute("key")))
+                                        {
+                                            paramEle.setAttribute("val", prm.getVal());
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        System.out.println(ProjectXmlUtils.nodeToString((Node)patchElement));
+        // Get Patch tag from Project.xml
+        Element patchEle = ProjectXmlUtils.getPatchElement(pNode.getpName(), pNode.getrName(), pNode.getsName(), projectDirectory);
+        Element patchInfoEle = null, fieldPatchEle=null;
+        NodeList nl1 = patchEle.getElementsByTagName("PatchInfo");
+        if(nl1!=null)
+        {
+            for(int i=0; i<nl1.getLength(); i++)
+            {
+                patchInfoEle = (Element) nl1.item(i);
+                break;
+            }
+        }
+        NodeList nl2 = patchEle.getElementsByTagName("FieldPatch");
+        if(nl2!=null)
+        {
+            for(int i=0; i<nl2.getLength(); i++)
+            {
+                fieldPatchEle = (Element) nl2.item(i);
+                if(fieldPatchEle.getAttribute("fieldFile").equals(field))
+                    break;
+                else
+                    fieldPatchEle = null;
+            }
+        }
+        if(fieldPatchEle!=null)
+            fieldPatchEle.getParentNode().removeChild(fieldPatchEle);
+    
+
+        Document patchEleDoc = patchInfoEle.getOwnerDocument();
+        Node patchElementImported = patchEleDoc.importNode(patchElement, true);
+        patchInfoEle.appendChild(patchElementImported);
+        
+        System.out.println(ProjectXmlUtils.nodeToString((Node)patchInfoEle));
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(patchEle.getOwnerDocument());
+        StreamResult result = new StreamResult(FileUtil.toFile(projectDirectory.getFileObject(OFProjectFactory.PROJECT_FILE)));
+        transformer.transform(source, result);        
+
     }
+    
+    
+    public static Collection<String> getElementsByTagName(FileObject project, String tagName) 
+    {
+        Collection<String>  sPatches = new ArrayList<String>();
+        
+        NodeList nPatches = ProjectXmlUtils.getAllElementsByTagName(project, tagName);
+        
+        if(nPatches!=null)
+        {
+            for(int i=0; i<nPatches.getLength(); i++)
+            {
+                sPatches.add( ((Element)nPatches.item(i)).getAttribute("name") );
+            }
+        }
+        return sPatches;
+    }      
 
     public static BGBlockPanel.BGBlock getBlockmeshInSubRegion(String rName, String sName, FileObject projectDirectory)
     {

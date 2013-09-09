@@ -476,5 +476,26 @@ public class ProjectXmlUtils
         return toRet;
     
     }
+
+    public static Element getPatchFieldTypeElement(String pName, String sName, String rName, FileObject projectDirectory, String field) 
+    {
+        Element toRet = null;
+        Element patchEle = getPatchElement(pName, rName, sName, projectDirectory);
+        NodeList nl = patchEle.getElementsByTagName("FieldPatch");
+        
+        if(nl!=null)
+        {
+            for (int i=0; i<nl.getLength();i++)
+            {
+                toRet = (Element) nl.item(i);
+                String fieldType = toRet.getAttribute("fieldFile");
+                if(field.equals(fieldType))
+                    break;
+                else
+                    toRet = null;
+            }
+        }
+        return toRet;    
+    }
     
 }

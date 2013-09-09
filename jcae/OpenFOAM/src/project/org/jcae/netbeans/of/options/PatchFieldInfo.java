@@ -4,13 +4,14 @@
  */
 package project.org.jcae.netbeans.of.options;
 
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collection;
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.netbeans.api.project.Project;
+import org.openide.util.Exceptions;
 import project.org.jcae.netbeans.of.api.ofProp;
 import project.org.jcae.netbeans.of.nodes.PatchNode;
 import project.org.jcae.netbeans.of.project.ProjectUtils;
@@ -19,46 +20,100 @@ import project.org.jcae.netbeans.of.project.ProjectUtils;
  *
  * @author mohit
  */
-public class PatchFieldInfo extends javax.swing.JPanel 
-{
-    public class SubPanel1 extends JPanel 
-    {        
-        public SubPanel1()
+public class PatchFieldInfo extends javax.swing.JPanel {
+
+    public class SubPanel2 extends JPanel 
+    {   
+        private boolean manSet = false;
+        public SubPanel2()
         {           
-            //setBackground(Color.white);
-            setBorder(BorderFactory.createTitledBorder("Properties"));
-            
         }
         
-        public void initComponents() 
+        private void loadGUI(boolean flag)
         {
-            Collection<ofProp> collProp = ProjectUtils.getFieldPatchTypeProperties(patchSelected, pNode, pr.getProjectDirectory());
-            
+            if(flag)
+            {
+                manSet = true;
+                jComboBox1.setSelectedItem(ProjectUtils.getStoredFieldPatchType(pNode, pr.getProjectDirectory(), fieldFile));
+                collProp = ProjectUtils.getStoredFieldPatchTypeProperties(patchStored, pNode, pr.getProjectDirectory(), fieldFile);
+                manSet = false;
+            }
+            else
+            {
+                collProp = ProjectUtils.getFieldPatchTypeProperties(patchSelected, pNode, pr.getProjectDirectory(), fieldFile);
+            }
             // Create panel based on collProp
+                        
             if(collProp!=null)
             {
                 setLayout(new GridLayout(collProp.size(), 1));
-                
                 for(int i=0;i<collProp.size();i++)
                 {
                     ofProp ofProp = ((ArrayList<ofProp>) collProp).get(i);
                     add(ofProp.loadGraphics());
                 }
+            }  
+      
+        }
+        
+        public void initComponents() 
+        {
+            String patchStored = ProjectUtils.getStoredFieldPatchType(pNode, pr.getProjectDirectory(), fieldFile);
+            
+            if(patchStored.equals(""))
+            {
+                if(!patchSelected.equals(""))
+                    loadGUI(false);
             }
-        }        
+            else
+            {
+                if(!patchSelected.equals("") && !patchSelected.equals(patchStored))
+                    loadGUI(false);
+                else if(patchSelected.equals("") || patchStored.equals(patchSelected))
+                    loadGUI(true);
+            }
+        }
     }
     
+    Collection<ofProp> collProp;
     PatchNode pNode;
     Project pr;
-    String patchSelected;
+    String patchSelected="";
+    String patchStored="";
+    String fieldFile= "";
+    
     /**
-     * Creates new form PatchBasicInfo
+     * Creates new form PatchFieldInfo
      */
-    public PatchFieldInfo(PatchNode pNode, Project pr) {
+    public PatchFieldInfo(PatchNode pNode, Project pr, String fieldType) {
         initComponents();
-        setBorder(BorderFactory.createTitledBorder("K"));
+        //setBorder(BorderFactory.createTitledBorder(""));
         this.pNode = pNode;
         this.pr = pr;
+        this.fieldFile = fieldType;
+    }
+
+    public void load()
+    {
+        ((PatchFieldInfo.SubPanel2)jPanel1).removeAll();
+        ((PatchFieldInfo.SubPanel2)jPanel1).repaint();
+        ((PatchFieldInfo.SubPanel2)jPanel1).initComponents();
+    }
+    
+    public void save()
+    {
+        try {
+            /* 1. Get selectedPatch, get project, patch names etc
+             * 2. Get the BasePatch element 
+             * 3. Collect info from Collection<ofProp>(or property), put in element
+             * 4. Send element to XML
+             */        
+            ProjectUtils.setFieldPatchTypeProperties(patchSelected, pNode, pr.getProjectDirectory(), collProp, fieldFile);
+        } catch (TransformerConfigurationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (TransformerException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 
     /**
@@ -70,20 +125,12 @@ public class PatchFieldInfo extends javax.swing.JPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new SubPanel1();
-        jComboBox1 = new javax.swing.JComboBox(ProjectUtils.getFieldPatches());
         jLabel1 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox(ProjectUtils.getFieldPatches());
+        jPanel1 = new SubPanel2();
+        jSeparator1 = new javax.swing.JSeparator();
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 168, Short.MAX_VALUE)
-        );
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PatchFieldInfo.class, "PatchFieldInfo.jLabel1.text")); // NOI18N
 
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -91,43 +138,68 @@ public class PatchFieldInfo extends javax.swing.JPanel
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(PatchFieldInfo.class, "PatchFieldInfo.jLabel1.text")); // NOI18N
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 237, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 176, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(57, 57, 57)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(84, 84, 84)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(50, 50, 50)
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(54, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(36, 36, 36)
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap(236, Short.MAX_VALUE))
+                    .addComponent(jLabel1)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(37, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         patchSelected = (String) jComboBox1.getSelectedItem();
         //jPanel1 = new SubPanel1();
-        ((SubPanel1)jPanel1).removeAll();
-        ((SubPanel1)jPanel1).repaint();
-        ((SubPanel1)jPanel1).initComponents();
-        ((SubPanel1)jPanel1).repaint();
-        setBackground(Color.red);
+        if(((PatchFieldInfo.SubPanel2)jPanel1).manSet)
+            return;
+        
+        ((PatchFieldInfo.SubPanel2)jPanel1).removeAll();
+        ((PatchFieldInfo.SubPanel2)jPanel1).repaint();
+        ((PatchFieldInfo.SubPanel2)jPanel1).initComponents();
+        ((PatchFieldInfo.SubPanel2)jPanel1).repaint();
+        
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JSeparator jSeparator1;
     // End of variables declaration//GEN-END:variables
 }

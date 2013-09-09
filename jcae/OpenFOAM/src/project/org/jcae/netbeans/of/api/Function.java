@@ -7,6 +7,7 @@ package project.org.jcae.netbeans.of.api;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.w3c.dom.Node;
@@ -23,16 +24,21 @@ public class Function implements ofProp
     
     private JLabel jKey;
     private JPanel jPanel;
+    private JCheckBox jCheckBox;
+    private ArrayList<Param> paramsList;
 
     public JPanel loadGraphics()
     {        
         jKey = new JLabel(key);
+        setjCheckBox(new JCheckBox());
+        
         if(params!=null)
         {
-            jPanel = new JPanel(new GridLayout(1, params.size()+1));
+            jPanel = new JPanel(new GridLayout(1, params.size()+1));            
+            jPanel.add(getjCheckBox());
             jPanel.add(jKey);
             
-            ArrayList<Param> paramsList = (ArrayList<Param>) params;
+            paramsList = (ArrayList<Param>) params;
                     
             for(int i=0;i<paramsList.size();i++)
             {
@@ -43,11 +49,23 @@ public class Function implements ofProp
         else
         {
             jPanel = new JPanel(new GridLayout(1, 1));
+            jPanel.add(getjCheckBox());
             jPanel.add(jKey);
         }
         return jPanel;
     }
 
+    public void setVals()
+    {
+        if(params!=null)
+        {
+            for(Param p: params)
+            {
+                p.setVals();
+            }
+        }
+    }
+    
     /**
      * @return the key
      */
@@ -88,6 +106,20 @@ public class Function implements ofProp
      */
     public void setParams(Collection<Param> params) {
         this.params = params;
+    }
+
+    /**
+     * @return the jCheckBox
+     */
+    public JCheckBox getjCheckBox() {
+        return jCheckBox;
+    }
+
+    /**
+     * @param jCheckBox the jCheckBox to set
+     */
+    public void setjCheckBox(JCheckBox jCheckBox) {
+        this.jCheckBox = jCheckBox;
     }
 
 }
