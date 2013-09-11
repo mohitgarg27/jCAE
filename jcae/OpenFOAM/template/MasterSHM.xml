@@ -67,7 +67,7 @@ and open the template in the editor.
                     <Properties name="regions"  id="surfaceRegion">  
                         <!--Repeatable-->
                         <Properties name=""  id="RefinedPatch" >  
-                            <Property name="level"  val="(0 0)"/>
+                            <Property name="level"  val="(2 3)"/>
                         </Properties>
                     </Properties>
             </Properties>

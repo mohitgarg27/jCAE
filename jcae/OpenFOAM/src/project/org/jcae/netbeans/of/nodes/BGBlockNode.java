@@ -73,6 +73,8 @@ public class BGBlockNode extends AbstractNode
     {
         try {
             String loc = project.getProjectDirectory().getPath()+"/"+rName+"/"+sName+"/BGBlock.brep";
+            File floc = new File(loc);
+            floc.delete();
             BRepTools.write(load(loc), loc);
             setShape(new NbShape(loc));                
             FileObject fo = FileUtil.toFileObject(new File(loc));

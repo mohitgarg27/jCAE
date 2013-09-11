@@ -44,12 +44,12 @@ public class RegionSolidConstantSettingsPanel extends javax.swing.JPanel {
     public void load()
     {
         // Get settings file and load file data
-        jTAThermal.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/system/" + "thermalProperties" ));
+        jTAThermal.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/constant/" + "thermalProperties" ));
     }
     
     public void save()
     {
-        ProjectFileUtils.writeFile(jTAThermal.getText(), project.getPath() + "/" + regionName + "/system/" + "thermalProperties" );        
+        ProjectFileUtils.writeFile(jTAThermal.getText(), project.getPath() + "/" + regionName + "/constant/" + "thermalProperties" );        
     }
     
     /**

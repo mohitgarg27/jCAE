@@ -496,7 +496,7 @@ public class ProjectUtils
         Node thePatchImported = projectXML.importNode(thePatch, true);
         
         subRegionElement.appendChild(thePatchImported);
-        ProjectXmlUtils.removeAll(thePatchImported);
+        //ProjectXmlUtils.removeAll(thePatchImported);
        
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer;
@@ -737,7 +737,7 @@ public class ProjectUtils
     {           
         Element patchElement = ProjectXmlUtils.getPatchElement(patchName, regionName, subRegionName, project);
         patchElement.setAttribute("name", newPatchName);
-        patchElement.setAttribute("brepLocation", project.getPath()+"/"+regionName+"/"+subRegionName+"/"+newPatchName);
+        patchElement.setAttribute("brepLocation", project.getPath()+"/"+regionName+"/"+subRegionName+"/"+newPatchName+".brep");
            
         Document projectXML = patchElement.getOwnerDocument();
        
@@ -829,16 +829,18 @@ public class ProjectUtils
         
         Node parent = patchElement.getParentNode();
         parent.removeChild(patchElement);
-        
-        FileObject fo = project.getFileObject("Patches");
-        for(FileObject f : fo.getChildren())
-        {
-            if(f.getName().equalsIgnoreCase(patchName))
-            {
-                f.delete();
-                break;
-            }
-        }
+//        
+//        FileObject fo = project.getFileObject(regionName+"/"+subRegionName);        
+//        
+//        for(FileObject f : fo.getChildren())
+//        {
+//            System.out.println(f.getName());
+//            if(f.getName().equalsIgnoreCase(patchName))
+//            {
+//                f.delete();
+//                break;
+//            }
+//        }
         
         Document projectXML = patchElement.getOwnerDocument();
        
@@ -849,7 +851,7 @@ public class ProjectUtils
         StreamResult result = new StreamResult(FileUtil.toFile(project.getFileObject(OFProjectFactory.PROJECT_FILE)));
         transformer.transform(source, result);
 
-        File f = new File(project.getPath()+"/"+regionName+"/"+subRegionName+"/"+patchName);
+        File f = new File(project.getPath()+"/"+regionName+"/"+subRegionName+"/"+patchName+".brep");
         FileObject rFile = FileUtil.toFileObject(f);
 
         try {
@@ -2048,6 +2050,12 @@ public class ProjectUtils
                             BrepToSTL b = new BrepToSTL(new File(brepPath));
                             b.performAction();
                             b.generateSTL();
+                            try {
+                                System.out.println("Sleeping...");
+                                Thread.sleep(1000);
+                            } catch (InterruptedException ex) {
+                                Exceptions.printStackTrace(ex);
+                            }
                         }
                     }
                 }
@@ -2168,7 +2176,7 @@ public class ProjectUtils
                 String locDPDict= System.getProperty("user.dir")+"/" + "./template/settings/decomposeParDict";
                 ProjectFileUtils.copyFile(locDPDict, decomposeParDictFile.getPath());
                 
-                performSHMMeshing(subRegion, region, project);
+                //performSHMMeshing(subRegion, region, project);
             }
         }           
     }    

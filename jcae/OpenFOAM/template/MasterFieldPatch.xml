@@ -84,7 +84,7 @@ and open the template in the editor.
     <FieldPatch type="flowRateInletVelocity" fieldFile="" >
             <Property key="flowRate" defVal="0" val="" />
             <Property key="value" defVal="uniform(0 0 0 )" val=""/>
-<!--                <value>-->
+<!--                <value>
                     <Function key="uniform" editable="true">
                         <Params>
                             <Param key="Param1" val="0"/>
@@ -92,7 +92,7 @@ and open the template in the editor.
                             <Param key="Param3" val="0"/>
                         </Params>
                     </Function>
-               <!-- </value>
+                </value>
             </Property>                -->
     </FieldPatch>      
 

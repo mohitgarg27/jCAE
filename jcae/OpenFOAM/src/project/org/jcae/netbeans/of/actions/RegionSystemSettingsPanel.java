@@ -44,17 +44,17 @@ public class RegionSystemSettingsPanel extends javax.swing.JPanel {
     public void load()
     {
         // Get settings file and load file data
-        jTAControlDict.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/" + "controlDict" ));
-        jTAFVSchemes.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/" + "fvSchemes" ));
-        jTAFVSolution.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/" + "fvSolution" ));
+        jTAControlDict.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/system/" + "controlDict" ));
+        jTAFVSchemes.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/system/" + "fvSchemes" ));
+        jTAFVSolution.setText(ProjectUtils.readFile(project.getPath() + "/" + regionName + "/system/" + "fvSolution" ));
         
     }
     
     public void save()
     {
-        ProjectFileUtils.writeFile(jTAControlDict.getText(), project.getPath() + "/" + regionName + "/" + "controlDict" );
-        ProjectFileUtils.writeFile(jTAFVSchemes.getText(), project.getPath() + "/" + regionName + "/" + "fvSchemes" );
-        ProjectFileUtils.writeFile(jTAFVSolution.getText(), project.getPath() + "/" + regionName + "/" + "fvSolution" );        
+        ProjectFileUtils.writeFile(jTAControlDict.getText(), project.getPath() + "/" + regionName + "/system/" + "controlDict" );
+        ProjectFileUtils.writeFile(jTAFVSchemes.getText(), project.getPath() + "/" + regionName + "/system/" + "fvSchemes" );
+        ProjectFileUtils.writeFile(jTAFVSolution.getText(), project.getPath() + "/" + regionName + "/system/" + "fvSolution" );        
     }
     
     /**

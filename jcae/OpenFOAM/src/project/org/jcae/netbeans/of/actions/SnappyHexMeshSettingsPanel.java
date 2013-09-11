@@ -106,7 +106,7 @@ public class SnappyHexMeshSettingsPanel extends javax.swing.JPanel {
         params.getMinFlatness()[0] = jTFCMaxFlatness.getText();
         params.getMinVol()[0] = jTFCMinVol.getText();
         params.getMinTetQuality()[0] = jTFCMinTetQuality.getText();
-        params.getMinTetQuality()[0] = jTFCMinArea.getText();
+        params.getMinArea()[0] = jTFCMinArea.getText();
         params.getMinTwist()[0] = jTFCMinTwist.getText();
         params.getMinDeterminant()[0] = jTFCMinDeterminant.getText();
         params.getMinFaceWeight()[0] = jTFCMinFaceWeight.getText();
@@ -122,7 +122,7 @@ public class SnappyHexMeshSettingsPanel extends javax.swing.JPanel {
         params.getMinFlatness()[1] = jTFSMaxFlatness.getText();
         params.getMinVol()[1] = jTFSMinVol.getText();
         params.getMinTetQuality()[1] = jTFSMinTetQuality.getText();
-        params.getMinTetQuality()[1] = jTFSMinArea.getText();
+        params.getMinArea()[1] = jTFSMinArea.getText();
         params.getMinTwist()[1] = jTFSMinTwist.getText();
         params.getMinDeterminant()[1] = jTFSMinDeterminant.getText();
         params.getMinFaceWeight()[1] = jTFSMinFaceWeight.getText();
@@ -138,7 +138,7 @@ public class SnappyHexMeshSettingsPanel extends javax.swing.JPanel {
         params.getMinFlatness()[2] = jTFLMaxFlatness.getText();
         params.getMinVol()[2] = jTFLMinVol.getText();
         params.getMinTetQuality()[2] = jTFLMinTetQuality.getText();
-        params.getMinTetQuality()[2] = jTFLMinArea.getText();
+        params.getMinArea()[2] = jTFLMinArea.getText();
         params.getMinTwist()[2] = jTFLMinTwist.getText();
         params.getMinDeterminant()[2] = jTFLMinDeterminant.getText();
         params.getMinFaceWeight()[2] = jTFLMinFaceWeight.getText();
@@ -204,7 +204,7 @@ public class SnappyHexMeshSettingsPanel extends javax.swing.JPanel {
         jTFCMaxFlatness.setText(params.getMinFlatness()[0]);
         jTFCMinVol.setText(params.getMinVol()[0]);
         jTFCMinTetQuality.setText(params.getMinTetQuality()[0]);
-        jTFCMinArea.setText(params.getMinTetQuality()[0]);
+        jTFCMinArea.setText(params.getMinArea()[0]);
         jTFCMinTwist.setText(params.getMinTwist()[0]);
         jTFCMinDeterminant.setText(params.getMinDeterminant()[0]);
         jTFCMinFaceWeight.setText(params.getMinFaceWeight()[0]);
@@ -220,7 +220,7 @@ public class SnappyHexMeshSettingsPanel extends javax.swing.JPanel {
         jTFSMaxFlatness.setText(params.getMinFlatness()[1]);
         jTFSMinVol.setText(params.getMinVol()[1]);
         jTFSMinTetQuality.setText(params.getMinTetQuality()[1]);
-        jTFSMinArea.setText(params.getMinTetQuality()[1]);
+        jTFSMinArea.setText(params.getMinArea()[1]);
         jTFSMinTwist.setText(params.getMinTwist()[1]);
         jTFSMinDeterminant.setText(params.getMinDeterminant()[1]);
         jTFSMinFaceWeight.setText(params.getMinFaceWeight()[1]);
@@ -236,7 +236,7 @@ public class SnappyHexMeshSettingsPanel extends javax.swing.JPanel {
         jTFLMaxFlatness.setText(params.getMinFlatness()[2]);
         jTFLMinVol.setText(params.getMinVol()[2]);
         jTFLMinTetQuality.setText(params.getMinTetQuality()[2]);
-        jTFLMinArea.setText(params.getMinTetQuality()[2]);
+        jTFLMinArea.setText(params.getMinArea()[2]);
         jTFLMinTwist.setText(params.getMinTwist()[2]);
         jTFLMinDeterminant.setText(params.getMinDeterminant()[2]);
         jTFLMinFaceWeight.setText(params.getMinFaceWeight()[2]);

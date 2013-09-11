@@ -54,6 +54,10 @@ public class PatchesChildren extends Children.Array
         refresh();
     }  
     
+    public void refresh1()
+    {
+        refresh();
+    }
     public void renameChildren( Node node, String newName)
     {
         

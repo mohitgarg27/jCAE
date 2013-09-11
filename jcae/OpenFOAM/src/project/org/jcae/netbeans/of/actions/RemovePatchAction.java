@@ -31,7 +31,7 @@ public class RemovePatchAction extends CookieAction
     @Override
     protected int mode() 
     {
-        return CookieAction.MODE_ONE;
+        return CookieAction.MODE_EXACTLY_ONE;
     }
 
     @Override
